@@ -1,17 +1,11 @@
-<h1 align="center">
-    <br>
-    <a href="https://easyappointments.org">
-        <img src="https://raw.githubusercontent.com/alextselegidis/easyappointments/develop/docs/images/logo.png" alt="Easy!Appointments" width="150">
-    </a>
-    <br>
-    Easy!Appointments
-    <br>
-</h1>
+## CLG booking system changes
+things that needs changing/doing to personalize the application
 
-<br>
+- [Change the Swedish translation to fit our use case](application/language/swedish/translations_lang.php)
+- ... more coming
 
 <h4 align="center">
-    A powerful Open Source Appointment Scheduler that can be installed on your server. 
+    Easy!Appointments, a powerful Open Source Appointment Scheduler that can be installed on your server. 
 </h4>
 
 <p align="center">
