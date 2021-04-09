@@ -153,6 +153,7 @@ class Appointments_model extends EA_Model {
     protected function insert($appointment)
     {
         $appointment['book_datetime'] = date('Y-m-d H:i:s');
+	$appointment['status'] = 'pending';
         $appointment['hash'] = $this->generate_hash();
 
         if ( ! $this->db->insert('appointments', $appointment))

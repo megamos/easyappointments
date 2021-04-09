@@ -63,6 +63,7 @@ $lang['disable_sync'] = 'Deaktivera';
 $lang['disable_sync_prompt'] = 'Are you sure that you want to disable the calendar synchronization?';
 $lang['reload'] = 'Uppdatera';
 $lang['appointment'] = 'Bokning';
+$lang['appointment_status'] = 'Status';
 $lang['unavailable'] = 'Inte tillgänglig';
 $lang['week'] = 'Vecka';
 $lang['month'] = 'Månad';

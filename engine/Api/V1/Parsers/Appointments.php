@@ -36,6 +36,7 @@ class Appointments implements ParsersInterface {
             'hash' => $response['hash'],
             'location' => $response['location'],
             'notes' => $response['notes'],
+	    'status' => $response['status]',
             'customerId' => $response['id_users_customer'] !== NULL ? (int)$response['id_users_customer'] : NULL,
             'providerId' => $response['id_users_provider'] !== NULL ? (int)$response['id_users_provider'] : NULL,
             'serviceId' => $response['id_services'] !== NULL ? (int)$response['id_services'] : NULL,
@@ -109,6 +110,11 @@ class Appointments implements ParsersInterface {
         if (array_key_exists('notes', $request))
         {
             $decoded_request['notes'] = $request['notes'];
+        }
+
+	if (array_key_exists('status', $request))
+        {
+            $decoded_request['status'] = $request['status'];
         }
 
         if (array_key_exists('customerId', $request))
