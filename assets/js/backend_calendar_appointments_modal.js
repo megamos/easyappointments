@@ -61,6 +61,8 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                 start_datetime: startDatetime,
                 end_datetime: endDatetime,
                 location: $dialog.find('#appointment-location').val(),
+                bg_color: $('input[name="colorOption"]:checked').val(),
+              //bg_color: $dialog.find('#bg-color-input').val(), //for color picker
                 notes: $dialog.find('#appointment-notes').val(),
                 is_unavailable: false
             };
@@ -365,8 +367,15 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
         var $dialog = $('#manage-appointment');
 
         // Empty form fields.
+        
         $dialog.find('input, textarea').val('');
         $dialog.find('.modal-message').fadeOut();
+
+        // prepare colors
+        $dialog.find('#colorRadio1').val('#FCA5A5');
+        $dialog.find('#colorRadio2').val('#93C5FD');
+        $dialog.find('#colorRadio3').val('#C4B5FD');
+        $dialog.find('#colorRadio4').val('#a0d468');
 
         // Prepare service and provider select boxes.
         $dialog.find('#select-service').val(
