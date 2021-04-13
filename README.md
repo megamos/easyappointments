@@ -1,3 +1,23 @@
+# CLG Modifications
+## TODO's
+
+1. Create migration to update secratary permissions
+  - mysql> UPDATE ea_roles SET appointments=1 WHERE id=4;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SELECT * FROM ea_roles;
++----+---------------+-----------+----------+--------------+-----------+----------+-------+-----------------+---------------+
+| id | name          | slug      | is_admin | appointments | customers | services | users | system_settings | user_settings |
++----+---------------+-----------+----------+--------------+-----------+----------+-------+-----------------+---------------+
+|  1 | Administrator | admin     |        1 |           15 |        15 |       15 |    15 |              15 |            15 |
+|  2 | Provider      | provider  |        0 |           15 |        15 |        0 |     0 |               0 |            15 |
+|  3 | Customer      | customer  |        0 |            0 |         0 |        0 |     0 |               0 |             0 |
+|  4 | Secretary     | secretary |        0 |            1 |         0 |        0 |     0 |               0 |            15 |
++----+---------------+-----------+----------+--------------+-----------+----------+-------+-----------------+---------------+
+
+
+
 <h1 align="center">
     <br>
     <a href="https://easyappointments.org">

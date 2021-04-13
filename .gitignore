@@ -29,3 +29,4 @@
 /vendor/
 /metafile
 .DS_Store
+/db_info.txt
