@@ -321,3 +321,4 @@ $lang['load_more'] = 'Ladda mer';
 $lang['list'] = 'Lista';
 $lang['default'] = 'Standard';
 $lang['table'] = 'Tabell';
+$lang['date'] = 'Datum';
