@@ -51,6 +51,15 @@
 
     <div id="header-menu" class="collapse navbar-collapse flex-row-reverse">
         <ul class="navbar-nav">
+
+            <li class="nav-item">
+                <a href="<?= site_url('appointments') ?>" class="nav-link"
+                   data-tippy-content="<?= lang('new_appointment_record_hint') ?>">
+                    <i class="fas fa-plus-square mr-2"></i>
+                    <?= lang('new_appointment_record_hint') ?>
+                </a>
+            </li>
+
             <?php $hidden = ($privileges[PRIV_APPOINTMENTS]['view'] == TRUE) ? '' : 'd-none' ?>
             <?php $active = ($active_menu == PRIV_APPOINTMENTS) ? 'active' : '' ?>
             <li class="nav-item <?= $active . $hidden ?>">
