@@ -40,7 +40,7 @@
 <nav id="header" class="navbar navbar-expand-md navbar-dark">
     <div id="header-logo" class="navbar-brand">
         <img src="<?= base_url('assets/img/logo.png') ?>">
-        <h6>BOKNINGSSYSTEM</h6>
+        <h6><?= lang('booking_system') ?></h6>
         <small>EASY!APPOINTMENTS, an Open Source Appointment Scheduler</small>
     </div>
 
@@ -76,7 +76,7 @@
                 <a href="<?= site_url('backend/customers') ?>" class="nav-link"
                    data-tippy-content="<?= lang('manage_customers_hint') ?>">
                     <i class="fas fa-user-friends mr-2"></i>
-                    <?= lang('customers') ?>
+                    <?= lang('appointments') ?>
                 </a>
             </li>
 

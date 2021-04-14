@@ -323,3 +323,6 @@ $lang['list'] = 'Lista';
 $lang['default'] = 'Standard';
 $lang['table'] = 'Tabell';
 $lang['date'] = 'Datum';
+$lang['language'] = 'Språk';
+$lang['no_language'] = 'Inget språk';
+$lang['booking_system'] = 'BOKNINGSSYSTEM';
