@@ -1376,6 +1376,18 @@ class Backend_api extends EA_Controller {
 
             $secretary_id = $this->secretaries_model->add($secretary);
 
+            /**
+             * Save the customer that the secretary relates to.
+             * CLG will use secretary users as "customers with login", with only read access for backend
+             * appointments. No customer info will be needed for new booking, as it is taken from the 
+             * logged in user.
+             */
+            $customer = $secretary;
+            unset($customer['settings']);
+            unset($customer['mobile_number']);
+            unset($customer['providers']);
+            $this->customers_model->add($customer);
+
             $response = [
                 'status' => AJAX_SUCCESS,
                 'id' => $secretary_id
@@ -1409,6 +1421,14 @@ class Backend_api extends EA_Controller {
             }
 
             $result = $this->secretaries_model->delete($this->input->post('secretary_id'));
+
+            /**
+             * Delete the customer that the secretary relates to.
+             * CLG will use secretary users as "customers with login", with only read access for backend
+             * appointments. No customer info will be needed for new booking, as it is taken from the 
+             * logged in user.
+             */
+            $this->customers_model->delete($this->input->post('secretary_id'));
 
             $response = $result ? AJAX_SUCCESS : AJAX_FAILURE;
         }
