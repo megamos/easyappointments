@@ -39,7 +39,7 @@
 |
 */
 
-$route['default_controller'] = 'appointments';
+$route['default_controller'] = 'user/login';
 $route['404_override'] = 'errors/error404';
 
 
