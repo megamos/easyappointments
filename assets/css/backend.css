@@ -458,11 +458,6 @@ body legend {
     font-size: 12px;
 }
 
-#appointment-notes,
-#customer-notes {
-    height: 37px; /* Align with location field */
-}
-
 body .form-horizontal .control-label {
     width: 135px;
 }
@@ -655,6 +650,7 @@ body .form-horizontal .controls {
 
 #services-page #service-duration {
     margin: 0;
+    display: hidden;
 }
 
 #services-page .record-details h3 a {

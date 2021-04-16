@@ -105,7 +105,8 @@
 
             // Default values
             $('#service-name').val('Service');
-            $('#service-duration').val('30');
+            $('#service-duration').val('1440');
+            $('#service-duration').prop("disabled", true);
             $('#service-price').val('0');
             $('#service-currency').val('');
             $('#service-category').val('null');

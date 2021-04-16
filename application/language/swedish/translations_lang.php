@@ -112,7 +112,7 @@ $lang['customers'] = 'Släcktingar';
 $lang['details'] = 'Detaljer';
 $lang['no_records_found'] = 'Hitade inga poster...';
 $lang['services'] = 'Rum';
-$lang['duration_minutes'] = 'Längd.';
+$lang['duration_minutes'] = 'Längd (minuter, 1440 = 1 dag).';
 $lang['currency'] = 'Valuta';
 $lang['category'] = 'Kategori';
 $lang['no_category'] = 'Ingen kategori';
