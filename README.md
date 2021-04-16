@@ -15,7 +15,7 @@
   - Renamed to: Släckting (only in front-end)
   - Usage: Now used as a "customer with login"
 
-
+<input type="color" class="form-control" id="bg-color-input" value="#93CFD2">
 
 <h1 align="center">
     <br>
