@@ -36,7 +36,7 @@ class Appointments implements ParsersInterface {
             'hash' => $response['hash'],
             'location' => $response['location'],
             'notes' => $response['notes'],
-	    'status' => $response['status]',
+	        'status' => $response['status'],
             'customerId' => $response['id_users_customer'] !== NULL ? (int)$response['id_users_customer'] : NULL,
             'providerId' => $response['id_users_provider'] !== NULL ? (int)$response['id_users_provider'] : NULL,
             'serviceId' => $response['id_services'] !== NULL ? (int)$response['id_services'] : NULL,
