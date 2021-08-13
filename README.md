@@ -12,7 +12,7 @@
 - Customer:
   - Now only indirectly created as a clone of a Secretary
 - Secretary:
-  - Renamed to: Släckting (only in front-end)
+  - Renamed to: Släkting (only in front-end)
   - Usage: Now used as a "customer with login"
 
 <input type="color" class="form-control" id="bg-color-input" value="#93CFD2">
