@@ -21,7 +21,7 @@ root {
    -------------------------------------------------------------------- */
 
 #header {
-    background-color: #429a82;
+    background-color: #d8b77e;
     box-shadow: none;
     border-radius: 0;
     padding: 0;
@@ -38,7 +38,6 @@ root {
 
 #header #header-logo img {
     float: left;
-    width: 45px;
     height: 45px;
     margin-right: 10px;
 }
@@ -66,11 +65,11 @@ root {
 }
 
 #header #header-menu .nav-item:hover {
-    background: #3a8873;
+    background: #ef6333;
 }
 
 #header #header-menu .nav-item.active {
-    background: #2e6a5b;
+    background: #ef6333;
 }
 
 #footer {
@@ -148,7 +147,7 @@ body .modal .modal-title {
 
 body .modal-header {
     padding: 20px 15px;
-    background: #429a82;
+    background: #ef6333;
 }
 
 body .modal-header h3 {
@@ -255,7 +254,7 @@ body legend {
 
 .backend-page .filter-records .results .entry.selected {
     background-color: #F4F4F4;
-    border-right: 5px solid #429a82;
+    border-right: 5px solid #ef6333;
 }
 
 .backend-page .filter-records .results hr {
@@ -447,7 +446,7 @@ body legend {
 }
 
 #existing-customers-list div:hover {
-    background: #429a82;
+    background: #ef6333;
     font-weight: bold;
     color: #FFF;
     cursor: pointer;
@@ -458,11 +457,6 @@ body legend {
     height: 14px;
     min-height: 24px;
     font-size: 12px;
-}
-
-#appointment-notes,
-#customer-notes {
-    height: 37px; /* Align with location field */
 }
 
 body .form-horizontal .control-label {
@@ -552,7 +546,7 @@ body .form-horizontal .controls {
 }
 
 #calendar .calendar-view .date-column .provider-column .event.unavailability {
-    background: #409482;
+    background: #ef6333;
     color: #fff;
 
 }
@@ -657,6 +651,7 @@ body .form-horizontal .controls {
 
 #services-page #service-duration {
     margin: 0;
+    display: hidden;
 }
 
 #services-page .record-details h3 a {

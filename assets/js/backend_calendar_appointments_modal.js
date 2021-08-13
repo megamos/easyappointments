@@ -61,6 +61,8 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                 start_datetime: startDatetime,
                 end_datetime: endDatetime,
                 location: $dialog.find('#appointment-location').val(),
+                //bg_color: $('input[name="colorOption"]:checked').val(),
+                bg_color: $dialog.find('#bg-color-input').val(), //for color picker
                 notes: $dialog.find('#appointment-notes').val(),
                 is_unavailable: false
             };
@@ -167,6 +169,19 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             $dialog.find('#end-datetime').val(GeneralFunctions.formatDate(start.addMinutes(duration),
                 GlobalVariables.dateFormat, true));
 
+            // CLG CHANGE: Inserting user data if it's a relative (customer, that is a clone of a secretary) 
+            //             that wants to create a new booking (appointment)
+            var relative = GlobalVariables.user;
+
+            if (relative) {
+                $dialog.find('#customer-id').val(relative.id);
+                $dialog.find('#first-name').val(relative.first_name);
+                $dialog.find('#last-name').val(relative.last_name);
+                $dialog.find('#email').val(relative.email);
+                $dialog.find('#phone-number').val(relative.phone_number);
+                $dialog.find('#customer-notes').val(relative.notes);
+            }
+
             // Display modal form.
             $dialog.find('.modal-header h3').text(EALang.new_appointment_title);
             $dialog.modal('show');
@@ -214,10 +229,6 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                 $('#last-name').val(customer.last_name);
                 $('#email').val(customer.email);
                 $('#phone-number').val(customer.phone_number);
-                $('#address').val(customer.address);
-                $('#city').val(customer.city);
-                $('#zip-code').val(customer.zip_code);
-                $('#customer-notes').val(customer.notes);
             }
 
             $('#select-customer').trigger('click'); // Hide the list.
@@ -365,8 +376,15 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
         var $dialog = $('#manage-appointment');
 
         // Empty form fields.
+        
         $dialog.find('input, textarea').val('');
         $dialog.find('.modal-message').fadeOut();
+
+        // prepare colors
+        $dialog.find('#colorRadio1').val('#FCA5A5');
+        $dialog.find('#colorRadio2').val('#93C5FD');
+        $dialog.find('#colorRadio3').val('#C4B5FD');
+        $dialog.find('#colorRadio4').val('#a0d468');
 
         // Prepare service and provider select boxes.
         $dialog.find('#select-service').val(

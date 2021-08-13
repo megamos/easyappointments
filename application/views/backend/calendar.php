@@ -28,6 +28,9 @@
         user: {
             id: <?= $user_id ?>,
             email: <?= json_encode($user_email) ?>,
+            first_name: <?= json_encode($user_first_name) ?>,
+            last_name: <?= json_encode($user_last_name) ?>,
+            phone_number: <?= json_encode($user_phone_number) ?>,
             timezone: <?= json_encode($timezone) ?>,
             role_slug: <?= json_encode($role_slug) ?>,
             privileges: <?= json_encode($privileges) ?>,
@@ -135,6 +138,12 @@
 
                         <input id="appointment-id" type="hidden">
 
+                        <!-- TODO CLG CHANGE: Providing the possibility to book several rooms (services) at once -->
+                        <div class="row">
+
+
+                        </div>
+
                         <div class="row">
                             <div class="col-12 col-sm-6">
                                 <div class="form-group">
@@ -220,17 +229,27 @@
                                     </label>
                                     <select id="select-provider" class="required form-control"></select>
                                 </div>
-
+                          
                                 <div class="form-group">
-                                    <label for="appointment-location" class="control-label">
-                                        <?= lang('location') ?>
-                                    </label>
-                                    <input id="appointment-location" class="form-control">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="appointment-notes" class="control-label"><?= lang('notes') ?></label>
-                                    <textarea id="appointment-notes" class="form-control" rows="3"></textarea>
+                                    <label class="my-1 mr-2" for="bg-color-input">Color</label>
+                                    <!-- CLG NOTICE: Testing color picker, but will most likely assign a color to each bookable room -->
+                                    <input type="color" class="form-control" id="bg-color-input" value="#93CFD2">
+                                        <!-- <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="colorOption" id="colorRadio1"  value="#FCA5A5">
+                                            <label class="form-check-label" for="inlineRadio1"  style="background-color:#FCA5A5;color:transparent;">KO</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="colorOption" id="colorRadio2" value="#93C5FD" >
+                                            <label class="form-check-label" for="inlineRadio2" style="background-color:#93C5FD;color:transparent;">KO</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="colorOption" id="colorRadio3" value="#C4B5FD">
+                                            <label class="form-check-label" for="inlineRadio3" style="background-color:#C4B5FD;color:transparent">KO</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="colorOption" id="colorRadio4" value="#a0d468">
+                                            <label class="form-check-label" for="inlineRadio1" style="background-color:#a0d468;color:transparent">KO</label>
+                                        </div> -->
                                 </div>
                             </div>
 
@@ -245,25 +264,6 @@
                                     <label for="end-datetime" class="control-label"><?= lang('end_date_time') ?></label>
                                     <input id="end-datetime" class="required form-control">
                                 </div>
-
-                                <div class="form-group">
-                                    <label class="control-label"><?= lang('timezone') ?></label>
-
-                                    <ul>
-                                        <li>
-                                            <?= lang('provider') ?>:
-                                            <span class="provider-timezone">
-                                                -
-                                            </span>
-                                        </li>
-                                        <li>
-                                            <?= lang('current_user') ?>:
-                                            <span>
-                                                <?= $timezones[$timezone] ?>
-                                            </span>
-                                        </li>
-                                    </ul>
-                                </div>
                             </div>
                         </div>
                     </fieldset>
@@ -273,22 +273,22 @@
                     <fieldset>
                         <legend>
                             <?= lang('customer_details_title') ?>
-                            <button id="new-customer" class="btn btn-outline-secondary btn-sm" type="button"
-                                    data-tippy-content="<?= lang('clear_fields_add_existing_customer_hint') ?>">
-                                <i class="fas fa-plus-square mr-2"></i>
-                                <?= lang('new') ?>
-                            </button>
-                            <button id="select-customer" class="btn btn-outline-secondary btn-sm" type="button"
-                                    data-tippy-content="<?= lang('pick_existing_customer_hint') ?>">
-                                <i class="fas fa-hand-pointer mr-2"></i>
-                                <span>
-                                    <?= lang('select') ?>
-                                </span>
-                            </button>
-                            <input id="filter-existing-customers"
-                                   placeholder="<?= lang('type_to_filter_customers') ?>"
-                                   style="display: none;" class="input-sm form-control">
-                            <div id="existing-customers-list" style="display: none;"></div>
+                            
+                            <!-- CLG CHANGE: Only provide thse buttons for admins and bokare (providers) -->
+                            <?php if ($role_slug == DB_SLUG_ADMIN || $role_slug == DB_SLUG_PROVIDER): ?>
+                                <button id="select-customer" class="btn btn-outline-secondary btn-sm" type="button"
+                                        data-tippy-content="<?= lang('pick_existing_customer_hint') ?>">
+                                    <i class="fas fa-hand-pointer mr-2"></i>
+                                    <span>
+                                        <?= lang('select') ?>
+                                    </span>
+                                </button>
+                                <input id="filter-existing-customers"
+                                    placeholder="<?= lang('type_to_filter_customers') ?>"
+                                    style="display: none;" class="input-sm form-control">
+                                <div id="existing-customers-list" style="display: none;"></div>
+                            <?php endif ?>
+
                         </legend>
 
                         <input id="customer-id" type="hidden">
@@ -300,7 +300,7 @@
                                         <?= lang('first_name') ?>
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <input id="first-name" class="required form-control">
+                                    <input id="first-name" type="text"class="required form-control">
                                 </div>
 
                                 <div class="form-group">
@@ -331,7 +331,8 @@
                                 </div>
                             </div>
                             <div class="col-12 col-sm-6">
-                                <div class="form-group">
+                                <!-- CLG CHANGE: Unsed data -->
+<!--                                 <div class="form-group">
                                     <label for="address" class="control-label">
                                         <?= lang('address') ?>
                                     </label>
@@ -350,13 +351,13 @@
                                         <?= lang('zip_code') ?>
                                     </label>
                                     <input id="zip-code" class="form-control">
-                                </div>
+                                </div> -->
 
                                 <div class="form-group">
-                                    <label for="customer-notes" class="control-label">
+                                    <label for="appointment-notes" class="control-label">
                                         <?= lang('notes') ?>
                                     </label>
-                                    <textarea id="customer-notes" rows="2" class="form-control"></textarea>
+                                    <textarea id="appointment-notes" rows="8" class="form-control"></textarea>
                                 </div>
                             </div>
                         </div>

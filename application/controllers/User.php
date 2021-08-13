@@ -27,6 +27,7 @@ class User extends EA_Controller {
     public function __construct()
     {
         parent::__construct();
+        $this->load->helper('installation');
         $this->load->model('settings_model');
         $this->load->model('user_model');
     }
@@ -48,6 +49,12 @@ class User extends EA_Controller {
      */
     public function login()
     {
+        if ( ! is_app_installed())
+        {
+            redirect('installation/index');
+            return;
+        }
+
         $view['base_url'] = config('base_url');
         $view['dest_url'] = $this->session->userdata('dest_url');
 

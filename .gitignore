@@ -30,3 +30,4 @@
 /metafile
 .DS_Store
 .vs
+/db_info.txt

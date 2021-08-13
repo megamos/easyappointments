@@ -41,8 +41,8 @@
 <nav id="header" class="navbar navbar-expand-md navbar-dark">
     <div id="header-logo" class="navbar-brand">
         <img src="<?= base_url('assets/img/logo.png') ?>">
-        <h6>EASY!APPOINTMENTS</h6>
-        <small>Open Source Appointment Scheduler</small>
+        <h6><?= lang('booking_system') ?></h6>
+        <small>EASY!APPOINTMENTS, an Open Source Appointment Scheduler</small>
     </div>
 
     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#header-menu">
@@ -52,6 +52,15 @@
 
     <div id="header-menu" class="collapse navbar-collapse flex-row-reverse">
         <ul class="navbar-nav">
+
+            <li class="nav-item">
+                <a href="<?= site_url('appointments') ?>" class="nav-link"
+                   data-tippy-content="<?= lang('new_appointment_record_hint') ?>">
+                    <i class="fas fa-plus-square mr-2"></i>
+                    <?= lang('new_appointment_record_hint') ?>
+                </a>
+            </li>
+
             <?php $hidden = ($privileges[PRIV_APPOINTMENTS]['view'] == TRUE) ? '' : 'd-none' ?>
             <?php $active = ($active_menu == PRIV_APPOINTMENTS) ? 'active' : '' ?>
             <li class="nav-item <?= $active . $hidden ?>">
@@ -68,7 +77,7 @@
                 <a href="<?= site_url('backend/customers') ?>" class="nav-link"
                    data-tippy-content="<?= lang('manage_customers_hint') ?>">
                     <i class="fas fa-user-friends mr-2"></i>
-                    <?= lang('customers') ?>
+                    <?= lang('appointments') ?>
                 </a>
             </li>
 

@@ -130,6 +130,44 @@ window.FrontendBook = window.FrontendBook || {};
             }
         });
 
+        $('#select-end-date').datepicker({
+            dateFormat: 'dd-mm-yy',
+            firstDay: weekDayId,
+            minDate: 1,
+            defaultDate: Date.today().addDays(2),
+
+            dayNames: [
+                EALang.sunday, EALang.monday, EALang.tuesday, EALang.wednesday,
+                EALang.thursday, EALang.friday, EALang.saturday],
+            dayNamesShort: [EALang.sunday.substr(0, 3), EALang.monday.substr(0, 3),
+                EALang.tuesday.substr(0, 3), EALang.wednesday.substr(0, 3),
+                EALang.thursday.substr(0, 3), EALang.friday.substr(0, 3),
+                EALang.saturday.substr(0, 3)],
+            dayNamesMin: [EALang.sunday.substr(0, 2), EALang.monday.substr(0, 2),
+                EALang.tuesday.substr(0, 2), EALang.wednesday.substr(0, 2),
+                EALang.thursday.substr(0, 2), EALang.friday.substr(0, 2),
+                EALang.saturday.substr(0, 2)],
+            monthNames: [EALang.january, EALang.february, EALang.march, EALang.april,
+                EALang.may, EALang.june, EALang.july, EALang.august, EALang.september,
+                EALang.october, EALang.november, EALang.december],
+            prevText: EALang.previous,
+            nextText: EALang.next,
+            currentText: EALang.now,
+            closeText: EALang.close,
+
+            onSelect: function (dateText, instance) {
+                FrontendBookApi.getAvailableHours($(this).datepicker('getDate').toString('yyyy-MM-dd'));
+                //$('#test').text(dateText);
+                FrontendBook.updateConfirmFrame();
+            },
+
+            onChangeMonthYear: function (year, month, instance) {
+                var currentDate = new Date(year, month - 1, 1);
+                FrontendBookApi.getUnavailableDates($('#select-provider').val(), $('#select-service').val(),
+                    currentDate.toString('yyyy-MM-dd'));
+            }
+        });
+
         $('#select-timezone').val(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
         // Bind the event handlers (might not be necessary every time we use this class).
@@ -238,6 +276,7 @@ window.FrontendBook = window.FrontendBook || {};
 
             FrontendBookApi.getUnavailableDates($('#select-provider').val(), $(this).val(),
                 $('#select-date').datepicker('getDate').toString('yyyy-MM-dd'));
+            // TODO: Check "#select-end-date" as well 
             FrontendBook.updateConfirmFrame();
             updateServiceDescription(serviceId);
         });
@@ -256,7 +295,8 @@ window.FrontendBook = window.FrontendBook || {};
 
             // If we are on the 2nd tab then the user should have an appointment hour selected.
             if ($(this).attr('data-step_index') === '2') {
-                if (!$('.selected-hour').length) {
+                // Booking by hour is not used by CLG, as we book days (for now)
+                /* if (!$('.selected-hour').length) {
                     if (!$('#select-hour-prompt').length) {
                         $('<div/>', {
                             'id': 'select-hour-prompt',
@@ -266,7 +306,10 @@ window.FrontendBook = window.FrontendBook || {};
                             .prependTo('#available-hours');
                     }
                     return;
-                }
+                } */
+
+                // Setting user information for appiointment
+                //document.getElementById("firt-name").value = GlobalVariables.user
             }
 
             // If we are on the 3rd tab then we will need to validate the user's input before proceeding to the next
@@ -276,36 +319,6 @@ window.FrontendBook = window.FrontendBook || {};
                     return; // Validation failed, do not continue.
                 } else {
                     FrontendBook.updateConfirmFrame();
-
-                    var $acceptToTermsAndConditions = $('#accept-to-terms-and-conditions');
-                    if ($acceptToTermsAndConditions.length && $acceptToTermsAndConditions.prop('checked') === true) {
-                        var newTermsAndConditionsConsent = {
-                            first_name: $('#first-name').val(),
-                            last_name: $('#last-name').val(),
-                            email: $('#email').val(),
-                            type: 'terms-and-conditions'
-                        };
-
-                        if (JSON.stringify(newTermsAndConditionsConsent) !== JSON.stringify(termsAndConditionsConsent)) {
-                            termsAndConditionsConsent = newTermsAndConditionsConsent;
-                            FrontendBookApi.saveConsent(termsAndConditionsConsent);
-                        }
-                    }
-
-                    var $acceptToPrivacyPolicy = $('#accept-to-privacy-policy');
-                    if ($acceptToPrivacyPolicy.length && $acceptToPrivacyPolicy.prop('checked') === true) {
-                        var newPrivacyPolicyConsent = {
-                            first_name: $('#first-name').val(),
-                            last_name: $('#last-name').val(),
-                            email: $('#email').val(),
-                            type: 'privacy-policy'
-                        };
-
-                        if (JSON.stringify(newPrivacyPolicyConsent) !== JSON.stringify(privacyPolicyConsent)) {
-                            privacyPolicyConsent = newPrivacyPolicyConsent;
-                            FrontendBookApi.saveConsent(privacyPolicyConsent);
-                        }
-                    }
                 }
             }
 
@@ -443,6 +456,12 @@ window.FrontendBook = window.FrontendBook || {};
                 FrontendBookApi.applyPreviousUnavailableDates(); // New jQuery UI version will replace the td elements.
             }, 300); // There is no draw event unfortunately.
         })
+
+        $('#select-end-date').on('mousedown', '.ui-datepicker-calendar td', function (event) {
+            setTimeout(function () {
+                FrontendBookApi.applyPreviousUnavailableDates(); // New jQuery UI version will replace the td elements.
+            }, 300); // There is no draw event unfortunately.
+        })
     }
 
     /**
@@ -499,15 +518,20 @@ window.FrontendBook = window.FrontendBook || {};
      * customer settings and input for the appointment booking.
      */
     exports.updateConfirmFrame = function () {
-        if ($('.selected-hour').text() === '') {
-            return;
-        }
+        // if ($('.selected-hour').text() === '') {
+        //     return;
+        // }
 
         // Appointment Details
         var selectedDate = $('#select-date').datepicker('getDate');
+        var selectedEndDate = $('#select-end-date').datepicker('getDate');
 
         if (selectedDate !== null) {
             selectedDate = GeneralFunctions.formatDate(selectedDate, GlobalVariables.dateFormat);
+        }
+
+        if (selectedEndDate !== null) {
+            selectedEndDate = GeneralFunctions.formatDate(selectedEndDate, GlobalVariables.dateFormat);
         }
 
         var serviceId = $('#select-service').val();
@@ -540,7 +564,11 @@ window.FrontendBook = window.FrontendBook || {};
                         }),
                         $('<br/>'),
                         $('<span/>', {
-                            'text': EALang.start + ': ' + selectedDate + ' ' + $('.selected-hour').text()
+                            'text': EALang.start + ': ' + selectedDate
+                        }),
+                        $('<br/>'),
+                        $('<span/>', {
+                            'text': EALang.end + ': ' + selectedEndDate
                         }),
                         $('<br/>'),
                         $('<span/>', {
@@ -616,28 +644,31 @@ window.FrontendBook = window.FrontendBook || {};
             first_name: $('#first-name').val(),
             email: $('#email').val(),
             phone_number: $('#phone-number').val(),
-            address: $('#address').val(),
-            city: $('#city').val(),
-            zip_code: $('#zip-code').val(),
-            timezone: $('#select-timezone').val()
+            // NOTICE: Currently not used/needed
+            address: " ",//$('#address').val(),
+            city: " ",//$('#city').val(),
+            zip_code: " ",//$('#zip-code').val(),
+            timezone: " "//$('#select-timezone').val()
         };
 
         data.appointment = {
-            start_datetime: $('#select-date').datepicker('getDate').toString('yyyy-MM-dd')
-                + ' ' + Date.parse($('.selected-hour').data('value') || '').toString('HH:mm') + ':00',
-            end_datetime: calculateEndDatetime(),
+            start_datetime: $('#select-date').datepicker('getDate').toString('yyyy-MM-dd') + ' 12:00:00',
+            end_datetime: $('#select-end-date').datepicker('getDate').toString('yyyy-MM-dd') + ' 12:00:00',
             notes: $('#notes').val(),
             is_unavailable: false,
             id_users_provider: $('#select-provider').val(),
             id_services: $('#select-service').val()
         };
 
+        console.log(data);
+
         data.manage_mode = FrontendBook.manageMode;
 
         if (FrontendBook.manageMode) {
             data.appointment.id = GlobalVariables.appointmentData.id;
             data.customer.id = GlobalVariables.customerData.id;
-        }
+        } 
+
         $('input[name="csrfToken"]').val(GlobalVariables.csrfToken);
         $('input[name="post_data"]').val(JSON.stringify(data));
     };

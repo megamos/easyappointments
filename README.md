@@ -1,3 +1,22 @@
+# CLG Modifications
+## TODO's
+- 
+
+## Changes
+- Appointments:
+  - Renamed to: Booking (only in front-end)
+  - Usage: Booking rooms by the day
+  - 
+- Language:
+  - Additions to swedish
+- Customer:
+  - Now only indirectly created as a clone of a Secretary
+- Secretary:
+  - Renamed to: Släckting (only in front-end)
+  - Usage: Now used as a "customer with login"
+
+<input type="color" class="form-control" id="bg-color-input" value="#93CFD2">
+
 <h1 align="center">
     <br>
     <a href="https://easyappointments.org">

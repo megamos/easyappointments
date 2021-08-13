@@ -110,7 +110,8 @@ window.FrontendBookApi = window.FrontendBookApi || {};
                                 'data': {
                                     'value': availableHour
                                 },
-                                'text': availableHourMoment.format(timeFormat)
+                                // NOTICE: Removed function call as console complained it did not exist
+                                'text': availableHourMoment //.format(timeFormat)
                             })
                         );
                     });

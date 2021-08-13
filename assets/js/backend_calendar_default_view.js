@@ -605,6 +605,21 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                         'text': getEventNotes(event)
                     }),
                     $('<br/>'),
+			
+                    $('<strong/>', {
+			    'class': 'd-inline-block mr-2',
+			    'text': EALang.attendance_status
+		    }),
+		    $('<select/>', {
+		    	'class': 'd-flex justify-content-center',
+			 'html': [
+			     $('</option>', {
+			     	'value': 'pending',
+				'text': 'Pending'
+			     })
+			 ]
+		    }),
+		    $('<br/>'),
 
                     $('<hr/>'),
 
@@ -1055,6 +1070,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                         start: moment(appointment.start_datetime),
                         end: moment(appointment.end_datetime),
                         allDay: false,
+                        color: appointment.bg_color,
                         data: appointment // Store appointment data for later use.
                     };
 

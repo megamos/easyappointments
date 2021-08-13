@@ -111,12 +111,13 @@
                         <input id="service-name" class="form-control required" maxlength="128">
                     </div>
 
-                    <div class="form-group">
+                    <!-- CLG CHANGE: All bookings are for 24h -->
+                    <div class="form-group ">
                         <label for="service-duration">
                             <?= lang('duration_minutes') ?>
                             <span class="text-danger">*</span>
                         </label>
-                        <input id="service-duration" class="form-control required" type="number" min="<?= EVENT_MINIMUM_DURATION ?>">
+                        <input id="service-duration" class="form-control required" type="number" min="15" disabled>
                     </div>
 
                     <div class="form-group">
