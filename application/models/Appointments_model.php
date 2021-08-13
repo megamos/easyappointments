@@ -157,7 +157,7 @@ class Appointments_model extends EA_Model {
 	    $appointment['status'] = !isset($appointment['status']) 
             ? 'pending'
             : $appointment['status'];
-        $appointment['hash'] = $this->generate_hash();
+        $appointment['hash'] = random_string('alnum', 12);
 
         if ( ! $this->db->insert('appointments', $appointment))
         {
