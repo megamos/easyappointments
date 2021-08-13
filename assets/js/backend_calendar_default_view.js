@@ -825,15 +825,19 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
     /**
      * Calendar Day "Click" Callback
      *
-     * When the user clicks on a day square on the calendar, then he will automatically be transferred to that
-     * day view calendar.
+     * When the user clicks on a day square on the calendar, then open window to book that day
+     * 
      *
      * @param {Date} date
      */
     function calendarDayClick(date) {
         if (!date.hasTime()) {
+            // ORIGINAL CODE: To jump calendar to the day clicked
             $('#calendar').fullCalendar('changeView', 'agendaDay');
             $('#calendar').fullCalendar('gotoDate', date);
+            // TODO
+            // Open popup for creating new booking for the day clicked on
+            
         }
     }
 

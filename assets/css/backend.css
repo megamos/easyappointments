@@ -39,6 +39,7 @@ root {
 #header #header-logo img {
     float: left;
     height: 45px;
+    width: 120px;
     margin-right: 10px;
 }
 
