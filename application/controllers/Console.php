@@ -100,12 +100,12 @@ class Console extends EA_Controller {
     public function seed()
     {
         // Settings
-        $this->settings_model->set_setting('company_name', 'Company Name');
-        $this->settings_model->set_setting('company_email', 'info@example.org');
-        $this->settings_model->set_setting('company_link', 'https://example.org');
+        //$this->settings_model->set_setting('company_name', 'Company Name');
+        //$this->settings_model->set_setting('company_email', 'info@example.org');
+        //$this->settings_model->set_setting('company_link', 'https://example.org');
 
         // Admin
-        $this->admins_model->add([
+         $this->admins_model->add([
             'first_name' => 'John',
             'last_name' => 'Doe',
             'email' => 'john@example.org',
@@ -118,28 +118,203 @@ class Console extends EA_Controller {
             ],
         ]);
 
-        // Service
-        $service_id = $this->services_model->add([
-            'name' => 'Service',
-            'duration' => '30',
+        // Room
+        $room_1 = $this->services_model->add([
+            'name' => 'Solhöjden (Allergi)',
+            'duration' => '1440',
             'price' => '0',
             'currency' => '',
+            'description' => '2st. + 2 barnsängar',
+            'availabilities_type' => 'flexible',
+            'attendants_number' => '2'
+        ]);
+
+        $room_2 = $this->services_model->add([
+            'name' => 'Mörtstugan',
+            'duration' => '1440',
+            'price' => '0',
+            'currency' => '',
+            'description' => '',
+            'availabilities_type' => 'flexible',
+            'attendants_number' => '5'
+        ]);
+
+        $room_3 = $this->services_model->add([
+            'name' => 'Soluppgången',
+            'duration' => '1440',
+            'price' => '0',
+            'currency' => '',
+            'description' => '',
             'availabilities_type' => 'flexible',
             'attendants_number' => '1'
         ]);
 
-        // Provider
+        $room_4 = $this->services_model->add([
+            'name' => 'Ungkarlshotellet',
+            'duration' => '1440',
+            'price' => '0',
+            'currency' => '',
+            'description' => '',
+            'availabilities_type' => 'flexible',
+            'attendants_number' => '2'
+        ]);
+
+        $room_5 = $this->services_model->add([
+            'name' => 'Fiskarboden',
+            'duration' => '1440',
+            'price' => '0',
+            'currency' => '',
+            'description' => '',
+            'availabilities_type' => 'flexible',
+            'attendants_number' => '2'
+        ]);
+
+        $room_6 = $this->services_model->add([
+            'name' => 'Bagarstugan',
+            'duration' => '1440',
+            'price' => '0',
+            'currency' => '',
+            'description' => '',
+            'availabilities_type' => 'flexible',
+            'attendants_number' => '2'
+        ]);
+
+        $room_7 = $this->services_model->add([
+            'name' => 'Härbret',
+            'duration' => '1440',
+            'price' => '0',
+            'currency' => '',
+            'description' => '+2 extra sängar',
+            'availabilities_type' => 'flexible',
+            'attendants_number' => '2'
+        ]);
+
+        $room_8 = $this->services_model->add([
+            'name' => 'Svalboet',
+            'duration' => '1440',
+            'price' => '0',
+            'currency' => '',
+            'description' => '',
+            'availabilities_type' => 'flexible',
+            'attendants_number' => '4'
+        ]);
+
+        $room_9 = $this->services_model->add([
+            'name' => 'Suzannes rum',
+            'duration' => '1440',
+            'price' => '0',
+            'currency' => '',
+            'description' => '',
+            'availabilities_type' => 'flexible',
+            'attendants_number' => '2'
+        ]);
+
+        $room_10 = $this->services_model->add([
+            'name' => 'Jungfrukammaren',
+            'duration' => '1440',
+            'price' => '0',
+            'currency' => '',
+            'description' => '+2 barnsängar',
+            'availabilities_type' => 'flexible',
+            'attendants_number' => '2'
+        ]);
+
+        $room_11 = $this->services_model->add([
+            'name' => 'Karins',
+            'duration' => '1440',
+            'price' => '0',
+            'currency' => '',
+            'description' => '+2 barnsängar',
+            'availabilities_type' => 'flexible',
+            'attendants_number' => '1'
+        ]);
+
+        $room_12 = $this->services_model->add([
+            'name' => 'CLs rum',
+            'duration' => '1440',
+            'price' => '0',
+            'currency' => '',
+            'description' => '',
+            'availabilities_type' => 'flexible',
+            'attendants_number' => '1'
+        ]);
+
+        $room_13 = $this->services_model->add([
+            'name' => 'Gammelrummet',
+            'duration' => '1440',
+            'price' => '0',
+            'currency' => '',
+            'description' => '',
+            'availabilities_type' => 'flexible',
+            'attendants_number' => '2'
+        ]);
+
+        $room_14 = $this->services_model->add([
+            'name' => 'Duvslaget',
+            'duration' => '1440',
+            'price' => '0',
+            'currency' => '+2 st på övre',
+            'description' => '',
+            'availabilities_type' => 'flexible',
+            'attendants_number' => '4'
+        ]);
+
+        $room_15 = $this->services_model->add([
+            'name' => 'Bergsmansstugan',
+            'duration' => '1440',
+            'price' => '0',
+            'currency' => '',
+            'description' => '',
+            'availabilities_type' => 'flexible',
+            'attendants_number' => '1'
+        ]);
+
+        $room_16 = $this->services_model->add([
+            'name' => 'Guidestugan',
+            'duration' => '1440',
+            'price' => '0',
+            'currency' => '',
+            'description' => 'Bäddsoffa ( dubbel ) + uppblåsbar madrass',
+            'availabilities_type' => 'flexible',
+            'attendants_number' => '1'
+        ]);
+
+        $room_17 = $this->services_model->add([
+            'name' => 'Sågbacken Studierummet',
+            'duration' => '1440',
+            'price' => '0',
+            'currency' => '',
+            'description' => '',
+            'availabilities_type' => 'flexible',
+            'attendants_number' => '1'
+        ]);
+
+        $room_18 = $this->services_model->add([
+            'name' => 'Sågbacken Inre rum',
+            'duration' => '1440',
+            'price' => '0',
+            'currency' => '',
+            'description' => '',
+            'availabilities_type' => 'flexible',
+            'attendants_number' => '1'
+        ]);
+
+        
+
+        // Bokare
         $this->providers_model->add([
-            'first_name' => 'Jane',
-            'last_name' => 'Doe',
-            'email' => 'jane@example.org',
+            'first_name' => 'Husmor',
+            'last_name' => 'CLG',
+            'email' => 'husmor@example.org',
             'phone_number' => '+1 (000) 000-0000',
             'services' => [
-                $service_id
+                $room_1,$room_2,$room_3,$room_4,$room_5,$room_6,
+                $room_7,$room_8,$room_9,$room_10,$room_11,$room_12,
+                $room_13,$room_14,$room_15,$room_16,$room_17,$room_18
             ],
             'settings' => [
-                'username' => 'janedoe',
-                'password' => 'janedoe',
+                'username' => 'husmor',
+                'password' => '57563abc618858a12a303154ae838aa3',
                 'working_plan' => $this->settings_model->get_setting('company_working_plan'),
                 'notifications' => TRUE,
                 'google_sync' => FALSE,
@@ -149,13 +324,48 @@ class Console extends EA_Controller {
             ],
         ]);
 
-        // Customer
-        $this->customers_model->add([
-            'first_name' => 'James',
-            'last_name' => 'Doe',
-            'email' => 'james@example.org',
-            'phone_number' => '+1 (000) 000-0000',
-        ]);
+        // Släktingar
+        // TODO: read file from website (https://familjen.carllarsson.se/s/Slaktens-kontaktlista-20200903.xlsx) and parse
+        if(file_exists('D:\xampp\htdocs\easyappointments\storage\clg_data\Släktregister.csv')) {
+
+            $csv = array_map('str_getcsv', file('D:\xampp\htdocs\easyappointments\storage\clg_data\Släktregister.csv'));
+            unset($csv[0]);
+
+            foreach ($csv as $member) {
+                if(!empty($member[8])) {
+                    $this->customers_model->add([
+                        'first_name' => "'".$member[1]."'",
+                        'last_name' => "'".$member[0]."'",
+                        'email' => "'".trim($member[8])."'",
+                        'birthday' => "'".$member[6]."'",
+                        'phone_number' => "'".$member[7]."'",
+                        'address' => "'".$member[2]."'",
+                        'city' => "'".$member[4]."'",
+                        'state' => "'".$member[5]."'",
+                        'zip_code' => "'".$member[3]."'",
+                        'notes' => "'".$member[9]."'",
+                        'timezone' => 'Europe/Stockholm',
+                        'language' => 'swedish'
+                    ]);
+                }
+            }
+
+        } else {
+            $this->customers_model->add([
+                'first_name' => 'Marcus',
+                'last_name' => 'Mueller',
+                'email' => 'marcus@example.org',
+                'birthday' => '16/08/1985',
+                'phone_number' => '0700969892',
+                'address' => 'Kyrkogatan 3c',
+                'city' => 'Höganäs',
+                'state' => '',
+                'zip_code' => '26331',
+                'notes' => '',
+                'timezone' => 'Europe/Stockholm',
+                'language' => 'swedish'
+            ]);
+        }
     }
 
     /**
