@@ -120,7 +120,7 @@ class Console extends EA_Controller {
 
         // Room
         $room_1 = $this->services_model->add([
-            'name' => 'Solhöjden (Allergi)',
+            'name' => 'Solhöjden (2,2,Allergi)',
             'duration' => '1440',
             'price' => '0',
             'currency' => '',
@@ -130,7 +130,7 @@ class Console extends EA_Controller {
         ]);
 
         $room_2 = $this->services_model->add([
-            'name' => 'Mörtstugan',
+            'name' => 'Mörtstugan (5)',
             'duration' => '1440',
             'price' => '0',
             'currency' => '',
@@ -140,7 +140,7 @@ class Console extends EA_Controller {
         ]);
 
         $room_3 = $this->services_model->add([
-            'name' => 'Soluppgången',
+            'name' => 'Soluppgången (1)',
             'duration' => '1440',
             'price' => '0',
             'currency' => '',
@@ -150,7 +150,7 @@ class Console extends EA_Controller {
         ]);
 
         $room_4 = $this->services_model->add([
-            'name' => 'Ungkarlshotellet',
+            'name' => 'Ungkarlshotellet (2)',
             'duration' => '1440',
             'price' => '0',
             'currency' => '',
@@ -160,7 +160,7 @@ class Console extends EA_Controller {
         ]);
 
         $room_5 = $this->services_model->add([
-            'name' => 'Fiskarboden',
+            'name' => 'Fiskarboden (2)',
             'duration' => '1440',
             'price' => '0',
             'currency' => '',
@@ -170,7 +170,7 @@ class Console extends EA_Controller {
         ]);
 
         $room_6 = $this->services_model->add([
-            'name' => 'Bagarstugan',
+            'name' => 'Bagarstugan (2)',
             'duration' => '1440',
             'price' => '0',
             'currency' => '',
@@ -180,7 +180,7 @@ class Console extends EA_Controller {
         ]);
 
         $room_7 = $this->services_model->add([
-            'name' => 'Härbret',
+            'name' => 'Härbret (2+2)',
             'duration' => '1440',
             'price' => '0',
             'currency' => '',
@@ -190,7 +190,7 @@ class Console extends EA_Controller {
         ]);
 
         $room_8 = $this->services_model->add([
-            'name' => 'Svalboet',
+            'name' => 'Svalboet (4)',
             'duration' => '1440',
             'price' => '0',
             'currency' => '',
@@ -200,7 +200,7 @@ class Console extends EA_Controller {
         ]);
 
         $room_9 = $this->services_model->add([
-            'name' => 'Suzannes rum',
+            'name' => 'Suzannes rum (2)',
             'duration' => '1440',
             'price' => '0',
             'currency' => '',
@@ -210,7 +210,7 @@ class Console extends EA_Controller {
         ]);
 
         $room_10 = $this->services_model->add([
-            'name' => 'Jungfrukammaren',
+            'name' => 'Jungfrukammaren (2,2)',
             'duration' => '1440',
             'price' => '0',
             'currency' => '',
@@ -220,7 +220,7 @@ class Console extends EA_Controller {
         ]);
 
         $room_11 = $this->services_model->add([
-            'name' => 'Karins',
+            'name' => 'Karins (1,2)',
             'duration' => '1440',
             'price' => '0',
             'currency' => '',
@@ -230,7 +230,7 @@ class Console extends EA_Controller {
         ]);
 
         $room_12 = $this->services_model->add([
-            'name' => 'CLs rum',
+            'name' => 'CLs rum (1)',
             'duration' => '1440',
             'price' => '0',
             'currency' => '',
@@ -240,7 +240,7 @@ class Console extends EA_Controller {
         ]);
 
         $room_13 = $this->services_model->add([
-            'name' => 'Gammelrummet',
+            'name' => 'Gammelrummet (2)',
             'duration' => '1440',
             'price' => '0',
             'currency' => '',
@@ -250,7 +250,7 @@ class Console extends EA_Controller {
         ]);
 
         $room_14 = $this->services_model->add([
-            'name' => 'Duvslaget',
+            'name' => 'Duvslaget (4+2)',
             'duration' => '1440',
             'price' => '0',
             'currency' => '+2 st på övre',
@@ -260,7 +260,7 @@ class Console extends EA_Controller {
         ]);
 
         $room_15 = $this->services_model->add([
-            'name' => 'Bergsmansstugan',
+            'name' => 'Bergsmansstugan (1)',
             'duration' => '1440',
             'price' => '0',
             'currency' => '',
@@ -270,7 +270,7 @@ class Console extends EA_Controller {
         ]);
 
         $room_16 = $this->services_model->add([
-            'name' => 'Guidestugan',
+            'name' => 'Guidestugan (1)',
             'duration' => '1440',
             'price' => '0',
             'currency' => '',
@@ -280,7 +280,7 @@ class Console extends EA_Controller {
         ]);
 
         $room_17 = $this->services_model->add([
-            'name' => 'Sågbacken Studierummet',
+            'name' => 'Sågbacken Studierummet (1)',
             'duration' => '1440',
             'price' => '0',
             'currency' => '',
@@ -290,7 +290,7 @@ class Console extends EA_Controller {
         ]);
 
         $room_18 = $this->services_model->add([
-            'name' => 'Sågbacken Inre rum',
+            'name' => 'Sågbacken Inre rum (1)',
             'duration' => '1440',
             'price' => '0',
             'currency' => '',
@@ -332,7 +332,7 @@ class Console extends EA_Controller {
             unset($csv[0]);
 
             foreach ($csv as $member) {
-                if(!empty($member[8])) {
+                if(filter_var(trim($member[8]), FILTER_VALIDATE_EMAIL)) {
                     $this->customers_model->add([
                         'first_name' => "'".$member[1]."'",
                         'last_name' => "'".$member[0]."'",
