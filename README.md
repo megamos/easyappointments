@@ -4,10 +4,17 @@
 
 ## Remembers
 DELETE FROM `ea_users`;
+DELETE FROM `ea_user_settings_`;
 DELETE FROM `ea_appointments`;
 DELETE FROM `ea_services`;
 DELETE FROM `ea_services_providers`;
 DELETE FROM `ea_secretaries_providers`;
+
+ALTER TABLE `ea_users` AUTO_INCREMENT = 0;
+ALTER TABLE `ea_appointments` AUTO_INCREMENT = 0;
+ALTER TABLE `ea_services` AUTO_INCREMENT = 0;
+ALTER TABLE `ea_secretaries_providers` AUTO_INCREMENT = 0;
+
 
 ## Changes
 - Appointments:

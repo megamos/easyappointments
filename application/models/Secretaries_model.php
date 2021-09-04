@@ -90,8 +90,9 @@ class Secretaries_model extends EA_Model {
         // Validate required fields integrity.
         if ( ! isset(
             $secretary['last_name'],
-            $secretary['email'],
-            $secretary['phone_number']
+            $secretary['email']
+            // CLG does not require a phone number
+            //,$secretary['phone_number']
         ))
         {
             throw new Exception('Not all required fields are provided: ' . print_r($secretary, TRUE));

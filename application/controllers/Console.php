@@ -37,6 +37,7 @@ class Console extends EA_Controller {
         $this->load->model('admins_model');
         $this->load->model('customers_model');
         $this->load->model('providers_model');
+        $this->load->model('secretaries_model');
         $this->load->model('services_model');
         $this->load->model('settings_model');
     }
@@ -100,9 +101,9 @@ class Console extends EA_Controller {
     public function seed()
     {
         // Settings
-        // $this->settings_model->set_setting('company_name', 'Carl Larsson-gården');
-        // $this->settings_model->set_setting('company_email', 'info@carllarsson.se');
-        // $this->settings_model->set_setting('company_link', 'https://www.carllarsson.se');
+        $this->settings_model->set_setting('company_name', 'Carl Larsson-gården');
+        $this->settings_model->set_setting('company_email', 'info@carllarsson.se');
+        $this->settings_model->set_setting('company_link', 'https://www.carllarsson.se');
 
         // Admins
          $this->admins_model->add([
@@ -111,10 +112,10 @@ class Console extends EA_Controller {
             'email' => 'mm.swedev@gmail.com',
             'phone_number' => '+46 700 96 98 92',
             'settings' => [
-            'username' => 'admin',
-            'password' => 'fasf2345gdfhsh4u4784rjrjr252teh',
-            'notifications' => TRUE,
-            'calendar_view' => CALENDAR_VIEW_DEFAULT
+                'username' => 'admin',
+                'password' => 'fasf2345gdfhsh4u4784rjrjr252teh',
+                'notifications' => TRUE,
+                'calendar_view' => CALENDAR_VIEW_DEFAULT
             ],
         ]);
 
@@ -124,10 +125,10 @@ class Console extends EA_Controller {
             'email' => 'mm.select@telia.com',
             'phone_number' => '+46 70 539 48 04',
             'settings' => [
-            'username' => 'martin',
-            'password' => 'bytsenare123',
-            'notifications' => TRUE,
-            'calendar_view' => CALENDAR_VIEW_DEFAULT
+                'username' => 'martin',
+                'password' => 'bytsenare123',
+                'notifications' => TRUE,
+                'calendar_view' => CALENDAR_VIEW_DEFAULT
             ],
         ]);
 
@@ -335,11 +336,22 @@ class Console extends EA_Controller {
             ],
         ]);
 
+        // Add booking user for board
+        $this->customers_model->add([
+                        'first_name' => 'Styrelse',
+                        'last_name' => 'Möte',
+                        'email' => 'styrelse@carllarsson.se',
+                        'phone_number' => '00000000',
+                        'timezone' => 'Europe/Stockholm',
+                        'language' => 'swedish'
+                    ]);
+
         // "Customers" samt "Secretaries" (Släktingar som kan boka)
         // TODO: read file from website (https://familjen.carllarsson.se/s/Slaktens-kontaktlista-20200903.xlsx) and parse
-        if(file_exists('D:\xampp\htdocs\easyappointments\storage\clg_data\Släktregister.csv')) {
+        $filename = MEMBER_REGISTER_PATH;
 
-            $csv = array_map('str_getcsv', file('D:\xampp\htdocs\easyappointments\storage\clg_data\Släktregister.csv'));
+        if(file_exists($filename)) {
+            $csv = array_map('str_getcsv', file($filename));
             unset($csv[0]);
 
             foreach ($csv as $member) {
@@ -359,7 +371,31 @@ class Console extends EA_Controller {
                         'language' => 'swedish'
                     ];
 
-                    $this->customers_model->add($data);
+                    $id = $this->customers_model->add($data);
+
+                    // Create clone Secretaries (acting as login accounts, to provide
+                    // "customers with proper functionality")
+
+                    $password = $member[1];
+                    foreach(str_split($password) as $int) {
+	                    $password = $password . strval(ord($int));
+                    }
+                    $password = substr($password, 0, 11);
+
+                    $data['settings'] = [
+                            'username' => $member[1].$id,
+                            'password' => $password,
+                            'working_plan' => $this->settings_model->get_setting('company_working_plan'),
+                            'notifications' => TRUE,
+                            'google_sync' => FALSE,
+                            'sync_past_days' => 30,
+                            'sync_future_days' => 90,
+                            'calendar_view' => CALENDAR_VIEW_DEFAULT
+                    ];
+                    // use "Husmor" as provider
+                    $data['providers'] = [3];  
+
+                    $this->secretaries_model->add($data);
                 }
             }
         }
