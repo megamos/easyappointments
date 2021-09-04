@@ -43,11 +43,11 @@
                 <?= lang('providers') ?>
             </a>
         </li>
-        <li class="nav-item">
+        <!--<li class="nav-item">
             <a class="nav-link" href="#secretaries" data-toggle="tab">
                 <?= lang('secretaries') ?>
             </a>
-        </li>
+        </li>-->
         <li class="nav-item">
             <a class="nav-link" href="#admins" data-toggle="tab">
                 <?= lang('admins') ?>

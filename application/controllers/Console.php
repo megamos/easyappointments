@@ -100,21 +100,34 @@ class Console extends EA_Controller {
     public function seed()
     {
         // Settings
-        //$this->settings_model->set_setting('company_name', 'Company Name');
-        //$this->settings_model->set_setting('company_email', 'info@example.org');
-        //$this->settings_model->set_setting('company_link', 'https://example.org');
+        // $this->settings_model->set_setting('company_name', 'Carl Larsson-gården');
+        // $this->settings_model->set_setting('company_email', 'info@carllarsson.se');
+        // $this->settings_model->set_setting('company_link', 'https://www.carllarsson.se');
 
-        // Admin
+        // Admins
          $this->admins_model->add([
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-            'email' => 'john@example.org',
-            'phone_number' => '+1 (000) 000-0000',
+            'first_name' => 'Marcus',
+            'last_name' => 'Mueller',
+            'email' => 'mm.swedev@gmail.com',
+            'phone_number' => '+46 700 96 98 92',
             'settings' => [
-                'username' => 'administrator',
-                'password' => 'administrator',
-                'notifications' => TRUE,
-                'calendar_view' => CALENDAR_VIEW_DEFAULT
+            'username' => 'admin',
+            'password' => 'fasf2345gdfhsh4u4784rjrjr252teh',
+            'notifications' => TRUE,
+            'calendar_view' => CALENDAR_VIEW_DEFAULT
+            ],
+        ]);
+
+        $this->admins_model->add([
+            'first_name' => 'Martin',
+            'last_name' => 'Mueller',
+            'email' => 'mm.select@telia.com',
+            'phone_number' => '+46 70 539 48 04',
+            'settings' => [
+            'username' => 'martin',
+            'password' => 'bytsenare123',
+            'notifications' => TRUE,
+            'calendar_view' => CALENDAR_VIEW_DEFAULT
             ],
         ]);
 
@@ -299,8 +312,6 @@ class Console extends EA_Controller {
             'attendants_number' => '1'
         ]);
 
-        
-
         // Bokare
         $this->providers_model->add([
             'first_name' => 'Husmor',
@@ -324,7 +335,7 @@ class Console extends EA_Controller {
             ],
         ]);
 
-        // Släktingar
+        // "Customers" samt "Secretaries" (Släktingar som kan boka)
         // TODO: read file from website (https://familjen.carllarsson.se/s/Slaktens-kontaktlista-20200903.xlsx) and parse
         if(file_exists('D:\xampp\htdocs\easyappointments\storage\clg_data\Släktregister.csv')) {
 
@@ -333,38 +344,24 @@ class Console extends EA_Controller {
 
             foreach ($csv as $member) {
                 if(filter_var(trim($member[8]), FILTER_VALIDATE_EMAIL)) {
-                    $this->customers_model->add([
-                        'first_name' => "'".$member[1]."'",
-                        'last_name' => "'".$member[0]."'",
-                        'email' => "'".trim($member[8])."'",
-                        'birthday' => "'".$member[6]."'",
-                        'phone_number' => "'".$member[7]."'",
-                        'address' => "'".$member[2]."'",
-                        'city' => "'".$member[4]."'",
-                        'state' => "'".$member[5]."'",
-                        'zip_code' => "'".$member[3]."'",
-                        'notes' => "'".$member[9]."'",
+                    $data = [
+                        'first_name' => $member[1],
+                        'last_name' => $member[0],
+                        'email' => trim($member[8]),
+                        'birthday' => $member[6],
+                        'phone_number' => $member[7],
+                        'address' => $member[2],
+                        'city' => $member[4],
+                        'state' => $member[5],
+                        'zip_code' => $member[3],
+                        'notes' => $member[9],
                         'timezone' => 'Europe/Stockholm',
                         'language' => 'swedish'
-                    ]);
+                    ];
+
+                    $this->customers_model->add($data);
                 }
             }
-
-        } else {
-            $this->customers_model->add([
-                'first_name' => 'Marcus',
-                'last_name' => 'Mueller',
-                'email' => 'marcus@example.org',
-                'birthday' => '16/08/1985',
-                'phone_number' => '0700969892',
-                'address' => 'Kyrkogatan 3c',
-                'city' => 'Höganäs',
-                'state' => '',
-                'zip_code' => '26331',
-                'notes' => '',
-                'timezone' => 'Europe/Stockholm',
-                'language' => 'swedish'
-            ]);
         }
     }
 

@@ -2,6 +2,13 @@
 ## TODO's
 - 
 
+## Remembers
+DELETE FROM `ea_users`;
+DELETE FROM `ea_appointments`;
+DELETE FROM `ea_services`;
+DELETE FROM `ea_services_providers`;
+DELETE FROM `ea_secretaries_providers`;
+
 ## Changes
 - Appointments:
   - Renamed to: Booking (only in front-end)
