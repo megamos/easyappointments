@@ -263,7 +263,8 @@ class Backend_api extends EA_Controller {
                     throw new Exception('You do not have the required privileges for this task.');
                 }
 
-                $customer['id'] = $this->customers_model->add($customer);
+                //$customer['id'] = $this->customers_model->add($customer);
+                $customer['id'] = $this->customers_model->find_record_id($customer);
             }
 
             // Save appointment changes to the database.
@@ -287,7 +288,7 @@ class Backend_api extends EA_Controller {
                 {
                     $appointment['id_users_customer'] = $customer['id'];
                 }
-
+                $appointment['id_users_customer'] = $customer['id'];
                 // Set background color
                 $appointment['bg_color']= $this->services_model->get_value("color", $appointment['id_services']);
 

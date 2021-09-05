@@ -25,7 +25,7 @@ class Migration_modify_secratary_permissions extends CI_Migration {
     {
         $this->db->query('
             UPDATE `' . $this->db->dbprefix('roles') . '`
-                SET `appointments`=1 WHERE `id`=4; 
+                SET `appointments`=3 WHERE `id`=4; 
         ');
 
     }
