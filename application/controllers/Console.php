@@ -140,7 +140,8 @@ class Console extends EA_Controller {
             'currency' => '',
             'description' => '2st. + 2 barnsängar',
             'availabilities_type' => 'flexible',
-            'attendants_number' => '2'
+            'attendants_number' => '2',
+            'color' => '#E2F0D7'
         ]);
 
         $room_2 = $this->services_model->add([
@@ -150,7 +151,8 @@ class Console extends EA_Controller {
             'currency' => '',
             'description' => '',
             'availabilities_type' => 'flexible',
-            'attendants_number' => '5'
+            'attendants_number' => '5',
+            'color' => '#F7AE92'
         ]);
 
         $room_3 = $this->services_model->add([
@@ -160,7 +162,8 @@ class Console extends EA_Controller {
             'currency' => '',
             'description' => '',
             'availabilities_type' => 'flexible',
-            'attendants_number' => '1'
+            'attendants_number' => '1',
+            'color' => '#6BADB5'
         ]);
 
         $room_4 = $this->services_model->add([
@@ -170,7 +173,8 @@ class Console extends EA_Controller {
             'currency' => '',
             'description' => '',
             'availabilities_type' => 'flexible',
-            'attendants_number' => '2'
+            'attendants_number' => '2',
+            'color' => '#F0F2DF'
         ]);
 
         $room_5 = $this->services_model->add([
@@ -180,7 +184,8 @@ class Console extends EA_Controller {
             'currency' => '',
             'description' => '',
             'availabilities_type' => 'flexible',
-            'attendants_number' => '2'
+            'attendants_number' => '2',
+            'color' => '#A7FAF5'
         ]);
 
         $room_6 = $this->services_model->add([
@@ -190,7 +195,8 @@ class Console extends EA_Controller {
             'currency' => '',
             'description' => '',
             'availabilities_type' => 'flexible',
-            'attendants_number' => '2'
+            'attendants_number' => '2',
+            'color' => '#F5D953'
         ]);
 
         $room_7 = $this->services_model->add([
@@ -200,7 +206,8 @@ class Console extends EA_Controller {
             'currency' => '',
             'description' => '+2 extra sängar',
             'availabilities_type' => 'flexible',
-            'attendants_number' => '2'
+            'attendants_number' => '2',
+            'color' => '#D1FA96'
         ]);
 
         $room_8 = $this->services_model->add([
@@ -210,7 +217,8 @@ class Console extends EA_Controller {
             'currency' => '',
             'description' => '',
             'availabilities_type' => 'flexible',
-            'attendants_number' => '4'
+            'attendants_number' => '4',
+            'color' => '#F59396'
         ]);
 
         $room_9 = $this->services_model->add([
@@ -220,7 +228,8 @@ class Console extends EA_Controller {
             'currency' => '',
             'description' => '',
             'availabilities_type' => 'flexible',
-            'attendants_number' => '2'
+            'attendants_number' => '2',
+            'color' => '#96E5FA'
         ]);
 
         $room_10 = $this->services_model->add([
@@ -230,7 +239,8 @@ class Console extends EA_Controller {
             'currency' => '',
             'description' => '+2 barnsängar',
             'availabilities_type' => 'flexible',
-            'attendants_number' => '2'
+            'attendants_number' => '2',
+            'color' => '#E280F5'
         ]);
 
         $room_11 = $this->services_model->add([
@@ -240,7 +250,8 @@ class Console extends EA_Controller {
             'currency' => '',
             'description' => '+2 barnsängar',
             'availabilities_type' => 'flexible',
-            'attendants_number' => '1'
+            'attendants_number' => '1',
+            'color' => '#CFFA8D'
         ]);
 
         $room_12 = $this->services_model->add([
@@ -250,7 +261,8 @@ class Console extends EA_Controller {
             'currency' => '',
             'description' => '',
             'availabilities_type' => 'flexible',
-            'attendants_number' => '1'
+            'attendants_number' => '1',
+            'color' => '#F5C5AA'
         ]);
 
         $room_13 = $this->services_model->add([
@@ -260,7 +272,8 @@ class Console extends EA_Controller {
             'currency' => '',
             'description' => '',
             'availabilities_type' => 'flexible',
-            'attendants_number' => '2'
+            'attendants_number' => '2',
+            'color' => '#F5B0C4'
         ]);
 
         $room_14 = $this->services_model->add([
@@ -270,7 +283,8 @@ class Console extends EA_Controller {
             'currency' => '+2 st på övre',
             'description' => '',
             'availabilities_type' => 'flexible',
-            'attendants_number' => '4'
+            'attendants_number' => '4',
+            'color' => '#8CD4FA'
         ]);
 
         $room_15 = $this->services_model->add([
@@ -280,7 +294,8 @@ class Console extends EA_Controller {
             'currency' => '',
             'description' => '',
             'availabilities_type' => 'flexible',
-            'attendants_number' => '1'
+            'attendants_number' => '1',
+            'color' => '#E1F7D5'
         ]);
 
         $room_16 = $this->services_model->add([
@@ -290,7 +305,8 @@ class Console extends EA_Controller {
             'currency' => '',
             'description' => 'Bäddsoffa ( dubbel ) + uppblåsbar madrass',
             'availabilities_type' => 'flexible',
-            'attendants_number' => '1'
+            'attendants_number' => '1',
+            'color' => '#FADA8C'
         ]);
 
         $room_17 = $this->services_model->add([
@@ -300,7 +316,8 @@ class Console extends EA_Controller {
             'currency' => '',
             'description' => '',
             'availabilities_type' => 'flexible',
-            'attendants_number' => '1'
+            'attendants_number' => '1',
+            'color' => '#97ECF8'
         ]);
 
         $room_18 = $this->services_model->add([
@@ -310,7 +327,8 @@ class Console extends EA_Controller {
             'currency' => '',
             'description' => '',
             'availabilities_type' => 'flexible',
-            'attendants_number' => '1'
+            'attendants_number' => '1',
+            'color' => '#FA918C'
         ]);
 
         // Bokare

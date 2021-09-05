@@ -107,6 +107,13 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                 BackendCalendarAppointmentsModal.resetAppointmentDialog();
 
                 // Apply appointment data and show modal dialog.
+                var confirmedStatus = true;
+                if (appointment.status == 'pending') {
+                    confirmedStatus = false;
+                }
+
+                $dialog.find('#bg-color-input').val(appointment.bg_color);
+                $dialog.find('#confirmAppointment').prop('checked', confirmedStatus);
                 $dialog.find('.modal-header h3').text(EALang.edit_appointment_title);
                 $dialog.find('#appointment-id').val(appointment.id);
                 $dialog.find('#select-service').val(appointment.id_services).trigger('change');
@@ -1066,6 +1073,16 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                 // Add appointments to calendar.
                 var appointmentEvents = [];
                 response.appointments.forEach(function (appointment) {
+                    // Set bg_color depending on status
+                    var theColor = "";
+                    if (appointment.status == "pending") {
+                        theColor = "#F06562";
+                    } else {
+                        theColor = appointment.bg_color;
+                    }
+
+                    //(appointment.status == "pending") ? "#F06562" : appointment.bg_color
+
                     var appointmentEvent = {
                         id: appointment.id,
                         title: appointment.service.name + ' - '
@@ -1074,7 +1091,8 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                         start: moment(appointment.start_datetime),
                         end: moment(appointment.end_datetime),
                         allDay: false,
-                        color: appointment.bg_color,
+                        color: theColor,
+                        status: appointment.status,
                         data: appointment // Store appointment data for later use.
                     };
 

@@ -72,6 +72,12 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                 appointment.id = $dialog.find('#appointment-id').val();
             }
 
+            if ($dialog.find('#confirmAppointment').is(":checked")) {
+                appointment.status = "confirmed";
+            } else {
+                appointment.status = "pending";
+            }
+
             var customer = {
                 first_name: $dialog.find('#first-name').val(),
                 last_name: $dialog.find('#last-name').val(),
