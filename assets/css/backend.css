@@ -21,10 +21,12 @@ root {
    -------------------------------------------------------------------- */
 
 #header {
-    background-color: #d8b77e;
     box-shadow: none;
     border-radius: 0;
     padding: 0;
+    background-color: #484848; /* #5b906e;*/
+    background-image: url('../img/login_bg2.jpg');
+    background-size: cover;
 }
 
 #header #header-logo {
