@@ -288,6 +288,9 @@ class Backend_api extends EA_Controller {
                     $appointment['id_users_customer'] = $customer['id'];
                 }
 
+                // Set background color
+                $appointment['bg_color']= $this->services_model->get_value("color", $appointment['id_services']);
+
                 $appointment['id'] = $this->appointments_model->add($appointment);
             }
 
