@@ -229,11 +229,11 @@
                                     </label>
                                     <select id="select-provider" class="required form-control"></select>
                                 </div>
-                          
+                                <?php if ($role_slug == DB_SLUG_ADMIN || $role_slug == DB_SLUG_PROVIDER): ?>
                                 <div class="form-group">
                                     <label class="my-1 mr-2" for="bg-color-input">Color</label>
-                                    <!-- CLG NOTICE: Testing color picker, but will most likely assign a color to each bookable room -->
-                                    <input type="color" class="form-control" id="bg-color-input" value="#93CFD2">
+                                    <!--CLG NOTICE: Testing color picker, but will most likely assign a color to each bookable room-->
+                                    <input type="color" class="form-control" id="bg-color-input" value="#F06562">
                                         <!-- <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="colorOption" id="colorRadio1"  value="#FCA5A5">
                                             <label class="form-check-label" for="inlineRadio1"  style="background-color:#FCA5A5;color:transparent;">KO</label>
@@ -249,8 +249,15 @@
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="colorOption" id="colorRadio4" value="#a0d468">
                                             <label class="form-check-label" for="inlineRadio1" style="background-color:#a0d468;color:transparent">KO</label>
-                                        </div> -->
+                                        </div>-->
                                 </div>
+                                <div class="form-group">
+                                    <label class="my-1 mr-2" for="confirm"><?= lang('confirm') ?></label>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" name="confirm" id="confirmAppointment">
+                                    </div>
+                                </div>
+                                <?php endif ?>
                             </div>
 
                             <div class="col-12 col-sm-6">

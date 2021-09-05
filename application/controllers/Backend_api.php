@@ -1387,6 +1387,12 @@ class Backend_api extends EA_Controller {
             unset($customer['settings']);
             unset($customer['mobile_number']);
             unset($customer['providers']);
+
+            if( $this->customers_model->exists( $customer) ) {
+                 $customer['id'] = $this->customers_model->find_record_id($customer);
+            }
+
+            // Update or Add the Customer clone of Secretary(User)
             $this->customers_model->add($customer);
 
             $response = [
