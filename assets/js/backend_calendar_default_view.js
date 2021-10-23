@@ -276,12 +276,14 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                 $('#calendar').fullCalendar('option', {
                     selectable: false,
                     editable: false,
+                    weekday: 'short'
                 });
             } else {
                 $('#google-sync, #enable-sync, #insert-appointment, #insert-dropdown').prop('disabled', false);
                 $('#calendar').fullCalendar('option', {
                     selectable: true,
                     editable: true,
+                    weekday: 'short'
                 });
 
                 var providerId = $('#select-filter-item').val();
@@ -354,7 +356,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
         // need to use different selectors to reach the parent element.
         var $parent = $(jsEvent.target.offsetParent);
         var $altParent = $(jsEvent.target).parents().eq(1);
-
+        //debugger;
         if ($(this).hasClass('fc-unavailable') || $parent.hasClass('fc-unavailable') || $altParent.hasClass('fc-unavailable')) {
             displayEdit = (($parent.hasClass('fc-custom') || $altParent.hasClass('fc-custom'))
                 && GlobalVariables.user.privileges.appointments.edit === true)
@@ -519,11 +521,21 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                 ]
             });
         } else {
-            //TODO: Only show if the appointment belongs to the user
-            displayEdit = (GlobalVariables.user.privileges.appointments.edit === true)
-                ? 'mr-2 test' : 'd-none';
-            displayDelete = (GlobalVariables.user.privileges.appointments.delete === true)
-                ? 'mr-2' : 'd-none';
+            // CLG Changes:
+            // - Only show if the appointment belongs to the user or user is admin or provider
+            // - Each relative have two identical users, one with "secretary role" and another with "customer role",
+            //   The customer user has a "user ID" 1 below the secretary user. 
+            if ((event.data.id_users_customer == (GlobalVariables.user.id - 1) ||
+                GlobalVariables.user.role_slug == Backend.DB_SLUG_ADMIN ||
+                GlobalVariables.user.role_slug == Backend.DB_SLUG_PROVIDER)
+                && GlobalVariables.user.privileges.appointments.edit === true
+            ) {
+                displayEdit = 'mr-2 test';
+                displayDelete = 'mr-2 test';
+            } else {
+                displayEdit = 'd-none';
+                displayDelete = 'd-none';
+            }
 
             $html = $('<div/>', {
                 'html': [
@@ -841,11 +853,12 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
     function calendarDayClick(date) {
         if (!date.hasTime()) {
             // ORIGINAL CODE: To jump calendar to the day clicked
-            $('#calendar').fullCalendar('changeView', 'agendaDay');
-            $('#calendar').fullCalendar('gotoDate', date);
-            // TODO
-            // Open popup for creating new booking for the day clicked on
-            
+            //$('#calendar').fullCalendar('changeView', 'agendaDay');
+            //$('#calendar').fullCalendar('gotoDate', date);
+
+            // CLG Change: We will set "start" and "end" in fullCalendar.select that will be called after this
+            //             from the date that was picked in the calendar. By doing so, the "create appointment" popup
+            //             will be created.
         }
     }
 
@@ -1412,12 +1425,12 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
 
         switch (GlobalVariables.dateFormat) {
             case 'DMY':
-                columnFormat = 'ddd D/M';
+                columnFormat = 'ddd';
                 break;
 
             case 'MDY':
             case 'YMD':
-                columnFormat = 'ddd M/D';
+                columnFormat = 'ddd';
                 break;
 
             default:
@@ -1464,13 +1477,20 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                 center: 'title',
                 right: 'agendaDay,agendaWeek,month'
             },
+            dayHeaderFormat: {
+                weekday: 'short',
+            },
 
             // Selectable
             selectable: true,
             selectHelper: true,
             select: function (start, end) {
+
                 if (!start.hasTime() || !end.hasTime()) {
-                    return;
+                    //return;
+                    // CLG Changes:
+                    start = moment(arguments[0].toDate());
+                    end = moment(arguments[1].toDate());
                 }
 
                 $('#insert-appointment').trigger('click');
