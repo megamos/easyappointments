@@ -32,3 +32,4 @@
 .vs
 /db_info.txt
 storage/clg_data/
+/application/config/email.php
