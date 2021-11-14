@@ -140,7 +140,24 @@ class Secretaries extends API_V1_Controller {
             $updated_secretary['id'] = $id;
             $id = $this->secretaries_model->add($updated_secretary);
 
-            // Fetch the updated object from the database and return it to the client.
+            // CLG Change:
+            // Customer is a copy of Secretary, so we need to update the corresponding Customer as well
+            $customer_id = $id -1;
+            $customer_batch = $this->customers_model->get_batch(['id' => $customer_id]);
+
+            if ($customer_id !== NULL && count($customer_batch) === 0)
+            {
+                $this->throw_record_not_found();
+            }
+
+            $request = new Request();
+            $updated_customer = $request->get_body();
+            $base_customer = $customer_batch[0];
+            $this->parser->decode($updated_customer, $base_customer);
+            $updated_customer['id'] = $customer_id;
+            $this->customers_model->add($updated_customer);
+
+            // Fetch the updated Secretary object from the database and return it to the client.
             $batch = $this->secretaries_model->get_batch(['id' => $id]);
             $response = new Response($batch);
             $response->encode($this->parser)->singleEntry($id)->output();

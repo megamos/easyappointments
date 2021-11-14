@@ -396,6 +396,18 @@ class Secretaries_model extends EA_Model {
         $this->save_providers($providers, $secretary['id']);
         $this->save_settings($settings, $secretary['id']);
 
+        // CLG Change: Update "cloned Customer" as well
+        $customer = $secretary;
+        $customer['id'] = $secretary['id'] - 1;
+        unset($customer['providers']);
+        unset($customer['settings']);
+
+        $this->db->where('id',  $customer['id']);
+        if ( ! $this->db->update('users', $customer))
+        {
+            throw new Exception('Could not update corresponding Customer record.');
+        }
+
         return (int)$secretary['id'];
     }
 
@@ -420,6 +432,9 @@ class Secretaries_model extends EA_Model {
         {
             return FALSE; // Record does not exist in database.
         }
+
+        // CLG Change: Delete corresponding Customer user
+        $this->db->delete('users', ['id' => $secretary_id - 1]);
 
         return $this->db->delete('users', ['id' => $secretary_id]);
     }
