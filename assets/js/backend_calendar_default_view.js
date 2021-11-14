@@ -1493,6 +1493,11 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                     end = moment(arguments[1].toDate());
                 }
 
+                if (start.isBefore(moment())) {
+                    $('#calendar').fullCalendar('unselect');
+                    return false;
+                }
+
                 $('#insert-appointment').trigger('click');
 
                 // Preselect service & provider.
