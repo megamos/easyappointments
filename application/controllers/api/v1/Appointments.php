@@ -133,7 +133,13 @@ class Appointments extends API_V1_Controller {
             ];
 
             $this->synchronization->sync_appointment_saved($appointment, $service, $provider, $customer, $settings, FALSE);
-            $this->notifications->notify_appointment_saved($appointment, $service, $provider, $customer, $settings, FALSE);
+
+            if ( $appointment['status'] == "confirmed")
+            {
+                $this->notifications->notify_appointment_confirmed($appointment, $service, $provider, $customer, $settings, FALSE);
+            } else {
+                $this->notifications->notify_appointment_saved($appointment, $service, $provider, $customer, $settings, FALSE);
+            }
 
             // Fetch the new object from the database and return it to the client.
             $batch = $this->appointments_model->get_batch(['id' => $id]);
@@ -183,7 +189,13 @@ class Appointments extends API_V1_Controller {
             ];
 
             $this->synchronization->sync_appointment_saved($updated_appointment, $service, $provider, $customer, $settings, TRUE);
-            $this->notifications->notify_appointment_saved($updated_appointment, $service, $provider, $customer, $settings, TRUE);
+
+            if ( $updated_appointment['status'] == "confirmed")
+            {
+                $this->notifications->notify_appointment_confirmed($updated_appointment, $service, $provider, $customer, $settings, TRUE);
+            } else {
+                $this->notifications->notify_appointment_saved($updated_appointment, $service, $provider, $customer, $settings, TRUE);
+            }
 
 
             // Fetch the updated object from the database and return it to the client.

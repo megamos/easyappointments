@@ -61,6 +61,8 @@ class Notifications {
     {
         try
         {
+        
+            throw new Exception('SAVE');
             $email = new EmailClient($this->CI, $this->CI->config->config);
 
             if ($manage_mode)
@@ -72,14 +74,13 @@ class Notifications {
             }
             else
             {
-                $customer_title = new Text(lang('appointment_booked'));
-                $customer_message = new Text(lang('thank_you_for_appointment'));
-                $provider_title = new Text(lang('appointment_added_to_your_plan'));
-                $provider_message = new Text(lang('appointment_link_description'));
+                $customer_title = new Text(lang('appointment_pending_customer_title'));
+                $customer_message = new Text(lang('appointment_pending_customer_msg'));
+                $provider_title = new Text(lang('appointment_pending_provider_title'));
+                $provider_message = new Text(lang('appointment_pending_provider_msg'));
             }
 
-            $customer_link = new Url(site_url('appointments/index/' . $appointment['hash']));
-            $provider_link = new Url(site_url('backend/index/' . $appointment['hash']));
+            $calendar_link = new Url(site_url('backend/index/' . $appointment['hash']));
 
             $ics_stream = $this->CI->ics_file->get_stream($appointment, $service, $provider, $customer);
 
@@ -91,7 +92,7 @@ class Notifications {
             {
                 $email->send_appointment_details($appointment, $provider,
                     $service, $customer, $settings, $customer_title,
-                    $customer_message, $customer_link, new Email($customer['email']), new Text($ics_stream), $customer['timezone']);
+                    $customer_message, $calendar_link, new Email($customer['email']), new Text($ics_stream), $customer['timezone']);
             }
 
             $send_provider = filter_var(
@@ -102,7 +103,7 @@ class Notifications {
             {
                 $email->send_appointment_details($appointment, $provider,
                     $service, $customer, $settings, $provider_title,
-                    $provider_message, $provider_link, new Email($provider['email']), new Text($ics_stream), $provider['timezone']);
+                    $provider_message, $calendar_link, new Email($provider['email']), new Text($ics_stream), $provider['timezone']);
             }
 
             // Notify admins
@@ -117,28 +118,9 @@ class Notifications {
 
                 $email->send_appointment_details($appointment, $provider,
                     $service, $customer, $settings, $provider_title,
-                    $provider_message, $provider_link, new Email($admin['email']), new Text($ics_stream), $admin['timezone']);
+                    $provider_message, $calendar_link, new Email($admin['email']), new Text($ics_stream), $admin['timezone']);
             }
 
-            // Notify secretaries
-            $secretaries = $this->CI->secretaries_model->get_batch();
-
-            foreach ($secretaries as $secretary)
-            {
-                if ($secretary['settings']['notifications'] === '0')
-                {
-                    continue;
-                }
-
-                if (!in_array($provider['id'], $secretary['providers']))
-                {
-                    continue;
-                }
-
-                $email->send_appointment_details($appointment, $provider,
-                    $service, $customer, $settings, $provider_title,
-                    $provider_message, $provider_link, new Email($secretary['email']), new Text($ics_stream), $secretary['timezone']);
-            }
         }
         catch (Exception $exception)
         {
@@ -161,6 +143,8 @@ class Notifications {
         // Send email notification to customer and provider.
         try
         {
+        
+            throw new Exception('Delete');
             $email = new EmailClient($this->CI, $this->CI->config->config);
 
             $send_provider = filter_var($this->CI->providers_model->get_setting('notifications', $provider['id']),
@@ -199,29 +183,90 @@ class Notifications {
                     new Text($this->CI->input->post('cancel_reason')));
             }
 
-            // Notify secretaries
-            $secretaries = $this->CI->secretaries_model->get_batch();
-
-            foreach ($secretaries as $secretary)
-            {
-                if ($secretary['settings']['notifications'] === '0')
-                {
-                    continue;
-                }
-
-                if (!in_array($provider['id'], $secretary['providers']))
-                {
-                    continue;
-                }
-
-                $email->send_delete_appointment($appointment, $provider,
-                    $service, $customer, $settings, new Email($secretary['email']),
-                    new Text($this->CI->input->post('cancel_reason')));
-            }
         }
         catch (Exception $exception)
         {
             $exceptions[] = $exception;
+        }
+    }
+
+    /**
+     * Send the required notifications, related to an appointment being confirmed/unconfirmed.
+     *
+     * @param array $appointment Appointment record.
+     * @param array $service Service record.
+     * @param array $provider Provider record.
+     * @param array $customer Customer record.
+     * @param array $settings Required settings for the notification content.
+     * @param bool|false $manage_mode
+     */
+    public function notify_appointment_confirmed($appointment, $service, $provider, $customer, $settings, $manage_mode = FALSE)
+    {
+        try
+        {
+            $email = new EmailClient($this->CI, $this->CI->config->config);
+
+            //TODO: Not sure what manage_mode is used for, so change of delete this statement
+            if ($manage_mode)
+            {
+                $customer_title = new Text(lang('appointment_confirmed_customer_title'));
+                $customer_message = new Text('appointment_confirmed_customer_msg');
+                $provider_title = new Text(lang('appointment_confirmed_provider_title'));
+                $provider_message = new Text('appointment_confirmed_provider_msg');
+            }
+            else
+            {
+                $customer_title = new Text(lang('appointment_confirmed_customer_title'));
+                $customer_message = new Text(lang('appointment_confirmed_customer_msg'));
+                $provider_title = new Text(lang('appointment_confirmed_provider_title'));
+                $provider_message = new Text(lang('appointment_confirmed_provider_msg'));
+            }
+
+            $calendar_link = new Url(site_url('backend/index/' . $appointment['hash']));
+
+            $ics_stream = $this->CI->ics_file->get_stream($appointment, $service, $provider, $customer);
+
+            $send_customer = filter_var(
+                $this->CI->settings_model->get_setting('customer_notifications'),
+                FILTER_VALIDATE_BOOLEAN);
+
+            if ($send_customer === TRUE)
+            {
+                $email->send_appointment_details($appointment, $provider,
+                    $service, $customer, $settings, $customer_title,
+                    $customer_message, $calendar_link, new Email($customer['email']), new Text($ics_stream), $customer['timezone']);
+            }
+
+            $send_provider = filter_var(
+                $this->CI->providers_model->get_setting('notifications', $provider['id']),
+                FILTER_VALIDATE_BOOLEAN);
+
+            if ($send_provider === TRUE)
+            {
+                $email->send_appointment_details($appointment, $provider,
+                    $service, $customer, $settings, $provider_title,
+                    $provider_message, $calendar_link, new Email($provider['email']), new Text($ics_stream), $provider['timezone']);
+            }
+
+            // Notify admins
+            $admins = $this->CI->admins_model->get_batch();
+
+            foreach ($admins as $admin)
+            {
+                if ($admin['settings']['notifications'] === '0')
+                {
+                    continue;
+                }
+
+                $email->send_appointment_details($appointment, $provider,
+                    $service, $customer, $settings, $provider_title,
+                    $provider_message, $calendar_link, new Email($admin['email']), new Text($ics_stream), $admin['timezone']);
+            }
+        }
+        catch (Exception $exception)
+        {
+            log_message('error', $exception->getMessage());
+            log_message('error', $exception->getTraceAsString());
         }
     }
 }

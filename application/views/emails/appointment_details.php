@@ -14,7 +14,7 @@
         <h2><?= $email_title ?></h2>
         <p><?= $email_message ?></p>
 
-        <h2><?= lang('appointment_details_title') ?></h2>
+        <!--<h2><?= lang('appointment_details_title') ?></h2>-->
         <table id="appointment-details">
             <tr>
                 <td class="label" style="padding: 3px;font-weight: bold;"><?= lang('service') ?></td>
@@ -64,8 +64,7 @@
 
     <div id="footer" style="padding: 10px; text-align: center; margin-top: 10px;
                 border-top: 1px solid #EEE; background: #FAFAFA;">
-        Powered by
-        <a href="https://easyappointments.org" style="text-decoration: none;">Easy!Appointments</a>
+        Ha en underbar dag! 
         |
         <a href="<?= $company_link ?>" style="text-decoration: none;"><?= $company_name ?></a>
     </div>

@@ -34,7 +34,7 @@ $lang['cancel_appointment_title'] = 'Avboka tid';
 $lang['appointment_cancelled'] = 'Din tid är ny avbokad';
 $lang['appointment_cancelled_title'] = 'tiden är avbokad';
 $lang['reason'] = 'Anledning';
-$lang['appointment_removed_from_schedule'] = 'Följande tid är avbokad.';
+$lang['appointment_removed_from_schedule'] = 'Följande bookning är avbokad.';
 $lang['appointment_details_was_sent_to_you'] = 'Du kommer få epostmed information om din tidsbokning.';
 $lang['add_to_google_calendar'] = 'Lägg till i Google-kalendern.';
 $lang['appointment_booked'] = 'Din tid är nu bookad';
@@ -96,6 +96,17 @@ $lang['appointment_updated'] = 'Tiden är uppdaterad.';
 $lang['undo'] = 'Ångra';
 $lang['appointment_details_changed'] = 'Bokningen har ändrats.';
 $lang['appointment_changes_saved'] = 'Ändringarna på bokningen har sparats.';
+
+$lang['appointment_pending_customer_title'] = 'Din preliminära CLG bokning är mottagen';
+$lang['appointment_pending_customer_msg'] = 'Husmor kommer snart ta hand om din bokning. Det kommer sedan ett email med bekräftelse (eller anledning till nekad bokning)';
+$lang['appointment_pending_provider_title'] = 'CLG-Bookning: Ny bokning att Bekräfta/Neka';
+$lang['appointment_pending_provider_msg'] = 'en släckting väntar på att få sin bokning behandlad.';
+
+$lang['appointment_confirmed_customer_title'] = 'Din CLG bokning är bekräftad';
+$lang['appointment_confirmed_customer_msg'] = 'kära släkting, din bokning på CL-Gården är nu bekräftad';
+$lang['appointment_confirmed_provider_title'] = 'Du har bekräftat följande bokning';
+$lang['appointment_confirmed_provider_msg'] = 'använd länken längst ner för att visa/ändra bokningen';
+
 $lang['save'] = 'Spara';
 $lang['new'] = 'Ny';
 $lang['select'] = 'Välj';

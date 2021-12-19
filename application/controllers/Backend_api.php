@@ -309,7 +309,13 @@ class Backend_api extends EA_Controller {
             ];
 
             $this->synchronization->sync_appointment_saved($appointment, $service, $provider, $customer, $settings, $manage_mode);
-            $this->notifications->notify_appointment_saved($appointment, $service, $provider, $customer, $settings, $manage_mode);
+            
+            if ( $appointment['status'] == "confirmed")
+            {
+                $this->notifications->notify_appointment_confirmed($appointment, $service, $provider, $customer, $settings, $manage_mode);
+            } else {
+                $this->notifications->notify_appointment_saved($appointment, $service, $provider, $customer, $settings, $manage_mode);
+            }
 
             $response = AJAX_SUCCESS;
         }
