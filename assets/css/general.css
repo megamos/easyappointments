@@ -425,3 +425,15 @@ body .popover-body a {
 body .clearfix {
     clear: both;
 }
+
+#appointment-notes {
+    height: 100px;
+}
+
+.input-group {
+    margin-bottom: 5px;
+}
+
+#select-service {
+    margin-bottom: 5px;
+}

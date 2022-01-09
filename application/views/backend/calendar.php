@@ -36,9 +36,88 @@
             privileges: <?= json_encode($privileges) ?>,
         }
     };
+    
+    var addRoom = function(e) {
+        if (e !== undefined) {
+            e.preventDefault();
+        }
+
+        var roomsContainer = $('#rooms-container'),
+        currentEntry = $(this).parents('.room:first'),
+        newEntry = $(currentEntry.clone()).appendTo(roomsContainer);
+
+        newEntry.find('input').val('');
+
+        roomsContainer.find('.room:not(:last) .btn-add-room')
+            .removeClass('btn-add-room').addClass('btn-remove-room')
+            .removeClass('btn-success').addClass('btn-danger')
+            .html('<i class="fas fa-minus-square"></i>');
+
+        return newEntry.find('#extra-room');
+    };
+
+    var addRelative = function(e) {
+        if (e !== undefined) {
+            e.preventDefault();
+        }
+
+        var relativeContainer = $('#relatives-container'),
+        currentEntry = $(this).parents('.relative:first'),
+        newEntry = $(currentEntry.clone()).appendTo(relativeContainer);
+
+        newEntry.find('input').val('');
+
+        relativeContainer.find('.relative:not(:last) .btn-add-relative')
+            .removeClass('btn-add-relative').addClass('btn-remove-relative')
+            .removeClass('btn-success').addClass('btn-danger')
+            .html('<i class="fas fa-minus-square"></i>');
+    };
+
+    var addGuest = function(e) {
+        if (e !== undefined) {
+            e.preventDefault();
+        }
+
+        var guestsContainer = $('#guests-container'),
+        currentEntry = $(this).parents('.guest:first'),
+        newEntry = $(currentEntry.clone()).appendTo(guestsContainer);
+
+        newEntry.find('input').val('');
+
+        guestsContainer.find('.guest:not(:last) .btn-add-guest')
+            .removeClass('btn-add-guest').addClass('btn-remove-guest')
+            .removeClass('btn-success').addClass('btn-danger')
+            .html('<i class="fas fa-minus-square"></i>');
+    };
 
     $(function () {
         BackendCalendar.initialize(GlobalVariables.calendarView);
+
+        $(document)
+        .on('click', '.btn-add-relative', addRelative)
+        .on('click', '.btn-remove-relative', function(e) {
+            $(this).parents('.relative:first').remove();
+
+            e.preventDefault();
+            return false;
+        })
+        
+        .on('click', '.btn-add-guest', addGuest)
+        .on('click', '.btn-remove-guest', function(e) {
+            $(this).parents('.guest:first').remove();
+
+            e.preventDefault();
+            return false;
+        })
+
+        .on('click', '.btn-add-room', addRoom)
+        .on('click', '.btn-remove-room', function(e) {
+            $(this).parents('.room:first').remove();
+
+            e.preventDefault();
+            return false;
+        })
+        ;
     });
 </script>
 
@@ -129,7 +208,7 @@
                 <button class="close" data-dismiss="modal">&times;</button>
             </div>
 
-            <div class="modal-body">
+            <div class="modal-body dynamic-wrap">
                 <div class="modal-message alert d-none"></div>
 
                 <form>
@@ -139,13 +218,14 @@
                         <input id="appointment-id" type="hidden">
 
                         <!-- TODO CLG CHANGE: Providing the possibility to book several rooms (services) at once -->
-                        <div class="row">
-
-
-                        </div>
 
                         <div class="row">
                             <div class="col-12 col-sm-6">
+                                 <div class="row form-group">
+
+                                      
+                                </div>
+
                                 <div class="form-group">
                                     <label for="select-service" class="control-label">
                                         <?= lang('service') ?>
@@ -220,6 +300,86 @@
                                         }
                                         ?>
                                     </select>
+
+                                    <div id="rooms-container">
+                                          <div class="room input-group">
+                                              <select id="extra-room" name="rooms[]" class="form-control">
+                                                  <option value="" selected>Boka ett till rum...</option>
+                                        <?php
+                                        // Group services by category, only if there is at least one service
+                                        // with a parent category.
+                                        $has_category = FALSE;
+                                        foreach ($available_services as $service)
+                                        {
+                                            if ($service['category_id'] != NULL)
+                                            {
+                                                $has_category = TRUE;
+                                                break;
+                                            }
+                                        }
+
+                                        if ($has_category)
+                                        {
+                                            $grouped_services = [];
+
+                                            foreach ($available_services as $service)
+                                            {
+                                                if ($service['category_id'] != NULL)
+                                                {
+                                                    if ( ! isset($grouped_services[$service['category_name']]))
+                                                    {
+                                                        $grouped_services[$service['category_name']] = [];
+                                                    }
+
+                                                    $grouped_services[$service['category_name']][] = $service;
+                                                }
+                                            }
+
+                                            // We need the uncategorized services at the end of the list so we will use
+                                            // another iteration only for the uncategorized services.
+                                            $grouped_services['uncategorized'] = [];
+                                            foreach ($available_services as $service)
+                                            {
+                                                if ($service['category_id'] == NULL)
+                                                {
+                                                    $grouped_services['uncategorized'][] = $service;
+                                                }
+                                            }
+
+                                            foreach ($grouped_services as $key => $group)
+                                            {
+                                                $group_label = ($key != 'uncategorized')
+                                                    ? $group[0]['category_name'] : 'Uncategorized';
+
+                                                if (count($group) > 0)
+                                                {
+                                                    echo '<optgroup label="' . $group_label . '">';
+                                                    foreach ($group as $service)
+                                                    {
+                                                        echo '<option value="' . $service['id'] . '">'
+                                                            . $service['name'] . '</option>';
+                                                    }
+                                                    echo '</optgroup>';
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            foreach ($available_services as $service)
+                                            {
+                                                echo '<option value="' . $service['id'] . '">'
+                                                    . $service['name'] . '</option>';
+                                            }
+                                        }
+                                        ?>
+                                    </select>
+                                              <span class="input-group-btn">
+                                                  <button class="btn btn-success btn-add-room" type="button">
+                                                      <i class="fas fa-plus-square"></i>
+                                                  </button>
+                                              </span>
+                                          </div>
+                                      </div>
                                 </div>
 
                                 <div class="form-group">
@@ -231,25 +391,6 @@
                                 </div>
                                 <?php if ($role_slug == DB_SLUG_ADMIN || $role_slug == DB_SLUG_PROVIDER): ?>
                                 <div class="form-group">
-                                    <!--<label class="my-1 mr-2" for="bg-color-input">Color</label>
-                                    <!--CLG NOTICE: Testing color picker, but will most likely assign a color to each bookable room
-                                    <input type="color" class="form-control" id="bg-color-input" value="#F06562"> -->
-                                        <!-- <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="colorOption" id="colorRadio1"  value="#FCA5A5">
-                                            <label class="form-check-label" for="inlineRadio1"  style="background-color:#FCA5A5;color:transparent;">KO</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="colorOption" id="colorRadio2" value="#93C5FD" >
-                                            <label class="form-check-label" for="inlineRadio2" style="background-color:#93C5FD;color:transparent;">KO</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="colorOption" id="colorRadio3" value="#C4B5FD">
-                                            <label class="form-check-label" for="inlineRadio3" style="background-color:#C4B5FD;color:transparent">KO</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="colorOption" id="colorRadio4" value="#a0d468">
-                                            <label class="form-check-label" for="inlineRadio1" style="background-color:#a0d468;color:transparent">KO</label>
-                                        </div>-->
                                 </div>
                                 <div class="form-group">
                                     <label class="my-1 mr-2" for="confirm"><?= lang('confirm') ?></label>
@@ -317,7 +458,8 @@
                                     </label>
                                     <input id="last-name" class="required form-control">
                                 </div>
-
+                            </div>    
+                            <div class="col-12 col-sm-6">
                                 <div class="form-group">
                                     <label for="email" class="control-label">
                                         <?= lang('email') ?>
@@ -337,37 +479,48 @@
                                            class="form-control <?= $require_phone_number === '1' ? 'required' : '' ?>">
                                 </div>
                             </div>
-                            <div class="col-12 col-sm-6">
-                                <!-- CLG CHANGE: Unsed data -->
-<!--                                 <div class="form-group">
-                                    <label for="address" class="control-label">
-                                        <?= lang('address') ?>
-                                    </label>
-                                    <input id="address" class="form-control">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="city" class="control-label">
-                                        <?= lang('city') ?>
-                                    </label>
-                                    <input id="city" class="form-control">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="zip-code" class="control-label">
-                                        <?= lang('zip_code') ?>
-                                    </label>
-                                    <input id="zip-code" class="form-control">
-                                </div> -->
-
-                                <div class="form-group">
-                                    <label for="appointment-notes" class="control-label">
-                                        <?= lang('notes') ?>
-                                    </label>
-                                    <textarea id="appointment-notes" rows="8" class="form-control"></textarea>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-12 col-sm-3">
+                                <label for="relatives"> <?= lang('customer') ?> </label>
+                            </div>
+                            <div id="relatives-container" class="col-12 col-sm-9">
+                                <div class="relative input-group">
+                                    <input class="form-control" name="relatives[]" type="text" placeholder="Namn..." />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-success btn-add-relative" type="button">
+                                            <i class="fas fa-plus-square"></i>
+                                        </button>
+                                    </span>
                                 </div>
                             </div>
                         </div>
+                        
+                        <div class="row">
+                            <div class="col-12 col-sm-3">
+                                <label for="relatives"> <?= lang('guest') ?> </label>
+                            </div>
+                            <div id="guests-container" class="col-12 col-sm-9">
+                                <div class="guest input-group">
+                                    <input class="form-control" name="guests[]" type="text" placeholder="Namn" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-success btn-add-guest" type="button">
+                                            <i class="fas fa-plus-square"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group col-12 col-sm-12">
+                                <label for="appointment-notes" class="control-label">
+                                    <?= lang('notes') ?>
+                                </label>
+                                <textarea id="appointment-notes" rows="8" class="form-control"></textarea>
+                            </div>
+                        </div>
+
                     </fieldset>
                 </form>
             </div>

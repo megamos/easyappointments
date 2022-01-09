@@ -45,6 +45,7 @@ class Synchronization {
      */
     public function sync_appointment_saved($appointment, $service, $provider, $customer, $settings, $manage_mode = FALSE)
     {
+        //TODO: Sync all child appointments
         try
         {
             $google_sync = filter_var(

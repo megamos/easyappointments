@@ -282,6 +282,9 @@ class Backend_api extends EA_Controller {
 
                 $manage_mode = isset($appointment['id']);
 
+                // Figure out if it's new or not'
+                $new_appointment = isset($appointment['id']) ? FALSE: TRUE;
+
                 // If the appointment does not contain the customer record id, then it means that is is going to be
                 // inserted. Get the customer's record ID.
                 if ( ! isset($appointment['id_users_customer']))
@@ -289,10 +292,63 @@ class Backend_api extends EA_Controller {
                     $appointment['id_users_customer'] = $customer['id'];
                 }
                 $appointment['id_users_customer'] = $customer['id'];
+                
                 // Set background color
                 $appointment['bg_color']= $this->services_model->get_value("color", $appointment['id_services']);
 
+                // Get visiting relatives
+                $relatives = [];
+                if (isset($appointment['relatives'])) {
+                    $relatives = $appointment['relatives'];
+                    unset($appointment['relatives']);
+                }
+
+                // Get visiting guests
+                 $guests = [];
+                if (isset($appointment['guests'])) {
+                    $guests = $appointment['guests'];
+                    unset($appointment['guests']);
+                }
+
+                //throw new Exception('Debugger: ' . );
+                // Get additional rooms
+                 $rooms = [];
+                if (count($appointment['additional_rooms']) > 0) {
+                    $rooms = $appointment['additional_rooms'];
+                    unset($appointment['additional_rooms']);
+                }
+                
+                // Save appointment
+                $child_appointment = $appointment;
+                $appointment['is_main'] = TRUE;
                 $appointment['id'] = $this->appointments_model->add($appointment);
+                
+                // Save new "child appointment" for each extra room booked
+                $child_appointment['is_main'] = FALSE;
+                foreach ($rooms as $room) {
+                    $child_appointment['id_main'] = $appointment['id'];
+                    $child_appointment['id_services'] = $room;
+                    $child_appointment['bg_color']= $this->services_model->get_value("color", $child_appointment['id_services']);
+                    $this->appointments_model->add($child_appointment);
+                }
+
+                // Save appointment visitors
+                if ($new_appointment) {
+                    if (sizeof($relatives) > 0) {
+                        $this->appointments_model->add_visitors($appointment['id'], $relatives, TRUE);
+                    }
+                    if (sizeof($guests) > 0) {
+                        $this->appointments_model->add_visitors($appointment['id'], $guests, FALSE);
+                    }
+                } else {
+                    if (sizeof($relatives) > 0) {
+                        $this->appointments_model->update_visitors($appointment['id'], $relatives, TRUE);
+
+                    }
+                    if (sizeof($guests) > 0) {
+                        $this->appointments_model->update_visitors($appointment['id'], $guests, FALSE);
+                    }
+                }
             }
 
             $appointment = $this->appointments_model->get_row($appointment['id']);
@@ -343,6 +399,7 @@ class Backend_api extends EA_Controller {
      */
     public function ajax_delete_appointment()
     {
+        //TODO Take care of 'additional_rooms'
         try
         {
             if ($this->privileges[PRIV_APPOINTMENTS]['delete'] == FALSE)

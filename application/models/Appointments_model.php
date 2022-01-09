@@ -26,6 +26,44 @@ class Appointments_model extends EA_Model {
         $this->load->helper('data_validation');
         $this->load->helper('string');
     }
+    
+    /**
+     * Add appointment visitor records to the database.
+     *
+     * This method adds new appointment visitors to the database. If the appointment doesn't exists they are going to be inserted,
+     * otherwise they are going to be updated.
+     *
+     * @param int $appointmentId
+     * @param array $relatives
+     * @param bool $isRelative
+     * database fields.
+     *
+     * @return 
+     * @throws Exception
+     */
+    public function add_visitors($appointment_id, $visitors, $is_relative)
+    {
+        // Validate the appointment data before doing anything.
+        //$this->validate_visitors($relatives);
+
+        //$appointment['book_datetime'] = date('Y-m-d H:i:s');
+	    //$appointment['status'] = !isset($appointment['status']) 
+        //    ? 'pending'
+        //    : $appointment['status'];
+        //$appointment['hash'] = random_string('alnum', 12);
+
+        foreach ($visitors as $name){
+            $visitor = [];
+            $visitor['id_appointment'] = $appointment_id;
+            $visitor['name'] = $name;
+            $visitor['is_relative'] = $is_relative;
+
+            if ( ! $this->db->insert('appointment_visitors', $visitor))
+            {
+                throw new Exception('Could not insert appointment visitor record.');
+            }
+        }
+    }
 
     /**
      * Add an appointment record to the database.
@@ -179,6 +217,9 @@ class Appointments_model extends EA_Model {
      */
     protected function update($appointment)
     {
+        //TODO: Update visitors
+        //TODO Take care of 'additional_rooms'
+
         $this->db->where('id', $appointment['id']);
         if ( ! $this->db->update('appointments', $appointment))
         {
@@ -284,10 +325,21 @@ class Appointments_model extends EA_Model {
             return FALSE; // Record does not exist.
         }
 
+        // Delete all related appointment_visitors
+        $this->db->where('id_appointment', $appointment_id);
+        $this->db->delete('appointment_visitors');
+        
+        // Delete child appointments if it is main
+        if(!isset($appointment['id_main'])) {
+            $this->db->where('id_main', $appointment_id);
+            $this->db->delete('appointments');
+        }
+
+        // Delete appointment
         $this->db->where('id', $appointment_id);
         return $this->db->delete('appointments');
     }
-
+    
     /**
      * Get a specific row from the appointments table.
      *

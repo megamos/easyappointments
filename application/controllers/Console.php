@@ -131,6 +131,51 @@ class Console extends EA_Controller {
                 'calendar_view' => CALENDAR_VIEW_DEFAULT
             ],
         ]);
+        
+        // Hela gården bokningar
+        $room_a = $this->services_model->add([
+            'name' => 'Brölopp',
+            'duration' => '1440',
+            'price' => '0',
+            'currency' => '',
+            'description' => 'Boka hela gården för ett brölopp',
+            'availabilities_type' => 'flexible',
+            'attendants_number' => '20',
+            'color' => '#F5BE00'
+        ]);
+
+        $room_a = $this->services_model->add([
+            'name' => 'Dop',
+            'duration' => '1440',
+            'price' => '0',
+            'currency' => '',
+            'description' => 'Boka hela gården för ett dop',
+            'availabilities_type' => 'flexible',
+            'attendants_number' => '20',
+            'color' => '#F5BE00'
+        ]);
+
+        $room_a = $this->services_model->add([
+            'name' => 'Jul',
+            'duration' => '1440',
+            'price' => '0',
+            'currency' => '',
+            'description' => 'Boka hela gården för att fira jul',
+            'availabilities_type' => 'flexible',
+            'attendants_number' => '20',
+            'color' => '#F5BE00'
+        ]);
+
+        $room_a = $this->services_model->add([
+            'name' => 'Nyår',
+            'duration' => '1440',
+            'price' => '0',
+            'currency' => '',
+            'description' => 'Boka hela gården för Nyårsfirande',
+            'availabilities_type' => 'flexible',
+            'attendants_number' => '20',
+            'color' => '#F5BE00'
+        ]);
 
         // Room
         $room_1 = $this->services_model->add([

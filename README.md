@@ -1,5 +1,16 @@
 # CLG Modifications
 ## TODO's
+### v0.9 Functional
+- Appointment for booking all rooms (hela gården)
+  - bröllop, dop, jul, nyår
+  - 
+- Validations
+  - implement "booking rules"
+  - 
+### v1.0 Basic Features
+- Google Calendar
+- Multiple
+- Appointment for booking a kitchen(etc) without sleeping over
 - 
 
 ## Remembers
@@ -16,11 +27,27 @@ ALTER TABLE `ea_services` AUTO_INCREMENT = 0;
 ALTER TABLE `ea_secretaries_providers` AUTO_INCREMENT = 0;
 
 
+ALTER TABLE `ea_services` 
+ADD COLUMN `is_all_rooms` BOOLEAN NOT NULL DEFAULT 0 AFTER `id_service_categories`
+
+
+### Console Usage
+php.exe console 
+
+## Additions
+- Multiple Customers/Släktingar for same appointment
+  - new table: appointment_visitor
+    - id, appointment_id, 
+
+- Multiple rooms/services for same appointment
+  - new column in "appointments": is_parent
+    - This will be true for the first selected room when creating a booking. When editing this one will be loaded, to provide ability to change all "child bookings" at the same time
+
 ## Changes
 - Appointments:
   - Renamed to: Booking (only in front-end)
   - Usage: Booking rooms by the day
-  - 
+  - New columns: "id_main", "bg_color", "is_all_rooms"
 - Language:
   - Additions to swedish
 - Customer:
@@ -28,6 +55,22 @@ ALTER TABLE `ea_secretaries_providers` AUTO_INCREMENT = 0;
 - Secretary:
   - Renamed to: Släkting (only in front-end)
   - Usage: Now used as a "customer with login"
+
+### Önskemål från styrelsen:
+
+- Att man ska kunna skriva in ankomsttid och avresetid i bokningen.  Styrelsen noterar om att bokningsreglerna bör uppdateras med att det är en överlämningstid vid kl. 12, då lämnar man sina rum till nästa boende (man behöver inte nödvändigtvis lämna gården).
+
+- Att det skickas ett automatisk mail en vecka innan bokningen med påminnelse och bilagd boendeinstruktion.
+
+- Att man inte ska kunna göra parallella bokningar utan att även en obekräftad bokning ska blockera från att parallella bokningar görs.
+
+- Att man i bokningen kan fylla i vem som är ”ansvarig” för bokningen (i förlängningen kan man också göra denna person ansvarig för nyckel och brandansvarig).
+
+- Att man kan ange i rumsnamnen vilka som är i Stora Huset och vilka som inte är det.
+
+- Att det kommer upp en periodiserad varning på de utrymmen som inte är ”vinterstödda”. T ex att köket i Mangelboden är avstängt och att Härbret, Mörtstugan, Fiskarboden och Ungkarlshotellet är kallt vintertid.
+
+- Finns ett generellt stöd för helgårdsbokningar? Bra om det går att göra som att boka ett rum ”Hela gården”, och att man även fyller i anledningen till helgårds-bokning. Gärna att det poppar upp en informationstext/länk till bokningsregler när man försöker göra en sådan bokning.
 
 <input type="color" class="form-control" id="bg-color-input" value="#93CFD2">
 

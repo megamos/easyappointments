@@ -102,6 +102,12 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                     });
             } else if (lastFocusedEventData.data.is_unavailable === '0') {
                 var appointment = lastFocusedEventData.data;
+                
+                // Check if child, and load parent instead if true
+                if (appointment.id_main != null) {
+                    appointment = appointment.parent;
+                }
+
                 $dialog = $('#manage-appointment');
 
                 BackendCalendarAppointmentsModal.resetAppointmentDialog();
@@ -111,6 +117,32 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                 if (appointment.status == 'pending') {
                     confirmedStatus = false;
                 }
+
+                // Add dropdown for each child appointment
+                console.log("Debugger");
+                var children = appointment.children;
+
+                if (children !== undefined) {
+                    var secondRoom = $dialog.find('#extra-room');
+                    secondRoom[0].value = children[0];
+
+                    if (children.length > 1) {
+                        for (let i = 1; i < children.length; i++) {
+                            var addButton = $dialog.find('btn btn-success btn-add-room');
+                            var newSelect = addRoom.call(addButton);
+                            newSelect.value = children[i];
+                        }
+                    }
+                }
+
+                // Add Relatives
+                var addButton2 = $dialog.find('btn btn-success btn-add-relative');
+                addRelative.call(addButton2)
+
+                // Add Guests
+                var addButton3 = $dialog.find('btn btn-success btn-add-guest');
+                addGuest.call(addButton3)
+
 
                 $dialog.find('#bg-color-input').val(appointment.bg_color);
                 $dialog.find('#confirmAppointment').prop('checked', confirmedStatus);
@@ -1109,6 +1141,14 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                         status: appointment.status,
                         data: appointment // Store appointment data for later use.
                     };
+
+                    // Save parent/main appointment for child appointments. Used when editing.
+                    if (appointment.id_main != null) {
+                        appointmentEvent.data.parent = response.appointments.find(a => a.id == appointment.id_main);
+                    // Save children IDs for parent appointment
+                    } else {
+                        appointmentEvent.data.children = response.appointments.filter(a => a.id_main == appointment.id).map(a => a.id_services);
+                    }
 
                     calendarEventSource.push(appointmentEvent);
                 });

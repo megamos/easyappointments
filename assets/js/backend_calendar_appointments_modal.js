@@ -95,6 +95,43 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                 appointment.id_users_customer = customer.id;
             }
 
+            var additionalRooms = document.getElementsByName('rooms[]');
+
+            if (additionalRooms.length > 0) {
+                var rooms = [];
+
+                additionalRooms.forEach((room_id) => {
+                    var id = room_id.value.trim();
+
+                    if (id.length > 0) {
+                        rooms.push(id);
+                    }
+
+                });
+
+                appointment.additional_rooms = rooms;
+            }
+
+            var relativesInput = document.getElementsByName('relatives[]');
+            var firstRelative = relativesInput[0].value.trim();
+
+            if (firstRelative.length > 0) {
+                var relatives = [];
+                relativesInput.forEach(name => relatives.push(name.value.trim()));
+
+                appointment.relatives = relatives;
+            }
+            
+            var guestsInput = document.getElementsByName('guests[]');
+            var firstGuest = guestsInput[0].value.trim();
+
+            if (firstGuest.length > 0) {
+                var guests = [];
+                guestsInput.forEach(name => guests.push(name.value.trim()));
+
+                appointment.guests = guests;
+            }
+
             // Define success callback.
             var successCallback = function (response) {
                 // Display success message to the user.
