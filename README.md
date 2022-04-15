@@ -13,7 +13,7 @@
 - Appointment for booking a kitchen(etc) without sleeping over
 - 
 
-## Remembers
+## SQL Remembers
 DELETE FROM `ea_users`;
 DELETE FROM `ea_user_settings_`;
 DELETE FROM `ea_appointments`;
@@ -33,6 +33,8 @@ ADD COLUMN `is_all_rooms` BOOLEAN NOT NULL DEFAULT 0 AFTER `id_service_categorie
 
 ### Console Usage
 php.exe console 
+php index.php console migrate
+
 
 ## Additions
 - Multiple Customers/Släktingar for same appointment
@@ -72,60 +74,17 @@ php.exe console
 
 - Finns ett generellt stöd för helgårdsbokningar? Bra om det går att göra som att boka ett rum ”Hela gården”, och att man även fyller i anledningen till helgårds-bokning. Gärna att det poppar upp en informationstext/länk till bokningsregler när man försöker göra en sådan bokning.
 
-<input type="color" class="form-control" id="bg-color-input" value="#93CFD2">
+# Remembers #
+- [clg-booking , google api project:](https://console.cloud.google.com/apis/api/calendar-json.googleapis.com/overview?project=clg-booking&authuser=4&supportedpurview=project)
+  - [Add server URI to Create OAuth client ID](https://console.cloud.google.com/apis/credentials/oauthclient?previousPage=%2Fapis%2Fcredentials%3Fauthuser%3D4%26project%3Dclg-booking%26supportedpurview%3Dproject&authuser=4&project=clg-booking&supportedpurview=project)
+  - [Tutorial](https://www.youtube.com/watch?v=sondt5kL_Hc)
+- Database:
+  - login: mysql -u clg -p
+  - [Create backup file:](/.application/controllers/Console.php)
+  - sudo mysql --defaults-file=/etc/mysql/debian.cnf
 
-<h1 align="center">
-    <br>
-    <a href="https://easyappointments.org">
-        <img src="https://raw.githubusercontent.com/alextselegidis/easyappointments/develop/docs/images/logo.png" alt="Easy!Appointments" width="150">
-    </a>
-    <br>
-    Easy!Appointments
-    <br>
-</h1>
-
-<br>
-
-<h4 align="center">
-    A powerful Open Source Appointment Scheduler that can be installed on your server. 
-</h4>
-
-<p align="center">
-  <img alt="GitHub" src="https://img.shields.io/github/license/alextselegidis/easyappointments?style=for-the-badge">
-  <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/alextselegidis/easyappointments?style=for-the-badge">
-  <img alt="GitHub All Releases" src="https://img.shields.io/github/downloads/alextselegidis/easyappointments/total?style=for-the-badge">
-</p>
-
-<p align="center">
-  <a href="#about">About</a> •
-  <a href="#features">Features</a> •
-  <a href="#setup">Setup</a> •
-  <a href="#installation">Installation</a> •
-  <a href="#license">License</a>
-</p>
-
-![screenshot](screenshot.png)
-
-## About
-
-**Easy!Appointments** is a highly customizable web application that allows customers to book appointments with you 
-via a sophisticated web interface. Moreover, it provides the ability to sync your data with Google Calendar so you can 
-use them with other services. It is an open source project that you can download and install **even for commercial use**. 
-Easy!Appointments will run smoothly with your existing website as it can be installed in a single folder of the 
-server and of course share an existing database.
-
-## Features
-
-The application is designed to be flexible enough so that it can handle any enterprise work flow. 
-
-* Customers and appointments management.
-* Services and providers organization.
-* Working plan and booking rules.
-* Google Calendar synchronization.
-* Email notifications system.
-* Self hosted installation.
-* Translated user interface.
-* User community support. 
+---------------------------------
+# Original README #
 
 ## Setup
 
