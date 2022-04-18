@@ -6,7 +6,6 @@
 namespace EA\Engine\Api\V1;
 
 use PHPUnit\Framework\TestCase;
-use EA\
 
 class CreateAppointmentTest extends TestCase
 {
