@@ -41,7 +41,7 @@ class Appointments_model extends EA_Model {
      * @return 
      * @throws Exception
      */
-    public function add_visitors($appointment_id, $visitors, $is_relative)
+    public function set_relatives($appointment_id, $relatives)
     {
         // Validate the appointment data before doing anything.
         //$this->validate_visitors($relatives);
@@ -52,17 +52,74 @@ class Appointments_model extends EA_Model {
         //    : $appointment['status'];
         //$appointment['hash'] = random_string('alnum', 12);
 
-        foreach ($visitors as $name){
+        // First delete all realtives connected to the appointment
+        $this->db->where('id_appointment', $appointment_id);
+        $this->db->where('id_user IS NOT NULL');
+        $this->db->delete('appointment_visitors');
+
+        //throw new Exception("Test: " . $relatives[1]);
+        // Get all relatives in $relatives
+        $query = $this->db
+        //->query("SELECT * FROM ea_appointment_visitors");
+
+            ->select(array('id', 'first_name', 'last_name'))
+            ->from('users')
+            ->where_in('users.id', $relatives)
+            ->get();
+        $users = $query->result_array();    
+        $row = $users[0]; //$query->row();
+        //throw new Exception("Test: " . $row['first_name']);
+
+        // Then create new visitors
+        foreach ($users as $user){
             $visitor = [];
             $visitor['id_appointment'] = $appointment_id;
-            $visitor['name'] = $name;
-            $visitor['is_relative'] = $is_relative;
+            $visitor['name'] = $user['first_name'] . ' ' . $user['last_name'];
+            $visitor['id_user'] = $user['id'];
 
             if ( ! $this->db->insert('appointment_visitors', $visitor))
             {
                 throw new Exception('Could not insert appointment visitor record.');
             }
         }
+    }
+
+    public function set_guests($appointment_id, $guests)
+    {
+        // Validate the appointment data before doing anything.
+        //$this->validate_visitors($relatives);
+
+        //$appointment['book_datetime'] = date('Y-m-d H:i:s');
+	    //$appointment['status'] = !isset($appointment['status']) 
+        //    ? 'pending'
+        //    : $appointment['status'];
+        //$appointment['hash'] = random_string('alnum', 12);
+
+        // First delete all guests/realtives connected to the appointment
+        $this->db->where('id_appointment', $appointment_id);
+        $this->db->where('id_user', NULL);
+        $this->db->delete('appointment_visitors');
+
+        // Then create new
+        foreach ($guests as $name){
+            $visitor = [];
+            $visitor['id_appointment'] = $appointment_id;
+            $visitor['name'] = $name;
+            $visitor['id_user'] = NULL;
+
+            if ( ! $this->db->insert('appointment_visitors', $visitor))
+            {
+                throw new Exception('Could not insert appointment visitor record.');
+            }
+        }
+    }
+
+    public function get_visitors($appointment_id) 
+    {
+        // First delete all guests/realtives connected to the appointment
+        $this->db->where('id_appointment', $appointment_id);
+        //throw new Exception('test: ' . $appointment_id);
+        return $this->db->get('appointment_visitors')->result_array();
     }
 
     /**
@@ -80,7 +137,7 @@ class Appointments_model extends EA_Model {
     public function add($appointment)
     {
         // Validate the appointment data before doing anything.
-        $this->validate($appointment);
+        $this ->validate($appointment);
 
         // Perform insert() or update() operation.
         if ( ! isset($appointment['id']))
@@ -118,6 +175,7 @@ class Appointments_model extends EA_Model {
         }
 
         // Check if appointment dates are valid.
+        //TODO: This doesn't work for CLG
         if ( ! validate_mysql_datetime($appointment['start_datetime']))
         {
             throw new Exception('Appointment start datetime is invalid.');
@@ -175,6 +233,15 @@ class Appointments_model extends EA_Model {
                 throw new Exception('Appointment service id is invalid.');
             }
         }
+
+        // CLG Change
+        // At least 1 room needs to be slected
+        if (count($appointment['rooms']) == 0)
+        {
+            
+        }
+        // Room IDs has to be unique
+        
 
         return TRUE;
     }
@@ -339,6 +406,84 @@ class Appointments_model extends EA_Model {
         $this->db->where('id', $appointment_id);
         return $this->db->delete('appointments');
     }
+
+    
+    /**
+     * Delete children appointments of an existing appointment record from the database.
+     *
+     * @param int $appointment_id The record id to have its children deleted.
+     *
+     * @return bool Returns the delete operation result.
+     *
+     * @throws Exception If $appointment_id argument is invalid.
+     */
+    public function delete_children($appointment_id)
+    {
+        if ( ! is_numeric($appointment_id))
+        {
+            throw new Exception('Invalid argument type $appointment_id (value:"' . $appointment_id . '")');
+        }
+
+        $num_rows = $this->db->get_where('appointments', ['id' => $appointment_id])->num_rows();
+
+        if ($num_rows == 0)
+        {
+            return FALSE; // Record does not exist.
+        }
+
+        // Delete child appointments
+        $this->db->where('id_main', $appointment_id);
+        return $this->db->delete('appointments');
+    }
+
+        /**
+     * Create children appointment for each extra room.
+     *
+     * @param int $appointment_id The record id whos children will be deleted.
+     * 
+     * @param int $rooms The ids of services/room to be added as children.
+     *
+     * @return bool Returns the create operation result.
+     *
+     * @throws Exception If $appointment_id argument is invalid.
+     */
+   /*  public function set_children($appointment_id, $rooms)
+    {
+        if ( ! is_numeric($appointment_id))
+        {
+            throw new Exception('Invalid argument type $appointment_id (value:"' . $appointment_id . '")');
+        }
+
+        $num_rows = $this->db->get_where('appointments', ['id' => $appointment_id])->num_rows();
+
+        if ($num_rows == 0)
+        {
+            return FALSE; // Record does not exist.
+        }
+
+        $child_appointment['is_main'] = FALSE;
+
+        //TODO: Get all children
+        foreach ($rooms as $room) {
+            //TODO: Insert if not existing
+            // $child = $this->db->select('id')
+            //                     ->from('') get_where('appointment')
+            // if ($child == 0)
+            $child_appointment['id_main'] = $appointment['id'];
+            $child_appointment['id_services'] = $room;
+            $child_appointment['bg_color'] =  $this->db->select('color')
+                                                        ->from('services')
+                                                        ->where('id', $child_appointment['id_services'])->get()->row(); 
+                                                        //$this->services_model->get_value("color", $child_appointment['id_services']);
+            $this->add($child_appointment);
+        }
+
+        //TODO: delete if not in $rooms
+
+        // Delete appointments
+        $this->db->where('id_main', $appointment_id);
+        return $this->db->delete('appointments');
+    } */
     
     /**
      * Get a specific row from the appointments table.
