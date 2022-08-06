@@ -437,3 +437,7 @@ body .clearfix {
 #select-service {
     margin-bottom: 5px;
 }
+
+.hide {
+    display: none !important;
+}

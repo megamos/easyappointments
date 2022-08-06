@@ -1405,7 +1405,8 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
      * @see updateAppointmentData()
      */
     function onEventResize(event, delta, revertFunc) {
-        if (GlobalVariables.user.privileges.appointments.edit === false) {
+        if (event.data.id_users_customer != (GlobalVariables.user.id - 1).toString()
+            || GlobalVariables.user.privileges.appointments.edit === false) {
             revertFunc();
             Backend.displayNotification(EALang.no_privileges_edit_appointments);
             return;
@@ -1530,7 +1531,8 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
      * on the calendar. We need to update the database with this change. This is done via an ajax call.
      */
     function onEventDrop(event, delta, revertFunc) {
-        if (GlobalVariables.user.privileges.appointments.edit === false) {
+        if (event.data.id_users_customer != (GlobalVariables.user.id - 1).toString()
+            || GlobalVariables.user.privileges.appointments.edit === false) {
             revertFunc();
             Backend.displayNotification(EALang.no_privileges_edit_appointments);
             return;

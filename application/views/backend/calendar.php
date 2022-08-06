@@ -483,13 +483,24 @@
                         <div class="row form-group">
                             <div class="col-12 col-sm-3">
                                 <label for="relatives"> <?= lang('customer') ?> </label>
+                                <button id="select-additional-customer" class="btn btn-outline-secondary btn-sm" type="button"
+                                        data-tippy-content="<?= lang('pick_existing_customer_hint') ?>">
+                                    <i class="fas fa-hand-pointer mr-2"></i>
+                                    <span>
+                                        <?= lang('add') ?>
+                                    </span>
+                                </button>
+                                <input id="filter-additional-customers"
+                                    placeholder="<?= lang('type_to_filter_customers') ?>"
+                                    style="display: none;" class="input-sm form-control">
+                                <div id="additional-customers-list" style="display: none;"></div>
                             </div>
                             <div id="relatives-container" class="col-12 col-sm-9">
-                                <div class="relative input-group">
+                                <div class="relative input-group hide">
                                     <input class="form-control" name="relatives[]" type="text" placeholder="Namn..." />
                                     <span class="input-group-btn">
-                                        <button class="btn btn-success btn-add-relative" type="button">
-                                            <i class="fas fa-plus-square"></i>
+                                        <button class="btn btn-danger btn-remove-relative" type="button">
+                                            <i class="fas fa-minus-square"></i>
                                         </button>
                                     </span>
                                 </div>

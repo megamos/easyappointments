@@ -89,12 +89,17 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                 notes: $dialog.find('#customer-notes').val()
             };
 
+
+            //CLG change:
+            // TODO: Also test case when Husmor or Admin books for someone
             if ($dialog.find('#customer-id').val() !== '') {
                 // Set the id value, only if we are editing an appointment.
+                var id = $dialog.find('#customer-id').val()
+
                 customer.id = $dialog.find('#customer-id').val();
                 appointment.id_users_customer = customer.id;
             }
-
+            
             var additionalRooms = document.getElementsByName('rooms[]');
 
             if (additionalRooms.length > 0) {
@@ -111,28 +116,37 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
 
                 appointment.additional_rooms = rooms;
             }
-
+            
             var relativesInput = document.getElementsByName('relatives[]');
-            var firstRelative = relativesInput[0].value.trim();
 
-            if (firstRelative.length > 0) {
+            if (relativesInput.length > 1) {
                 var relatives = [];
-                relativesInput.forEach(name => relatives.push(name.value.trim()));
+                relativesInput.forEach(function(user) { 
+                    if (user.dataset.userid !== undefined) {
+                        relatives.push(user.dataset.userid)
+                    }
+                });
 
                 appointment.relatives = relatives;
             }
             
             var guestsInput = document.getElementsByName('guests[]');
             var firstGuest = guestsInput[0].value.trim();
+            console.log("test");
+
 
             if (firstGuest.length > 0) {
                 var guests = [];
-                guestsInput.forEach(name => guests.push(name.value.trim()));
+                guestsInput.forEach(name => {
+                    if (name.value.trim() != "") {
+                        guests.push(name.value.trim())
+                    }
+                });
 
                 appointment.guests = guests;
             }
 
-            // Define success callback.
+            // zfine success callback.
             var successCallback = function (response) {
                 // Display success message to the user.
                 Backend.displayNotification(EALang.appointment_saved);
@@ -217,7 +231,7 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             var relative = GlobalVariables.user;
 
             if (relative) {
-                $dialog.find('#customer-id').val(relative.id);
+                $dialog.find('#customer-id').val(relative.id - 1);
                 $dialog.find('#first-name').val(relative.first_name);
                 $dialog.find('#last-name').val(relative.last_name);
                 $dialog.find('#email').val(relative.email);
@@ -275,6 +289,58 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             }
 
             $('#select-customer').trigger('click'); // Hide the list.
+        });
+
+        /**
+         * Event: Pick Existing Customer Button "Click"
+         */
+        $('#select-additional-customer').on('click', function () {
+            var $list = $('#additional-customers-list');
+
+            if (!$list.is(':visible')) {
+                $(this).find('span').text(EALang.hide);
+                $list.empty();
+                $list.slideDown('slow');
+                $('#filter-additional-customers').fadeIn('slow');
+                $('#filter-additional-customers').val('');
+                GlobalVariables.customers.forEach(function (customer) {
+                    $('<div/>', {
+                        'data-id': customer.id,
+                        'text': customer.first_name + ' ' + customer.last_name
+                    })
+                        .appendTo($list);
+                });
+            } else {
+                $list.slideUp('slow');
+                $('#filter-additional-customers').fadeOut('slow');
+                $(this).find('span').text(EALang.select);
+            }
+        });
+
+        /**
+         * Event: Select Existing Customer From List "Click"
+         */
+        $('#manage-appointment').on('click', '#additional-customers-list div', function () {
+            var customerId = $(this).attr('data-id');
+
+            var customer = GlobalVariables.customers.find(function (customer) {
+                return Number(customer.id) === Number(customerId);
+            });
+            console.log("testing2");
+
+            if (customer) {
+                var relativeContainer = $('#relatives-container'),
+                currentEntry = $(relativeContainer).children('.relative:first'),
+                newEntry = $(currentEntry.clone()).appendTo(relativeContainer);
+                var newEntryInput = newEntry.find('input');
+
+                newEntry.removeClass('hide');
+                newEntryInput.val(customer.first_name);
+                newEntryInput.attr("data-userid", customer.id);
+                newEntryInput.prop('disabled', true);
+            }
+
+            $('#select-additional-customer').trigger('click'); // Hide the list.
         });
 
         var filterExistingCustomersTimeout = null;
@@ -464,6 +530,43 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             return Number(service.id) === Number(serviceId);
         });
 
+        // Reset rooms/services
+        var roomsContainer = $dialog.find('#rooms-container');
+        while (roomsContainer[0].childNodes.length > 2) {
+            roomsContainer[0].removeChild(roomsContainer[0].lastChild);
+        }
+        
+        roomsContainer.find('.room:last .btn-remove-room')
+            .removeClass('btn-remove-room').addClass('btn-add-room')
+            .removeClass('btn-danger').addClass('btn-success')
+            .html('<i class="fas fa-plus-square"></i>');
+
+        $dialog.find('#extra-room')[0].value = '';
+
+        // Reset relatives and guests
+        var relativesContainer = $dialog.find('#relatives-container');
+        while (relativesContainer[0].childNodes.length > 2) {
+            relativesContainer[0].removeChild(relativesContainer[0].lastChild);
+        }
+        
+        //
+         var guestsContainer = $dialog.find('#guests-container');
+
+        guestsContainer[0].childNodes.forEach(function(n) {
+            if(n.nodeName == '#text'){
+                guestsContainer[0].removeChild(n);
+            }
+        });
+
+        while (guestsContainer[0].childNodes.length > 1) {
+            guestsContainer[0].removeChild(guestsContainer[0].firstChild);
+        }
+
+        guestsContainer.find('.guest:last .btn-remove-guest')
+            .removeClass('btn-remove-guest').addClass('btn-add-guest')
+            .removeClass('btn-danger').addClass('btn-success')
+            .html('<i class="fas fa-plus-square"></i>');
+                
         var duration = service ? service.duration : 0;
 
         var startDatetime = new Date();

@@ -50,6 +50,7 @@ class Backend_api extends EA_Controller {
         $this->load->library('notifications');
         $this->load->library('synchronization');
         $this->load->library('timezones');
+        //$this->load->library('clg');
 
         if ($this->session->userdata('role_slug'))
         {
@@ -202,6 +203,7 @@ class Backend_api extends EA_Controller {
                 $appointment['provider'] = $this->providers_model->get_row($appointment['id_users_provider']);
                 $appointment['service'] = $this->services_model->get_row($appointment['id_services']);
                 $appointment['customer'] = $this->customers_model->get_row($appointment['id_users_customer']);
+                $appointment['visitors'] = $this->appointments_model->get_visitors($appointment['id']);
             }
 
             // Get unavailable periods (only for provider).
@@ -258,6 +260,12 @@ class Backend_api extends EA_Controller {
                 $required_privileges = ( ! isset($customer['id']))
                     ? $this->privileges[PRIV_CUSTOMERS]['add']
                     : $this->privileges[PRIV_CUSTOMERS]['edit'];
+
+                if (isset($customer['id']) && $customer['id'] == $this->session->userdata('user_id') -1)
+                {
+                    $required_privileges = TRUE;
+                }
+                
                 if ($required_privileges == FALSE)
                 {
                     throw new Exception('You do not have the required privileges for this task.');
@@ -275,6 +283,13 @@ class Backend_api extends EA_Controller {
                 $required_privileges = ( ! isset($appointment['id']))
                     ? $this->privileges[PRIV_APPOINTMENTS]['add']
                     : $this->privileges[PRIV_APPOINTMENTS]['edit'];
+
+
+                if (isset($appointment['id_users_customer']) && $appointment['id_users_customer'] == $this->session->userdata('user_id') -1)
+                {
+                    $required_privileges = TRUE;
+                }
+
                 if ($required_privileges == FALSE)
                 {
                     throw new Exception('You do not have the required privileges for this task.');
@@ -291,7 +306,7 @@ class Backend_api extends EA_Controller {
                 {
                     $appointment['id_users_customer'] = $customer['id'];
                 }
-                $appointment['id_users_customer'] = $customer['id'];
+                //$appointment['id_users_customer'] = $customer['id'];
                 
                 // Set background color
                 $appointment['bg_color']= $this->services_model->get_value("color", $appointment['id_services']);
@@ -304,50 +319,42 @@ class Backend_api extends EA_Controller {
                 }
 
                 // Get visiting guests
-                 $guests = [];
+                $guests = [];
                 if (isset($appointment['guests'])) {
                     $guests = $appointment['guests'];
                     unset($appointment['guests']);
                 }
 
-                //throw new Exception('Debugger: ' . );
                 // Get additional rooms
-                 $rooms = [];
+                $rooms = [];
                 if (count($appointment['additional_rooms']) > 0) {
                     $rooms = $appointment['additional_rooms'];
-                    unset($appointment['additional_rooms']);
                 }
-                
+                unset($appointment['additional_rooms']);
+
                 // Save appointment
                 $child_appointment = $appointment;
                 $appointment['is_main'] = TRUE;
                 $appointment['id'] = $this->appointments_model->add($appointment);
-                
+
                 // Save new "child appointment" for each extra room booked
+                $this->appointments_model->delete_children($appointment['id']);
+
+                unset($child_appointment['id']);
                 $child_appointment['is_main'] = FALSE;
                 foreach ($rooms as $room) {
                     $child_appointment['id_main'] = $appointment['id'];
                     $child_appointment['id_services'] = $room;
-                    $child_appointment['bg_color']= $this->services_model->get_value("color", $child_appointment['id_services']);
+                    $child_appointment['bg_color'] = $this->services_model->get_value("color", $child_appointment['id_services']);
                     $this->appointments_model->add($child_appointment);
                 }
 
                 // Save appointment visitors
-                if ($new_appointment) {
-                    if (sizeof($relatives) > 0) {
-                        $this->appointments_model->add_visitors($appointment['id'], $relatives, TRUE);
-                    }
-                    if (sizeof($guests) > 0) {
-                        $this->appointments_model->add_visitors($appointment['id'], $guests, FALSE);
-                    }
-                } else {
-                    if (sizeof($relatives) > 0) {
-                        $this->appointments_model->update_visitors($appointment['id'], $relatives, TRUE);
-
-                    }
-                    if (sizeof($guests) > 0) {
-                        $this->appointments_model->update_visitors($appointment['id'], $guests, FALSE);
-                    }
+                if (sizeof($relatives) > 0) {
+                    $this->appointments_model->set_relatives($appointment['id'], $relatives);
+                }
+                if (sizeof($guests) > 0) {
+                    $this->appointments_model->set_guests($appointment['id'], $guests);
                 }
             }
 
@@ -402,11 +409,6 @@ class Backend_api extends EA_Controller {
         //TODO Take care of 'additional_rooms'
         try
         {
-            if ($this->privileges[PRIV_APPOINTMENTS]['delete'] == FALSE)
-            {
-                throw new Exception('You do not have the required privileges for this task.');
-            }
-
             if ( ! $this->input->post('appointment_id'))
             {
                 throw new Exception('No appointment id provided.');
@@ -414,6 +416,13 @@ class Backend_api extends EA_Controller {
 
             // Store appointment data for later use in this method.
             $appointment = $this->appointments_model->get_row($this->input->post('appointment_id'));
+
+            if ($this->privileges[PRIV_APPOINTMENTS]['delete'] == FALSE
+                && intval($appointment['id_users_customer']) != intval($this->session->userdata('user_id') - 1))
+            {
+                throw new Exception('You do not have the required privileges for this task.');
+            }
+
             $provider = $this->providers_model->get_row($appointment['id_users_provider']);
             $customer = $this->customers_model->get_row($appointment['id_users_customer']);
             $service = $this->services_model->get_row($appointment['id_services']);

@@ -90,7 +90,7 @@ define('AVAILABILITIES_TYPE_FIXED', 'fixed');
 define('EVENT_MINIMUM_DURATION', 5); // Minutes
 
 /* CLG Extras */
-define('MEMBER_REGISTER_PATH', 'D:\xampp\htdocs\easyappointments\storage\clg_data\Sl‰ktregister.csv');
+define('MEMBER_REGISTER_PATH', 'D:\xampp\htdocs\easyappointments\storage\clg_data\Sl√§ktregister.csv');
 
 
 /* End of file constants.php */

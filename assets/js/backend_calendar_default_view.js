@@ -102,8 +102,9 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                     });
             } else if (lastFocusedEventData.data.is_unavailable === '0') {
                 var appointment = lastFocusedEventData.data;
-                
+                // CLG change
                 // Check if child, and load parent instead if true
+                
                 if (appointment.id_main != null) {
                     appointment = appointment.parent;
                 }
@@ -119,7 +120,6 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                 }
 
                 // Add dropdown for each child appointment
-                console.log("Debugger");
                 var children = appointment.children;
 
                 if (children !== undefined) {
@@ -127,21 +127,73 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                     secondRoom[0].value = children[0];
 
                     if (children.length > 1) {
+                        var roomsContainer = $('#rooms-container');
+
                         for (let i = 1; i < children.length; i++) {
-                            var addButton = $dialog.find('btn btn-success btn-add-room');
-                            var newSelect = addRoom.call(addButton);
-                            newSelect.value = children[i];
+
+                            var currentEntry = $('.room:last');
+                            var newEntry = $(currentEntry.clone());
+                            newEntry.appendTo(roomsContainer);
+                            
+                            newEntry[0].firstElementChild.value = children[i];
                         }
+
+                        //Makes sure they have correct icons/colors
+                        roomsContainer.find('.room:not(:last) .btn-add-room')
+                            .removeClass('btn-add-room').addClass('btn-remove-room')
+                            .removeClass('btn-success').addClass('btn-danger')
+                            .html('<i class="fas fa-minus-square"></i>');
                     }
                 }
 
-                // Add Relatives
-                var addButton2 = $dialog.find('btn btn-success btn-add-relative');
-                addRelative.call(addButton2)
+                // Add Appointment Visitors
+                console.log("testing1");
+                // var visitors = array_filter(appointment.visitors, function($v, $k) {
+                //     return $k == 'id_appointment' && $v == appointment.id;
+                // }, ARRAY_FILTER_USE_BOTH);
 
-                // Add Guests
+                var relativeContainer = $('#relatives-container');
+                var firstRelativeEntry = $(relativeContainer).children('.relative:first');
+                var guestsContainer = $('#guests-container');
+                var firstGuestEntry = $(guestsContainer).children('.guest:first');
+
+                appointment.visitors.forEach(function (visitor) {
+                    if(visitor.id_user != null ) {
+                        // Add relatives
+                        var newEntry = $(firstRelativeEntry.clone()).appendTo(relativeContainer);
+                        var newEntryInput = newEntry.find('input');
+    
+                        newEntry.removeClass('hide');
+                        newEntryInput.val(visitor.name);
+                        newEntryInput.attr("data-userid", visitor.id_user);
+                        newEntryInput.prop('disabled', true);
+                    } else {
+                        // Add non-relatives
+                        if (visitor.id == appointment.visitors.find(attr => attr.id_user == null).id) {
+                            firstGuestEntry.find('input').val(visitor.name);
+                        } else {
+                            var newEntry = firstGuestEntry.clone().appendTo(guestsContainer);
+                            newEntry.find('input').val(visitor.name);
+                            guestsContainer.find('.guest:not(:last) .btn-add-guest')
+                                .removeClass('btn-add-guest').addClass('btn-remove-guest')
+                                .removeClass('btn-success').addClass('btn-danger')
+                                .html('<i class="fas fa-minus-square"></i>');
+                        }
+                    }
+
+                    // var relative = GlobalVariables.customer.find(function (customer) {
+                    //     customer.id == relativeId;
+                    // });
+                });
+
+                guestsContainer.find('.guest:last .btn-remove-guest')
+                    .removeClass('btn-remove-guest').addClass('btn-add-guest')
+                    .removeClass('btn-danger').addClass('btn-success')
+                    .html('<i class="fas fa-plus-square"></i>');
+                
+                /* // Add Guests
                 var addButton3 = $dialog.find('btn btn-success btn-add-guest');
-                addGuest.call(addButton3)
+                addGuest.call(addButton3) */
 
 
                 $dialog.find('#bg-color-input').val(appointment.bg_color);
@@ -388,7 +440,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
         // need to use different selectors to reach the parent element.
         var $parent = $(jsEvent.target.offsetParent);
         var $altParent = $(jsEvent.target).parents().eq(1);
-        //debugger;
+
         if ($(this).hasClass('fc-unavailable') || $parent.hasClass('fc-unavailable') || $altParent.hasClass('fc-unavailable')) {
             displayEdit = (($parent.hasClass('fc-custom') || $altParent.hasClass('fc-custom'))
                 && GlobalVariables.user.privileges.appointments.edit === true)
@@ -556,12 +608,13 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
             // CLG Changes:
             // - Only show if the appointment belongs to the user or user is admin or provider
             // - Each relative have two identical users, one with "secretary role" and another with "customer role",
-            //   The customer user has a "user ID" 1 below the secretary user. 
-            if ((event.data.id_users_customer == (GlobalVariables.user.id - 1) ||
-                GlobalVariables.user.role_slug == Backend.DB_SLUG_ADMIN ||
+            //   The customer user has a "user ID" 1 below the secretary user.
+            if ((event.data.id_users_customer == (GlobalVariables.user.id - 1).toString()) ||
+                ((GlobalVariables.user.role_slug == Backend.DB_SLUG_ADMIN ||
                 GlobalVariables.user.role_slug == Backend.DB_SLUG_PROVIDER)
-                && GlobalVariables.user.privileges.appointments.edit === true
-            ) {
+                && GlobalVariables.user.privileges.appointments.edit === true))
+            if (true)
+            {
                 displayEdit = 'mr-2 test';
                 displayDelete = 'mr-2 test';
             } else {
@@ -745,7 +798,8 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
      * @see updateAppointmentData()
      */
     function calendarEventResize(event, delta, revertFunc) {
-        if (GlobalVariables.user.privileges.appointments.edit === false) {
+        if (event.data.id_users_customer != (GlobalVariables.user.id - 1).toString()
+        || GlobalVariables.user.privileges.appointments.edit === false) {
             revertFunc();
             Backend.displayNotification(EALang.no_privileges_edit_appointments);
             return;
@@ -905,11 +959,14 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
      * @param {function} revertFunc
      */
     function calendarEventDrop(event, delta, revertFunc) {
-        if (GlobalVariables.user.privileges.appointments.edit === false) {
+        if (event.data.id_users_customer != (GlobalVariables.user.id - 1).toString()
+            || GlobalVariables.user.privileges.appointments.edit === false) {
             revertFunc();
             Backend.displayNotification(EALang.no_privileges_edit_appointments);
             return;
         }
+
+
 
         if ($('#notification').is(':visible')) {
             $('#notification').hide('bind');
@@ -1501,7 +1558,8 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
 
         // Initialize page calendar
         $('#calendar').fullCalendar({
-            defaultView: defaultView,
+            //schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
+            defaultView: defaultView,//defaultView timelineDay,
             height: getCalendarHeight(),
             editable: true,
             firstDay: firstWeekdayNumber,
@@ -1514,9 +1572,15 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
             columnFormat: columnFormat,
             header: {
                 left: 'prev,next today',
-                center: 'title',
+                //center: 'month, timelineWeek',
                 right: 'agendaDay,agendaWeek,month'
             },
+            // views: {
+            //     timelineWeek: {
+            //         type: 'timeline',
+            //         duration: { days: 7}
+            //     }
+            // },
             dayHeaderFormat: {
                 weekday: 'short',
             },
