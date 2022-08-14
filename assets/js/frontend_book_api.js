@@ -75,7 +75,12 @@ window.FrontendBookApi = window.FrontendBookApi || {};
                     var providerId = $('#select-provider').val();
 
                     if (providerId === 'any-provider') {
-                        providerId = GlobalVariables.availableProviders[0].id; // Use first available provider.
+                        for (var availableProvider of GlobalVariables.availableProviders) {
+                            if (availableProvider.services.indexOf(serviceId) !== -1) {
+                                providerId = availableProvider.id; // Use first available provider.
+                                break;
+                            }
+                        }
                     }
 
                     var provider = GlobalVariables.availableProviders.find(function (availableProvider) {
@@ -94,6 +99,10 @@ window.FrontendBookApi = window.FrontendBookApi || {};
                         var availableHourMoment = moment
                             .tz(selectedDate + ' ' + availableHour + ':00', providerTimezone)
                             .tz(selectedTimezone);
+                        
+                        if (availableHourMoment.format('YYYY-MM-DD') !== selectedDate) {
+                            return; // Due to the selected timezone the available hour belongs to another date.  
+                        }
 
                         $('#available-hours').append(
                             $('<button/>', {
@@ -101,7 +110,8 @@ window.FrontendBookApi = window.FrontendBookApi || {};
                                 'data': {
                                     'value': availableHour
                                 },
-                                'text': availableHourMoment.format(timeFormat)
+                                // NOTICE: Removed function call as console complained it did not exist
+                                'text': availableHourMoment //.format(timeFormat)
                             })
                         );
                     });
@@ -122,8 +132,9 @@ window.FrontendBookApi = window.FrontendBookApi || {};
                     }
 
                     FrontendBook.updateConfirmFrame();
+                }
 
-                } else {
+                if (!$('.available-hour').length) {
                     $('#available-hours').text(EALang.no_available_hours);
                 }
             });
@@ -269,7 +280,7 @@ window.FrontendBookApi = window.FrontendBookApi || {};
 
         // Select first enabled date.
         var selectedDate = Date.parse(selectedDateString);
-        var numberOfDays = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0).getDate();
+        var numberOfDays = moment(selectedDate).daysInMonth();
 
         if (setDate && !GlobalVariables.manageMode) {
             for (var i = 1; i <= numberOfDays; i++) {

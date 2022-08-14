@@ -38,7 +38,7 @@
         });
     </script>
 </head>
-<body>
+<body style="">
 <div id="login-frame" class="frame-container">
     <h2><?= lang('backend_section') ?></h2>
     <p><?= lang('you_need_to_login') ?></p>

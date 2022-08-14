@@ -754,7 +754,7 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
                 $('#select-provider').trigger('change');
 
                 // Preselect time
-                $('#start-datetime').datepicker('setDate', new Date(start.format('YYY/MM/DD HH:mm:ss')));
+                $('#start-datetime').datepicker('setDate', new Date(start.format('YYYY/MM/DD HH:mm:ss')));
                 $('#end-datetime').datepicker('setDate', new Date(end.format('YYYY/MM/DD HH:mm:ss')));
 
                 return false;
@@ -817,6 +817,7 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
         var end = view.end.clone();
         var selDayName = start.toDate().toString('dddd').toLowerCase();
         var selDayDate = start.format('YYYY-MM-DD');
+        var calendarEventSource = [];
 
         if (workingPlanExceptions[selDayDate]) {
             workingPlan[selDayName] = workingPlanExceptions[selDayDate];
@@ -839,7 +840,7 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
                 }
             };
 
-            $calendar.fullCalendar('renderEvent', workingPlanExceptionEvent, false);
+            calendarEventSource.push(workingPlanExceptionEvent);
         }
 
         if (workingPlan[selDayName] === null) {
@@ -853,7 +854,9 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
                 className: 'fc-unavailable'
             };
 
-            $calendar.fullCalendar('renderEvent', nonWorkingDay, true);
+            calendarEventSource.push(nonWorkingDay);
+
+            $calendar.fullCalendar('addEventSource', calendarEventSource);
 
             return;
         }
@@ -870,7 +873,8 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
                 editable: false,
                 className: 'fc-unavailable'
             };
-            $calendar.fullCalendar('renderEvent', unavailablePeriod, false);
+
+            calendarEventSource.push(unavailablePeriod);
         }
 
         // Add unavailable period after work ends.
@@ -886,7 +890,8 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
                 editable: false,
                 className: 'fc-unavailable'
             };
-            $calendar.fullCalendar('renderEvent', unavailablePeriod, false);
+
+            calendarEventSource.push(unavailablePeriod);
         }
 
         // Add unavailable periods for breaks.
@@ -907,8 +912,10 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
                 className: 'fc-unavailable fc-break'
             };
 
-            $calendar.fullCalendar('renderEvent', unavailablePeriod, false);
+            calendarEventSource.push(unavailablePeriod);
         });
+
+        $calendar.fullCalendar('addEventSource', calendarEventSource);
     }
 
     /**
@@ -947,6 +954,7 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
                 start: moment(appointment.start_datetime),
                 end: moment(appointment.end_datetime),
                 allDay: false,
+                color: appointment.bg_color,
                 data: appointment // Store appointment data for later use.
             });
         }
@@ -967,6 +975,8 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
             return;
         }
 
+        var calendarEventSource = [];
+
         for (var index in unavailabilityEvents) {
             var unavailability = unavailabilityEvents[index];
 
@@ -985,8 +995,10 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
                 data: unavailability
             };
 
-            $providerColumn.find('.calendar-wrapper').fullCalendar('renderEvent', event, false);
+            calendarEventSource.push(event);
         }
+
+        $providerColumn.find('.calendar-wrapper').fullCalendar('addEventSource', calendarEventSource);
     }
 
     /**
@@ -1175,7 +1187,7 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
                         'text': EALang.start
                     }),
                     $('<span/>', {
-                        'text': GeneralFunctions.formatDate(event.start.format('YYYY-MM-DD HH:mm:ss'), GlobalVariables.dateFormat, true)
+                        'text': GeneralFunctions.formatDate(event.data.date + ' ' + event.data.workingPlanException.start, GlobalVariables.dateFormat, true)
                     }),
                     $('<br/>'),
 
@@ -1183,7 +1195,7 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
                         'text': EALang.end
                     }),
                     $('<span/>', {
-                        'text': GeneralFunctions.formatDate(event.end.format('YYYY-MM-DD HH:mm:ss'), GlobalVariables.dateFormat, true)
+                        'text': GeneralFunctions.formatDate(event.data.date + ' ' + event.data.workingPlanException.end, GlobalVariables.dateFormat, true)
                     }),
                     $('<br/>'),
 
@@ -1338,7 +1350,7 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
                                 ]
                             }),
                             $('<button/>', {
-                                'class': 'delete-popover btn btn-outline-secondary mr-2' + displayDelete,
+                                'class': 'delete-popover btn btn-outline-secondary mr-2 ' + displayDelete,
                                 'html': [
                                     $('<i/>', {
                                         'class': 'fas fa-trash-alt mr-2'
@@ -1393,7 +1405,8 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
      * @see updateAppointmentData()
      */
     function onEventResize(event, delta, revertFunc) {
-        if (GlobalVariables.user.privileges.appointments.edit === false) {
+        if (event.data.id_users_customer != (GlobalVariables.user.id - 1).toString()
+            || GlobalVariables.user.privileges.appointments.edit === false) {
             revertFunc();
             Backend.displayNotification(EALang.no_privileges_edit_appointments);
             return;
@@ -1518,7 +1531,8 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
      * on the calendar. We need to update the database with this change. This is done via an ajax call.
      */
     function onEventDrop(event, delta, revertFunc) {
-        if (GlobalVariables.user.privileges.appointments.edit === false) {
+        if (event.data.id_users_customer != (GlobalVariables.user.id - 1).toString()
+            || GlobalVariables.user.privileges.appointments.edit === false) {
             revertFunc();
             Backend.displayNotification(EALang.no_privileges_edit_appointments);
             return;

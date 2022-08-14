@@ -13,6 +13,8 @@
 
 /**
  * Appointments Controller
+ * 
+ * @property CI_Session $session
  *
  * @package Controllers
  */
@@ -24,7 +26,6 @@ class Appointments extends EA_Controller {
     {
         parent::__construct();
 
-        $this->load->helper('installation');
         $this->load->helper('google_analytics');
         $this->load->model('appointments_model');
         $this->load->model('providers_model');
@@ -38,6 +39,11 @@ class Appointments extends EA_Controller {
         $this->load->library('notifications');
         $this->load->library('availability');
         $this->load->driver('cache', ['adapter' => 'file']);
+        //$this->load->library('session');
+
+        $this->load->model('roles_model');
+        $this->load->model('user_model');
+        $this->load->library('migration');
     }
 
     /**
@@ -50,13 +56,16 @@ class Appointments extends EA_Controller {
      */
     public function index($appointment_hash = '')
     {
+        $this->session->set_userdata('dest_url', site_url('appointments/index' . (! empty($appointment_hash) ? '/' . $appointment_hash : '')));
+        
+        if ( ! $this->has_privileges(PRIV_APPOINTMENTS))
+        {
+            return;
+        }
+
         try
         {
-            if ( ! is_app_installed())
-            {
-                redirect('installation/index');
-                return;
-            }
+            
 
             $available_services = $this->services_model->get_available_services();
             $available_providers = $this->providers_model->get_available_providers();
@@ -74,6 +83,8 @@ class Appointments extends EA_Controller {
             $privacy_policy_content = $this->settings_model->get_setting('privacy_policy_content');
             $display_any_provider = $this->settings_model->get_setting('display_any_provider');
             $timezones = $this->timezones->to_array();
+            $relative = $this->secretaries_model->get_row($this->session->userdata('user_id'));
+
 
             // Remove the data that are not needed inside the $available_providers array.
             foreach ($available_providers as $index => $provider)
@@ -151,7 +162,7 @@ class Appointments extends EA_Controller {
                 $provider = [];
                 $customer = [];
             }
-
+            
             // Load the book appointment view.
             $variables = [
                 'available_services' => $available_services,
@@ -174,6 +185,7 @@ class Appointments extends EA_Controller {
                 'privacy_policy_content' => $privacy_policy_content,
                 'timezones' => $timezones,
                 'display_any_provider' => $display_any_provider,
+                'relative' => $relative,
             ];
         }
         catch (Exception $exception)
@@ -340,7 +352,7 @@ class Appointments extends EA_Controller {
             // that will provide the requested service.
             if ($provider_id === ANY_PROVIDER)
             {
-                $provider_id = $this->search_any_provider($selected_date, $service_id);
+                $provider_id = $this->search_any_provider($service_id, $selected_date);
 
                 if ($provider_id === NULL)
                 {
@@ -378,14 +390,15 @@ class Appointments extends EA_Controller {
      *
      * This method will return the database ID of the provider with the most available periods.
      *
-     * @param string $date The date to be searched (Y-m-d).
      * @param int $service_id The requested service ID.
+     * @param string $date The date to be searched (Y-m-d).
+     * @param string $hour The hour to be searched (H:i).
      *
      * @return int Returns the ID of the provider that can provide the service at the selected date.
      *
      * @throws Exception
      */
-    protected function search_any_provider($date, $service_id)
+    protected function search_any_provider($service_id, $date, $hour = null)
     {
         $available_providers = $this->providers_model->get_available_providers();
 
@@ -404,7 +417,7 @@ class Appointments extends EA_Controller {
                     // Check if the provider is available for the requested date.
                     $available_hours = $this->availability->get_available_hours($date, $service, $provider);
 
-                    if (count($available_hours) > $max_hours_count)
+                    if (count($available_hours) > $max_hours_count && (empty($hour) || in_array($hour, $available_hours, false)))
                     {
                         $provider_id = $provider['id'];
                         $max_hours_count = count($available_hours);
@@ -486,7 +499,14 @@ class Appointments extends EA_Controller {
             ];
 
             $this->synchronization->sync_appointment_saved($appointment, $service, $provider, $customer, $settings, $manage_mode);
-            $this->notifications->notify_appointment_saved($appointment, $service, $provider, $customer, $settings, $manage_mode);
+
+            if ( $appointment['status'] == "confirmed")
+            {
+                $this->notifications->notify_appointment_confirmed($appointment, $service, $provider, $customer, $settings, $manage_mode);
+            } else {
+                $this->notifications->notify_appointment_saved($appointment, $service, $provider, $customer, $settings, $manage_mode);
+            }
+
 
             $response = [
                 'appointment_id' => $appointment['id'],
@@ -527,12 +547,13 @@ class Appointments extends EA_Controller {
 
         $appointment = $post_data['appointment'];
 
-        $date = date('Y-m-d', strtotime($appointment['start_datetime']));
+        $appointment_start = new DateTime($appointment['start_datetime']);
+        $date = $appointment_start->format('Y-m-d');
+        $hour = $appointment_start->format('H:i');
 
         if ($appointment['id_users_provider'] === ANY_PROVIDER)
         {
-
-            $appointment['id_users_provider'] = $this->search_any_provider($date, $appointment['id_services']);
+            $appointment['id_users_provider'] = $this->search_any_provider($appointment['id_services'], $date, $hour);
 
             return $appointment['id_users_provider'];
         }
@@ -674,5 +695,53 @@ class Appointments extends EA_Controller {
         return $provider_list;
     }
 
+    /**
+     * Check whether current user is logged in and has the required privileges to view a page.
+     *
+     * The backend page requires different privileges from the users to display pages. Not all pages are available to
+     * all users. For example secretaries should not be able to edit the system users.
+     *
+     * @param string $page This argument must match the roles field names of each section (eg "appointments", "users"
+     * ...).
+     * @param bool $redirect If the user has not the required privileges (either not logged in or insufficient role
+     * privileges) then the user will be redirected to another page. Set this argument to FALSE when using ajax (default
+     * true).
+     *
+     * @return bool Returns whether the user has the required privileges to view the page or not. If the user is not
+     * logged in then he will be prompted to log in. If he hasn't the required privileges then an info message will be
+     * displayed.
+     */
+    protected function has_privileges($page, $redirect = TRUE)
+    {
+        // Check if user is logged in.
+        $user_id = $this->session->userdata('user_id');
+
+        if ($user_id == FALSE)
+        {
+            // User not logged in, display the login view.
+            if ($redirect)
+            {
+                header('Location: ' . site_url('user/login'));
+            }
+            return FALSE;
+        }
+
+        // Check if the user has the required privileges for viewing the selected page.
+        $role_slug = $this->session->userdata('role_slug');
+
+        $role_privileges = $this->db->get_where('roles', ['slug' => $role_slug])->row_array();
+
+        if ($role_privileges[$page] < PRIV_VIEW)
+        {
+            // User does not have the permission to view the page.
+            if ($redirect)
+            {
+                header('Location: ' . site_url('user/no_privileges'));
+            }
+            return FALSE;
+        }
+
+        return TRUE;
+    }
 
 }

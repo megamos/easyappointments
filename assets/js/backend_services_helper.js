@@ -105,7 +105,8 @@
 
             // Default values
             $('#service-name').val('Service');
-            $('#service-duration').val('30');
+            $('#service-duration').val('1440');
+            $('#service-duration').prop("disabled", true);
             $('#service-price').val('0');
             $('#service-currency').val('');
             $('#service-category').val('null');
@@ -269,7 +270,7 @@
             .hide();
 
         try {
-            // validate required fields.
+            // Validate required fields.
             var missingRequired = false;
 
             $('#services .required').each(function (index, requiredField) {
@@ -281,6 +282,12 @@
 
             if (missingRequired) {
                 throw new Error(EALang.fields_are_required);
+            }
+
+            // Validate the duration.
+            if (Number($('#service-duration').val()) < 5) {
+                $('#service-duration').closest('.form-group').addClass('has-error');
+                throw new Error(EALang.invalid_duration);
             }
 
             return true;

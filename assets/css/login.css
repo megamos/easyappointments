@@ -3,7 +3,9 @@ body {
     height: 100vh;
     display: table-cell;
     vertical-align: middle;
-    background-color: #f5f8fa;
+    background-image: url('../img/login_bg2.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 #login-frame {

@@ -50,6 +50,7 @@ class Backend_api extends EA_Controller {
         $this->load->library('notifications');
         $this->load->library('synchronization');
         $this->load->library('timezones');
+        //$this->load->library('clg');
 
         if ($this->session->userdata('role_slug'))
         {
@@ -88,6 +89,7 @@ class Backend_api extends EA_Controller {
                 $appointment['service'] = $this->services_model->get_row($appointment['id_services']);
                 $appointment['customer'] = $this->customers_model->get_row($appointment['id_users_customer']);
             }
+            unset ($appointment);
 
             $user_id = $this->session->userdata('user_id');
             $role_slug = $this->session->userdata('role_slug');
@@ -201,6 +203,7 @@ class Backend_api extends EA_Controller {
                 $appointment['provider'] = $this->providers_model->get_row($appointment['id_users_provider']);
                 $appointment['service'] = $this->services_model->get_row($appointment['id_services']);
                 $appointment['customer'] = $this->customers_model->get_row($appointment['id_users_customer']);
+                $appointment['visitors'] = $this->appointments_model->get_visitors($appointment['id']);
             }
 
             // Get unavailable periods (only for provider).
@@ -257,12 +260,19 @@ class Backend_api extends EA_Controller {
                 $required_privileges = ( ! isset($customer['id']))
                     ? $this->privileges[PRIV_CUSTOMERS]['add']
                     : $this->privileges[PRIV_CUSTOMERS]['edit'];
+
+                if (isset($customer['id']) && $customer['id'] == $this->session->userdata('user_id') -1)
+                {
+                    $required_privileges = TRUE;
+                }
+                
                 if ($required_privileges == FALSE)
                 {
                     throw new Exception('You do not have the required privileges for this task.');
                 }
 
-                $customer['id'] = $this->customers_model->add($customer);
+                //$customer['id'] = $this->customers_model->add($customer);
+                $customer['id'] = $this->customers_model->find_record_id($customer);
             }
 
             // Save appointment changes to the database.
@@ -273,6 +283,13 @@ class Backend_api extends EA_Controller {
                 $required_privileges = ( ! isset($appointment['id']))
                     ? $this->privileges[PRIV_APPOINTMENTS]['add']
                     : $this->privileges[PRIV_APPOINTMENTS]['edit'];
+
+
+                if (isset($appointment['id_users_customer']) && $appointment['id_users_customer'] == $this->session->userdata('user_id') -1)
+                {
+                    $required_privileges = TRUE;
+                }
+
                 if ($required_privileges == FALSE)
                 {
                     throw new Exception('You do not have the required privileges for this task.');
@@ -280,14 +297,65 @@ class Backend_api extends EA_Controller {
 
                 $manage_mode = isset($appointment['id']);
 
+                // Figure out if it's new or not'
+                $new_appointment = isset($appointment['id']) ? FALSE: TRUE;
+
                 // If the appointment does not contain the customer record id, then it means that is is going to be
                 // inserted. Get the customer's record ID.
                 if ( ! isset($appointment['id_users_customer']))
                 {
                     $appointment['id_users_customer'] = $customer['id'];
                 }
+                //$appointment['id_users_customer'] = $customer['id'];
+                
+                // Set background color
+                $appointment['bg_color']= $this->services_model->get_value("color", $appointment['id_services']);
 
+                // Get visiting relatives
+                $relatives = [];
+                if (isset($appointment['relatives'])) {
+                    $relatives = $appointment['relatives'];
+                    unset($appointment['relatives']);
+                }
+
+                // Get visiting guests
+                $guests = [];
+                if (isset($appointment['guests'])) {
+                    $guests = $appointment['guests'];
+                    unset($appointment['guests']);
+                }
+
+                // Get additional rooms
+                $rooms = [];
+                if (count($appointment['additional_rooms']) > 0) {
+                    $rooms = $appointment['additional_rooms'];
+                }
+                unset($appointment['additional_rooms']);
+
+                // Save appointment
+                $child_appointment = $appointment;
+                $appointment['is_main'] = TRUE;
                 $appointment['id'] = $this->appointments_model->add($appointment);
+
+                // Save new "child appointment" for each extra room booked
+                $this->appointments_model->delete_children($appointment['id']);
+
+                unset($child_appointment['id']);
+                $child_appointment['is_main'] = FALSE;
+                foreach ($rooms as $room) {
+                    $child_appointment['id_main'] = $appointment['id'];
+                    $child_appointment['id_services'] = $room;
+                    $child_appointment['bg_color'] = $this->services_model->get_value("color", $child_appointment['id_services']);
+                    $this->appointments_model->add($child_appointment);
+                }
+
+                // Save appointment visitors
+                if (sizeof($relatives) > 0) {
+                    $this->appointments_model->set_relatives($appointment['id'], $relatives);
+                }
+                if (sizeof($guests) > 0) {
+                    $this->appointments_model->set_guests($appointment['id'], $guests);
+                }
             }
 
             $appointment = $this->appointments_model->get_row($appointment['id']);
@@ -304,7 +372,13 @@ class Backend_api extends EA_Controller {
             ];
 
             $this->synchronization->sync_appointment_saved($appointment, $service, $provider, $customer, $settings, $manage_mode);
-            $this->notifications->notify_appointment_saved($appointment, $service, $provider, $customer, $settings, $manage_mode);
+            
+            if ( $appointment['status'] == "confirmed")
+            {
+                $this->notifications->notify_appointment_confirmed($appointment, $service, $provider, $customer, $settings, $manage_mode);
+            } else {
+                $this->notifications->notify_appointment_saved($appointment, $service, $provider, $customer, $settings, $manage_mode);
+            }
 
             $response = AJAX_SUCCESS;
         }
@@ -332,13 +406,9 @@ class Backend_api extends EA_Controller {
      */
     public function ajax_delete_appointment()
     {
+        //TODO Take care of 'additional_rooms'
         try
         {
-            if ($this->privileges[PRIV_APPOINTMENTS]['delete'] == FALSE)
-            {
-                throw new Exception('You do not have the required privileges for this task.');
-            }
-
             if ( ! $this->input->post('appointment_id'))
             {
                 throw new Exception('No appointment id provided.');
@@ -346,6 +416,13 @@ class Backend_api extends EA_Controller {
 
             // Store appointment data for later use in this method.
             $appointment = $this->appointments_model->get_row($this->input->post('appointment_id'));
+
+            if ($this->privileges[PRIV_APPOINTMENTS]['delete'] == FALSE
+                && intval($appointment['id_users_customer']) != intval($this->session->userdata('user_id') - 1))
+            {
+                throw new Exception('You do not have the required privileges for this task.');
+            }
+
             $provider = $this->providers_model->get_row($appointment['id_users_provider']);
             $customer = $this->customers_model->get_row($appointment['id_users_customer']);
             $service = $this->services_model->get_row($appointment['id_services']);
@@ -1376,6 +1453,24 @@ class Backend_api extends EA_Controller {
 
             $secretary_id = $this->secretaries_model->add($secretary);
 
+            /**
+             * Save the customer that the secretary relates to.
+             * CLG will use secretary users as "customers with login", with only read access for backend
+             * appointments. No customer info will be needed for new booking, as it is taken from the 
+             * logged in user.
+             */
+            $customer = $secretary;
+            unset($customer['settings']);
+            unset($customer['mobile_number']);
+            unset($customer['providers']);
+
+            if( $this->customers_model->exists( $customer) ) {
+                 $customer['id'] = $this->customers_model->find_record_id($customer);
+            }
+
+            // Update or Add the Customer clone of Secretary(User)
+            $this->customers_model->add($customer);
+
             $response = [
                 'status' => AJAX_SUCCESS,
                 'id' => $secretary_id
@@ -1409,6 +1504,14 @@ class Backend_api extends EA_Controller {
             }
 
             $result = $this->secretaries_model->delete($this->input->post('secretary_id'));
+
+            /**
+             * Delete the customer that the secretary relates to.
+             * CLG will use secretary users as "customers with login", with only read access for backend
+             * appointments. No customer info will be needed for new booking, as it is taken from the 
+             * logged in user.
+             */
+            $this->customers_model->delete($this->input->post('secretary_id'));
 
             $response = $result ? AJAX_SUCCESS : AJAX_FAILURE;
         }

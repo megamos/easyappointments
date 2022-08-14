@@ -212,14 +212,7 @@
                         </div>
 
                         <div class="col-12 col-md-6">
-                            <div id="select-time">
-                                <div class="form-group">
-                                    <label for="select-timezone"><?= lang('timezone') ?></label>
-                                    <?= render_timezone_dropdown('id="select-timezone" class="form-control" value="UTC"'); ?>
-                                </div>
-
-                                <div id="available-hours"></div>
-                            </div>
+                            <div id="select-end-date"></div>
                         </div>
                     </div>
                 </div>
@@ -239,7 +232,6 @@
             </div>
 
             <!-- ENTER CUSTOMER DATA -->
-
             <div id="wizard-frame-3" class="wizard-frame" style="display:none;">
                 <div class="frame-container">
 
@@ -252,21 +244,21 @@
                                     <?= lang('first_name') ?>
                                     <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" id="first-name" class="required form-control" maxlength="100"/>
+                                <input type="text" id="first-name" class="required form-control" maxlength="100"/ value="<?= $relative['first_name'] ?>">
                             </div>
                             <div class="form-group">
                                 <label for="last-name" class="control-label">
                                     <?= lang('last_name') ?>
                                     <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" id="last-name" class="required form-control" maxlength="120"/>
+                                <input type="text" id="last-name" class="required form-control" maxlength="120"/ value="<?= $relative['last_name'] ?>">
                             </div>
                             <div class="form-group">
                                 <label for="email" class="control-label">
                                     <?= lang('email') ?>
                                     <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" id="email" class="required form-control" maxlength="120"/>
+                                <input type="text" id="email" class="required form-control" maxlength="120"/ value="<?= $relative['email'] ?>">
                             </div>
                             <div class="form-group">
                                 <label for="phone-number" class="control-label">
@@ -274,66 +266,20 @@
                                     <?= $require_phone_number === '1' ? '<span class="text-danger">*</span>' : '' ?>
                                 </label>
                                 <input type="text" id="phone-number" maxlength="60"
-                                       class="<?= $require_phone_number === '1' ? 'required' : '' ?> form-control"/>
+                                       class="<?= $require_phone_number === '1' ? 'required' : '' ?> form-control"/ value="<?= $relative['phone_number'] ?>">
                             </div>
                         </div>
 
                         <div class="col-12 col-md-6">
                             <div class="form-group">
-                                <label for="address" class="control-label">
-                                    <?= lang('address') ?>
-                                </label>
-                                <input type="text" id="address" class="form-control" maxlength="120"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="city" class="control-label">
-                                    <?= lang('city') ?>
-                                </label>
-                                <input type="text" id="city" class="form-control" maxlength="120"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="zip-code" class="control-label">
-                                    <?= lang('zip_code') ?>
-                                </label>
-                                <input type="text" id="zip-code" class="form-control" maxlength="120"/>
-                            </div>
-                            <div class="form-group">
                                 <label for="notes" class="control-label">
                                     <?= lang('notes') ?>
                                 </label>
-                                <textarea id="notes" maxlength="500" class="form-control" rows="1"></textarea>
+                                <textarea id="notes" maxlength="1000" class="form-control" rows="6"></textarea>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <?php if ($display_terms_and_conditions): ?>
-                    <div class="form-check mb-3">
-                        <input type="checkbox" class="required form-check-input" id="accept-to-terms-and-conditions">
-                        <label class="form-check-label" for="accept-to-terms-and-conditions">
-                            <?= strtr(lang('read_and_agree_to_terms_and_conditions'),
-                                [
-                                    '{$link}' => '<a href="#" data-toggle="modal" data-target="#terms-and-conditions-modal">',
-                                    '{/$link}' => '</a>'
-                                ])
-                            ?>
-                        </label>
-                    </div>
-                <?php endif ?>
-
-                <?php if ($display_privacy_policy): ?>
-                    <div class="form-check mb-3">
-                        <input type="checkbox" class="required form-check-input" id="accept-to-privacy-policy">
-                        <label class="form-check-label" for="accept-to-privacy-policy">
-                            <?= strtr(lang('read_and_agree_to_privacy_policy'),
-                                [
-                                    '{$link}' => '<a href="#" data-toggle="modal" data-target="#privacy-policy-modal">',
-                                    '{/$link}' => '</a>'
-                                ])
-                            ?>
-                        </label>
-                    </div>
-                <?php endif ?>
 
                 <div class="command-buttons">
                     <button type="button" id="button-back-3" class="btn button-back btn-outline-secondary"

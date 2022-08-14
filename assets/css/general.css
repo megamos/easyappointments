@@ -31,7 +31,7 @@ body .ui-dialog .ui-dialog-titlebar-close {
 }
 
 body .ui-draggable .ui-dialog-titlebar {
-    background: #429a82;
+    background: #ef6333;
     color: #FFF;
     font-size: 1.2em;
     font-weight: lighter;
@@ -67,7 +67,7 @@ body .ui-dialog #error-technical {
 }
 
 body .ui-widget.ui-widget-content {
-    border: 1px solid #429a82;
+    border: 1px solid #ef6333;
     padding: 0;
 }
 
@@ -83,7 +83,7 @@ body .ui-datepicker {
 
 body .ui-datepicker .ui-widget-header {
     border: none;
-    background: #429a82;
+    background: #ef6333;
     border-radius: 0;
 }
 
@@ -97,7 +97,7 @@ body .ui-datepicker .ui-datepicker-title {
 }
 
 body .ui-datepicker th {
-    background: #429a82;
+    background: #ef6333;
     color: #FFF;
 }
 
@@ -158,8 +158,8 @@ body .ui-datepicker .ui-datepicker-next-hover {
 
 body .ui-datepicker .ui-slider-handle {
     border-radius: 0;
-    border-color: #429a82;
-    background-color: #429a82;
+    border-color: #ef6333;
+    background-color: #ef6333;
 }
 
 body .ui-priority-primary,
@@ -424,4 +424,20 @@ body .popover-body a {
 
 body .clearfix {
     clear: both;
+}
+
+#appointment-notes {
+    height: 100px;
+}
+
+.input-group {
+    margin-bottom: 5px;
+}
+
+#select-service {
+    margin-bottom: 5px;
+}
+
+.hide {
+    display: none !important;
 }

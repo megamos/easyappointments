@@ -67,7 +67,7 @@ class Backend extends EA_Controller {
 
         $view['base_url'] = config('base_url');
         $view['page_title'] = lang('calendar');
-        $view['user_display_name'] = $this->user_model->get_user_display_name($this->session->userdata('user_id'));
+        $view['user_display_name'] = $this->user_model->get_user_display_name($user_id);
         $view['active_menu'] = PRIV_APPOINTMENTS;
         $view['date_format'] = $this->settings_model->get_setting('date_format');
         $view['time_format'] = $this->settings_model->get_setting('time_format');
@@ -79,11 +79,15 @@ class Backend extends EA_Controller {
         $view['customers'] = $this->customers_model->get_batch();
         $view['calendar_view'] = ! empty($calendar_view_query_param) ? $calendar_view_query_param : $user['settings']['calendar_view'];
         $view['timezones'] = $this->timezones->to_array();
+        $view['user_first_name'] = $user['first_name'];
+        $view['user_last_name'] = $user['last_name'];
+        $view['user_phone_number'] = $user['phone_number'];
+
         $this->set_user_data($view);
 
         if ($this->session->userdata('role_slug') === DB_SLUG_SECRETARY)
         {
-            $secretary = $this->secretaries_model->get_row($this->session->userdata('user_id'));
+            $secretary = $this->secretaries_model->get_row($user_id);
             $view['secretary_providers'] = $secretary['providers'];
         }
         else

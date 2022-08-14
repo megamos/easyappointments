@@ -21,10 +21,12 @@ root {
    -------------------------------------------------------------------- */
 
 #header {
-    background-color: #429a82;
     box-shadow: none;
     border-radius: 0;
     padding: 0;
+    background-color: #484848; /* #5b906e;*/
+    background-image: url('../img/login_bg2.jpg');
+    background-size: cover;
 }
 
 #header #header-logo {
@@ -38,8 +40,8 @@ root {
 
 #header #header-logo img {
     float: left;
-    width: 45px;
     height: 45px;
+    width: 120px;
     margin-right: 10px;
 }
 
@@ -66,11 +68,11 @@ root {
 }
 
 #header #header-menu .nav-item:hover {
-    background: #3a8873;
+    background: #ef6333;
 }
 
 #header #header-menu .nav-item.active {
-    background: #2e6a5b;
+    background: #ef6333;
 }
 
 #footer {
@@ -148,7 +150,7 @@ body .modal .modal-title {
 
 body .modal-header {
     padding: 20px 15px;
-    background: #429a82;
+    background: #ef6333;
 }
 
 body .modal-header h3 {
@@ -255,7 +257,7 @@ body legend {
 
 .backend-page .filter-records .results .entry.selected {
     background-color: #F4F4F4;
-    border-right: 5px solid #429a82;
+    border-right: 5px solid #ef6333;
 }
 
 .backend-page .filter-records .results hr {
@@ -427,6 +429,7 @@ body legend {
 #calendar .fc-event {
     border: 1px solid #4790CA;
     background-color: #4790CA;
+    min-height: 12px; 
 }
 
 #existing-customers-list {
@@ -446,7 +449,7 @@ body legend {
 }
 
 #existing-customers-list div:hover {
-    background: #429a82;
+    background: #ef6333;
     font-weight: bold;
     color: #FFF;
     cursor: pointer;
@@ -457,11 +460,6 @@ body legend {
     height: 14px;
     min-height: 24px;
     font-size: 12px;
-}
-
-#appointment-notes,
-#customer-notes {
-    height: 37px; /* Align with location field */
 }
 
 body .form-horizontal .control-label {
@@ -551,7 +549,7 @@ body .form-horizontal .controls {
 }
 
 #calendar .calendar-view .date-column .provider-column .event.unavailability {
-    background: #409482;
+    background: #ef6333;
     color: #fff;
 
 }
@@ -656,6 +654,7 @@ body .form-horizontal .controls {
 
 #services-page #service-duration {
     margin: 0;
+    display: hidden;
 }
 
 #services-page .record-details h3 a {
@@ -708,7 +707,7 @@ body .form-horizontal .controls {
 
 #users-page #providers .working-plan-view .work-start,
 #users-page #providers .working-plan-view .work-end {
-    max-width: 88px;
+    max-width: 100px;
 }
 
 #users-page .btn-toolbar {
@@ -718,6 +717,11 @@ body .form-horizontal .controls {
 
 #users-page #providers .form-message {
     clear: both;
+}
+
+#users-page #providers .breaks.table,
+#settings-page .breaks.table {
+    table-layout: fixed;
 }
 
 #users-page #providers .breaks .btn {
@@ -784,12 +788,12 @@ body .form-horizontal .controls {
 }
 
 #business-logic .working-plan td input[type="text"] {
-    max-width: 88px;
+    max-width: 100px;
 }
 
 #business-logic .working-plan .work-start,
 #business-logic .working-plan .work-end {
-    max-width: 88px;
+    max-width: 100px;
 }
 
 #business-logic .working-plan label.checkbox {

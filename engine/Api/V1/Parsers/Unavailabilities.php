@@ -34,6 +34,7 @@ class Unavailabilities implements ParsersInterface {
             'start' => $response['start_datetime'],
             'end' => $response['end_datetime'],
             'notes' => $response['notes'],
+	    'status' => $response['status'],
             'providerId' => array_key_exists('id_users_provider', $response)
                 ? (int)$response['id_users_provider']
                 : NULL,
@@ -78,6 +79,11 @@ class Unavailabilities implements ParsersInterface {
         if (array_key_exists('notes', $request))
         {
             $decodedRequest['notes'] = $request['notes'];
+        }
+
+	if (array_key_exists('status', $request))
+        {
+            $decoded_request['status'] = $request['status'];
         }
 
         if (array_key_exists('providerId', $request))
