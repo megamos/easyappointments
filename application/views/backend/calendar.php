@@ -382,7 +382,7 @@
                                       </div>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group invisible">
                                     <label for="select-provider" class="control-label">
                                         <?= lang('provider') ?>
                                         <span class="text-danger">*</span>

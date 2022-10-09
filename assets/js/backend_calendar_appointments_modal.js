@@ -210,18 +210,8 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             var duration = service ? service.duration : 60;
 
             var start = new Date();
-            var currentMin = parseInt(start.toString('mm'));
-
-            if (currentMin > 0 && currentMin < 15) {
-                start.set({'minute': 15});
-            } else if (currentMin > 15 && currentMin < 30) {
-                start.set({'minute': 30});
-            } else if (currentMin > 30 && currentMin < 45) {
-                start.set({'minute': 45});
-            } else {
-                start.addHours(1).set({'minute': 0});
-            }
-
+            start.set({'hour': 12, 'minute': 0, 'second': 0});
+            
             $dialog.find('#start-datetime').val(GeneralFunctions.formatDate(start, GlobalVariables.dateFormat, true));
             $dialog.find('#end-datetime').val(GeneralFunctions.formatDate(start.addMinutes(duration),
                 GlobalVariables.dateFormat, true));
@@ -570,7 +560,9 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
         var duration = service ? service.duration : 0;
 
         var startDatetime = new Date();
-        var endDatetime = new Date().addMinutes(duration);
+        startDatetime.set({'hour': 12, 'minute': 0, 'second': 0});
+
+        var endDatetime = startDatetime.addMinutes(duration);
         var dateFormat;
 
         switch (GlobalVariables.dateFormat) {
