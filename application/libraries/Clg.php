@@ -153,7 +153,7 @@ class Clg {
                 'is_main' => TRUE,
                 'id_users_customer' => $appointment['id_users_customer'],
                 'start_datetime >=' => $this->last_day_in_may->format('Y-m-d'),
-                'start_datetime <' => $this->first_day_in_september->format('Y-m-d')
+                'end_datetime <' => $this->first_day_in_september->format('Y-m-d')
             ]);
 
             foreach ($summer_appointments as $a) {
@@ -204,7 +204,7 @@ class Clg {
                 'is_main' => TRUE,
                 'id_users_customer' => $appointment['id_users_customer'],
                 'start_datetime >=' => $end_last_year->format('Y-m-d'),
-                'start_datetime <' => $end_last_year->format('Y-m-d')
+                'end_datetime <' => $end_last_year->format('Y-m-d')
             ]);
 
             if (count($last_year_summer_appointments) > 0) {
