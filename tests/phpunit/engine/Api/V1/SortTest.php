@@ -18,6 +18,7 @@ use PHPUnit\Framework\TestCase;
 class SortTest extends TestCase {
     public function test()
     {
-        $this->markTestIncomplete();
+        $this->markTestSkipped("Skipped...");
+        //$this->markTestIncomplete();
     }
 }
