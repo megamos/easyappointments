@@ -696,6 +696,30 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                 throw new Error(EALang.start_date_before_end_error);
             }
 
+            // Check no duplicate services/rooms
+            var selectedServices = [];
+            var selectedService = $dialog.find('#select-service');
+            var additionalRooms = document.getElementsByName('rooms[]');
+
+            selectedServices.push(selectedService.val());
+
+            if (additionalRooms.length > 0) {
+                additionalRooms.forEach((room_id) => {
+                    var id = room_id.value.trim();
+
+                    if (id.length > 0) {
+                        selectedServices.push(id);
+                    }
+
+                });
+            }
+
+            var hasDuplicates = new Set(selectedServices).size !== selectedServices.length;
+            if (hasDuplicates) {
+                selectedService.closest('.form-group').addClass('has-error');
+                throw new Error(EALang.duplicate_service_selected_error);
+            }
+
             return true;
         } catch (error) {
             $dialog.find('.modal-message').addClass('alert-danger').text(error.message).removeClass('d-none');

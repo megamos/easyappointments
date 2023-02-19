@@ -101,7 +101,7 @@ class Clg {
             $this->R1_max_one_year_prior($appointment);
             $this->R2_max_seven_days($appointment);
             $this->R3_summer_two_years_in_a_row($appointment);
-            $this->R4_exchange_day($appointment);
+            //$this->R4_exchange_day($appointment);
 
             return $this->validation_faults;
         }
@@ -222,7 +222,6 @@ class Clg {
      */
     private function R4_exchange_day($appointment) {
         try {
-
             array_push($this->validation_faults,"R4 Running...");
         }
         catch(Exception $exception) {

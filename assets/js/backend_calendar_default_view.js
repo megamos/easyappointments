@@ -1572,7 +1572,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
             columnFormat: columnFormat,
             header: {
                 left: 'prev,next today',
-                //center: 'month, timelineWeek',
+                center: 'title',
                 right: 'agendaDay,agendaWeek,month'
             },
             // views: {

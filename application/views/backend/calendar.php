@@ -179,13 +179,14 @@
             </button>
 
             <?php if ($calendar_view === 'default'): ?>
-                <a class="btn btn-light" href="<?= site_url('backend?view=table') ?>"
-                   data-tippy-content="<?= lang('table') ?>">
-                    <i class="fas fa-table"></i>
+                <!-- TODO: insert new href value when we have timeline view available -->
+                <a class="btn btn-light is-disabled" href="#"
+                   data-tippy-content="Tabell utseende utvecklas fortfarande">
+                    <i class="fas fa-table is-disabled"></i>
                 </a>
             <?php endif ?>
 
-            <?php if ($calendar_view === 'table'): ?>
+            <?php if ($calendar_view === 'resourceTimeline'): ?>
                 <a class="btn btn-light" href="<?= site_url('backend?view=default') ?>"
                    data-tippy-content="<?= lang('default') ?>">
                     <i class="fas fa-calendar-alt"></i>
@@ -217,7 +218,7 @@
 
                         <input id="appointment-id" type="hidden">
 
-                        <!-- TODO CLG CHANGE: Providing the possibility to book several rooms (services) at once -->
+                        <!-- CLG CHANGE: Providing the possibility to book several rooms (services) at once -->
 
                         <div class="row">
                             <div class="col-12 col-sm-6">
