@@ -1184,8 +1184,6 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                         theColor = appointment.bg_color;
                     }
 
-                    //(appointment.status == "pending") ? "#F06562" : appointment.bg_color
-
                     var appointmentEvent = {
                         id: appointment.id,
                         title: appointment.service.name + ' - '
@@ -1551,7 +1549,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                 throw new Error('Invalid time format setting provided!', GlobalVariables.timeFormat);
         }
 
-        var defaultView = window.innerWidth < 468 ? 'agendaDay' : 'agendaWeek';
+        //var defaultView = window.innerWidth < 468 ? 'agendaDay' : 'agendaWeek';
 
         var firstWeekday = GlobalVariables.firstWeekday;
         var firstWeekdayNumber = GeneralFunctions.getWeekDayId(firstWeekday);
@@ -1559,7 +1557,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
         // Initialize page calendar
         $('#calendar').fullCalendar({
             //schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
-            defaultView: defaultView,//defaultView timelineDay,
+            defaultView: 'month',//defaultView timelineDay,
             height: getCalendarHeight(),
             editable: true,
             firstDay: firstWeekdayNumber,
@@ -1572,7 +1570,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
             columnFormat: columnFormat,
             header: {
                 left: 'prev,next today',
-                //center: 'month, timelineWeek',
+                center: 'title',
                 right: 'agendaDay,agendaWeek,month'
             },
             // views: {
@@ -1644,8 +1642,8 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                 }
 
                 // Preselect time
-                $('#start-datetime').datepicker('setDate', new Date(start.format('YYYY/MM/DD HH:mm:ss')));
-                $('#end-datetime').datepicker('setDate', new Date(end.format('YYYY/MM/DD HH:mm:ss')));
+                $('#start-datetime').datepicker('setDate', new Date(start.format('YYYY/MM/DD HH:mm:ss')).set({'hour': 12, 'minute': 0, 'second': 0}));
+                $('#end-datetime').datepicker('setDate', new Date(end.format('YYYY/MM/DD HH:mm:ss')).set({'hour': 12, 'minute': 0, 'second': 0}));
 
                 return false;
             },

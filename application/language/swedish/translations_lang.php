@@ -125,6 +125,7 @@ $lang['new_unavailable_title'] = 'Ny låst period';
 $lang['edit_unavailable_title'] = 'Ändra låst period';
 $lang['unavailable_saved'] = 'Låst period sparad.';
 $lang['start_date_before_end_error'] = 'Startdatum är efter slutdatum.';
+$lang['duplicate_service_selected_error'] = 'Varje rum får endast väljas en gång';
 $lang['invalid_duration'] = 'Invalid duration.';
 $lang['invalid_email'] = 'Ogiltig epostadress';
 $lang['customers'] = 'Släktingar';

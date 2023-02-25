@@ -234,15 +234,14 @@ class Appointments_model extends EA_Model {
             }
         }
 
-        // CLG Change
-        // At least 1 room needs to be slected
-        if (count($appointment['rooms']) == 0)
+/*         // At least 1 room needs to be slected
+        if (sizeof($appointment['rooms']) < 1)
         {
-            
-        }
+            throw new Exception('Åtminstånde ett rum måste bokas');
+        } */
+
         // Room IDs has to be unique
         
-
         return TRUE;
     }
 

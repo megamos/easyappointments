@@ -179,13 +179,14 @@
             </button>
 
             <?php if ($calendar_view === 'default'): ?>
-                <a class="btn btn-light" href="<?= site_url('backend?view=table') ?>"
-                   data-tippy-content="<?= lang('table') ?>">
-                    <i class="fas fa-table"></i>
+                <!-- TODO: insert new href value when we have timeline view available -->
+                <a class="btn btn-light is-disabled" href="#"
+                   data-tippy-content="Tabell utseende utvecklas fortfarande">
+                    <i class="fas fa-table is-disabled"></i>
                 </a>
             <?php endif ?>
 
-            <?php if ($calendar_view === 'table'): ?>
+            <?php if ($calendar_view === 'resourceTimeline'): ?>
                 <a class="btn btn-light" href="<?= site_url('backend?view=default') ?>"
                    data-tippy-content="<?= lang('default') ?>">
                     <i class="fas fa-calendar-alt"></i>
@@ -217,7 +218,7 @@
 
                         <input id="appointment-id" type="hidden">
 
-                        <!-- TODO CLG CHANGE: Providing the possibility to book several rooms (services) at once -->
+                        <!-- CLG CHANGE: Providing the possibility to book several rooms (services) at once -->
 
                         <div class="row">
                             <div class="col-12 col-sm-6">
@@ -382,7 +383,7 @@
                                       </div>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group invisible">
                                     <label for="select-provider" class="control-label">
                                         <?= lang('provider') ?>
                                         <span class="text-danger">*</span>
@@ -481,7 +482,7 @@
                             </div>
                         </div>
                         <div class="row form-group">
-                            <div class="col-12 col-sm-3">
+                            <legend>
                                 <label for="relatives"> <?= lang('customer') ?> </label>
                                 <button id="select-additional-customer" class="btn btn-outline-secondary btn-sm" type="button"
                                         data-tippy-content="<?= lang('pick_existing_customer_hint') ?>">
@@ -493,8 +494,8 @@
                                 <input id="filter-additional-customers"
                                     placeholder="<?= lang('type_to_filter_customers') ?>"
                                     style="display: none;" class="input-sm form-control">
-                                <div id="additional-customers-list" style="display: none;"></div>
-                            </div>
+                                <div id="additional-customers-list" class="input-sm form-control" style="display: none;"></div>
+                            </legend>
                             <div id="relatives-container" class="col-12 col-sm-9">
                                 <div class="relative input-group hide">
                                     <input class="form-control" name="relatives[]" type="text" placeholder="Namn..." />

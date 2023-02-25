@@ -432,7 +432,7 @@ body legend {
     min-height: 12px; 
 }
 
-#existing-customers-list {
+#existing-customers-list, #additional-customers-list {
     height: 110px;
     overflow-y: auto;
     margin-bottom: 8px;
@@ -440,7 +440,7 @@ body legend {
     line-height: 22px;
 }
 
-#existing-customers-list div {
+#existing-customers-list div, #additional-customers-list div {
     display: inline-block;
     width: 250px;
     margin: 0 7px 7px 0;
@@ -448,14 +448,14 @@ body legend {
     border-radius: 3px;
 }
 
-#existing-customers-list div:hover {
+#existing-customers-list div:hover, #additional-customers-list div:hover {
     background: #ef6333;
     font-weight: bold;
     color: #FFF;
     cursor: pointer;
 }
 
-#filter-existing-customers {
+#filter-existing-customers, #filter-additional-customers {
     display: inline-block;
     height: 14px;
     min-height: 24px;

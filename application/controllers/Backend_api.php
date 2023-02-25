@@ -50,7 +50,7 @@ class Backend_api extends EA_Controller {
         $this->load->library('notifications');
         $this->load->library('synchronization');
         $this->load->library('timezones');
-        //$this->load->library('clg');
+        $this->load->library('clg');
 
         if ($this->session->userdata('role_slug'))
         {
@@ -307,9 +307,12 @@ class Backend_api extends EA_Controller {
                     $appointment['id_users_customer'] = $customer['id'];
                 }
                 //$appointment['id_users_customer'] = $customer['id'];
-                
-                // Set background color
-                $appointment['bg_color']= $this->services_model->get_value("color", $appointment['id_services']);
+
+                // Run CLG validations/booking rules
+                $exceptions = $this->clg->validate_appointment($appointment, false);
+                if (sizeof($exceptions) > 0) {
+                    throw new Exception(join("\r\n", $exceptions));
+                }
 
                 // Get visiting relatives
                 $relatives = [];
@@ -330,11 +333,18 @@ class Backend_api extends EA_Controller {
                 if (count($appointment['additional_rooms']) > 0) {
                     $rooms = $appointment['additional_rooms'];
                 }
+
+                // Set background color
+                $appointment['bg_color']= $this->services_model->get_value("color", $appointment['id_services']);
+
                 unset($appointment['additional_rooms']);
+
+                // Check and save if "book all rooms" service
 
                 // Save appointment
                 $child_appointment = $appointment;
                 $appointment['is_main'] = TRUE;
+
                 $appointment['id'] = $this->appointments_model->add($appointment);
 
                 // Save new "child appointment" for each extra room booked

@@ -210,18 +210,8 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             var duration = service ? service.duration : 60;
 
             var start = new Date();
-            var currentMin = parseInt(start.toString('mm'));
-
-            if (currentMin > 0 && currentMin < 15) {
-                start.set({'minute': 15});
-            } else if (currentMin > 15 && currentMin < 30) {
-                start.set({'minute': 30});
-            } else if (currentMin > 30 && currentMin < 45) {
-                start.set({'minute': 45});
-            } else {
-                start.addHours(1).set({'minute': 0});
-            }
-
+            start.set({'hour': 12, 'minute': 0, 'second': 0});
+            
             $dialog.find('#start-datetime').val(GeneralFunctions.formatDate(start, GlobalVariables.dateFormat, true));
             $dialog.find('#end-datetime').val(GeneralFunctions.formatDate(start.addMinutes(duration),
                 GlobalVariables.dateFormat, true));
@@ -258,6 +248,7 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                 $('#filter-existing-customers').val('');
                 GlobalVariables.customers.forEach(function (customer) {
                     $('<div/>', {
+                        'class': 'list-group-item',
                         'data-id': customer.id,
                         'text': customer.first_name + ' ' + customer.last_name
                     })
@@ -296,7 +287,6 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
          */
         $('#select-additional-customer').on('click', function () {
             var $list = $('#additional-customers-list');
-
             if (!$list.is(':visible')) {
                 $(this).find('span').text(EALang.hide);
                 $list.empty();
@@ -304,7 +294,8 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                 $('#filter-additional-customers').fadeIn('slow');
                 $('#filter-additional-customers').val('');
                 GlobalVariables.customers.forEach(function (customer) {
-                    $('<div/>', {
+                    $('<div/>', {  
+                        'class': 'list-group-item', 
                         'data-id': customer.id,
                         'text': customer.first_name + ' ' + customer.last_name
                     })
@@ -404,6 +395,7 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                                 || customer.zip_code.toLowerCase().indexOf(key) !== -1
                                 || customer.notes.toLowerCase().indexOf(key) !== -1) {
                                 $('<div/>', {
+                                    'class': 'list-group-item',
                                     'data-id': customer.id,
                                     'text': customer.first_name + ' ' + customer.last_name
                                 })
@@ -570,7 +562,9 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
         var duration = service ? service.duration : 0;
 
         var startDatetime = new Date();
-        var endDatetime = new Date().addMinutes(duration);
+        startDatetime.set({'hour': 12, 'minute': 0, 'second': 0});
+
+        var endDatetime = startDatetime.addMinutes(duration);
         var dateFormat;
 
         switch (GlobalVariables.dateFormat) {
@@ -702,6 +696,30 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             if (start > end) {
                 $dialog.find('#start-datetime, #end-datetime').closest('.form-group').addClass('has-error');
                 throw new Error(EALang.start_date_before_end_error);
+            }
+
+            // Check no duplicate services/rooms
+            var selectedServices = [];
+            var selectedService = $dialog.find('#select-service');
+            var additionalRooms = document.getElementsByName('rooms[]');
+
+            selectedServices.push(selectedService.val());
+
+            if (additionalRooms.length > 0) {
+                additionalRooms.forEach((room_id) => {
+                    var id = room_id.value.trim();
+
+                    if (id.length > 0) {
+                        selectedServices.push(id);
+                    }
+
+                });
+            }
+
+            var hasDuplicates = new Set(selectedServices).size !== selectedServices.length;
+            if (hasDuplicates) {
+                selectedService.closest('.form-group').addClass('has-error');
+                throw new Error(EALang.duplicate_service_selected_error);
             }
 
             return true;
