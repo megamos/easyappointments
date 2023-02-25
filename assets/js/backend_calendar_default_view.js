@@ -1184,8 +1184,6 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                         theColor = appointment.bg_color;
                     }
 
-                    //(appointment.status == "pending") ? "#F06562" : appointment.bg_color
-
                     var appointmentEvent = {
                         id: appointment.id,
                         title: appointment.service.name + ' - '

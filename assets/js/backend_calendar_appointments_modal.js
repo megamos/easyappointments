@@ -248,6 +248,7 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                 $('#filter-existing-customers').val('');
                 GlobalVariables.customers.forEach(function (customer) {
                     $('<div/>', {
+                        'class': 'list-group-item',
                         'data-id': customer.id,
                         'text': customer.first_name + ' ' + customer.last_name
                     })
@@ -286,7 +287,6 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
          */
         $('#select-additional-customer').on('click', function () {
             var $list = $('#additional-customers-list');
-
             if (!$list.is(':visible')) {
                 $(this).find('span').text(EALang.hide);
                 $list.empty();
@@ -294,7 +294,8 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                 $('#filter-additional-customers').fadeIn('slow');
                 $('#filter-additional-customers').val('');
                 GlobalVariables.customers.forEach(function (customer) {
-                    $('<div/>', {
+                    $('<div/>', {  
+                        'class': 'list-group-item', 
                         'data-id': customer.id,
                         'text': customer.first_name + ' ' + customer.last_name
                     })
@@ -394,6 +395,7 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                                 || customer.zip_code.toLowerCase().indexOf(key) !== -1
                                 || customer.notes.toLowerCase().indexOf(key) !== -1) {
                                 $('<div/>', {
+                                    'class': 'list-group-item',
                                     'data-id': customer.id,
                                     'text': customer.first_name + ' ' + customer.last_name
                                 })

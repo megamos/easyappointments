@@ -482,7 +482,7 @@
                             </div>
                         </div>
                         <div class="row form-group">
-                            <div class="col-12 col-sm-3">
+                            <legend>
                                 <label for="relatives"> <?= lang('customer') ?> </label>
                                 <button id="select-additional-customer" class="btn btn-outline-secondary btn-sm" type="button"
                                         data-tippy-content="<?= lang('pick_existing_customer_hint') ?>">
@@ -494,8 +494,8 @@
                                 <input id="filter-additional-customers"
                                     placeholder="<?= lang('type_to_filter_customers') ?>"
                                     style="display: none;" class="input-sm form-control">
-                                <div id="additional-customers-list" style="display: none;"></div>
-                            </div>
+                                <div id="additional-customers-list" class="input-sm form-control" style="display: none;"></div>
+                            </legend>
                             <div id="relatives-container" class="col-12 col-sm-9">
                                 <div class="relative input-group hide">
                                     <input class="form-control" name="relatives[]" type="text" placeholder="Namn..." />
