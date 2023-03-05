@@ -123,6 +123,7 @@ window.BackendSettings = window.BackendSettings || {};
         $('#username').val(GlobalVariables.settings.user.settings.username);
         $('#password, #retype-password').val('');
         $('#calendar-view').val(GlobalVariables.settings.user.settings.calendar_view);
+        $('#bg-color-theme').val(GlobalVariables.settings.user.settings.bg_color_theme);
         $('#user-notifications').prop('checked', Boolean(Number(GlobalVariables.settings.user.settings.notifications)));
 
         // Set default settings helper.

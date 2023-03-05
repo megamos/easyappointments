@@ -93,6 +93,10 @@ $lang['log_out_hint'] = 'Logga ut ut systemet';
 $lang['unavailable_periods_hint'] = 'Under låsta perioder går det inte att boka leverantören.';
 $lang['new_appointment_hint'] = 'Skapa en ny bokning och spara den i databasen.';
 $lang['reload_appointments_hint'] = 'Uppdatera kalendern.';
+$lang['appointments_bg_colors_hint'] = 'Färgtema på bokningars bakgrund';
+$lang['toggle_appointments_bg_colors_hint'] = 'Byt färgtema på bokningar';
+$lang['bg_color_theme'] = 'Färgtema på bokningar';
+
 $lang['trigger_google_sync_hint'] = 'Starta synkroniseringen med Google-kalendrar processen.';
 $lang['appointment_updated'] = 'Tiden är uppdaterad.';
 $lang['undo'] = 'Ångra';

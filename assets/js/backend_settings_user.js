@@ -43,7 +43,8 @@
             settings: {
                 username: $('#username').val(),
                 notifications: $('#user-notifications').prop('checked'),
-                calendar_view: $('#calendar-view').val()
+                calendar_view: $('#calendar-view').val(),
+                bg_color_theme: $('#bg-color-theme').val()
             }
         };
 
@@ -66,7 +67,7 @@
         }
 
         var url = GlobalVariables.baseUrl + '/index.php/backend_api/ajax_save_settings';
-
+        debugger;
         var data = {
             csrfToken: GlobalVariables.csrfToken,
             type: BackendSettings.SETTINGS_USER,
