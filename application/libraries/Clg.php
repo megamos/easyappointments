@@ -137,8 +137,7 @@ class Clg {
                 array_push($booked_services, $appointment['service']['name']);
             }
 
-            //array_push($this->validation_faults, $appointments);
-            if ($appointments > 0 )
+            if (count($booked_services) > 0 )
             {
                 array_push($this->validation_faults, lang('appointment_exists') . join(', ', $booked_services));
             }
