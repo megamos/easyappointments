@@ -82,6 +82,8 @@ class Backend extends EA_Controller {
         $view['user_first_name'] = $user['first_name'];
         $view['user_last_name'] = $user['last_name'];
         $view['user_phone_number'] = $user['phone_number'];
+        $view['system_settings'] = $this->settings_model->get_settings();
+        $view['user_settings'] = $user['settings'];
 
         $this->set_user_data($view);
 

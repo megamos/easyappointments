@@ -134,11 +134,11 @@ class Console extends EA_Controller {
         
         // Hela gården bokningar
         $room_a = $this->services_model->add([
-            'name' => 'Brölopp',
+            'name' => 'Bröllop',
             'duration' => '1440',
             'price' => '0',
             'currency' => '',
-            'description' => 'Boka hela gården för ett brölopp',
+            'description' => 'Boka hela gården för ett Bröllop',
             'availabilities_type' => 'flexible',
             'attendants_number' => '20',
             'color' => '#F5BE00'

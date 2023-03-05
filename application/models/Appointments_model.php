@@ -57,7 +57,6 @@ class Appointments_model extends EA_Model {
         $this->db->where('id_user IS NOT NULL');
         $this->db->delete('appointment_visitors');
 
-        //throw new Exception("Test: " . $relatives[1]);
         // Get all relatives in $relatives
         $query = $this->db
         //->query("SELECT * FROM ea_appointment_visitors");
@@ -66,9 +65,7 @@ class Appointments_model extends EA_Model {
             ->from('users')
             ->where_in('users.id', $relatives)
             ->get();
-        $users = $query->result_array();    
-        $row = $users[0]; //$query->row();
-        //throw new Exception("Test: " . $row['first_name']);
+        $users = $query->result_array();
 
         // Then create new visitors
         foreach ($users as $user){
@@ -175,7 +172,6 @@ class Appointments_model extends EA_Model {
         }
 
         // Check if appointment dates are valid.
-        //TODO: This doesn't work for CLG
         if ( ! validate_mysql_datetime($appointment['start_datetime']))
         {
             throw new Exception('Appointment start datetime is invalid.');
@@ -185,7 +181,7 @@ class Appointments_model extends EA_Model {
         {
             throw new Exception('Appointment end datetime is invalid.');
         }
-
+        
         // Ensure the appointment lasts longer than the minimum duration (in minutes).
         $diff = (strtotime($appointment['end_datetime']) - strtotime($appointment['start_datetime'])) / 60;
 
@@ -800,5 +796,40 @@ class Appointments_model extends EA_Model {
             ->get()
             ->row()
             ->attendants_number;
+    }
+
+    /**
+     * Returns the service/room names that have already been booked for the given slot
+     *
+     * @param DateTime $slot_start When the slot starts
+     * @param DateTime $slot_end When the slot ends.
+     * @param int $id_main ID of the appointment
+     * @param array $service_ids Selected service IDs.
+     *
+     * @return int Returns the service name of any already booked service for selected time period.
+     */
+    public function get_already_booked_services(DateTime $slot_start, DateTime $slot_end, $id_main, $service_ids)
+    {
+        $appointments = $this->db
+            //->join('services', 'services.id = appointments.id_services')
+            ->where('appointments.id !=', $id_main)
+            ->where_in('appointments.id_services', $service_ids)
+            ->group_start()
+                ->where('appointments.start_datetime >=', $slot_start->format('Y-m-d H:i:s'))
+                ->where('appointments.start_datetime <=', $slot_end->format('Y-m-d H:i:s'))
+                ->or_group_start()
+                    ->where('appointments.start_datetime <=', $slot_start->format('Y-m-d H:i:s'))
+                    ->where('appointments.end_datetime >=', $slot_start->format('Y-m-d H:i:s'))
+                ->group_end()
+            ->group_end()
+            ->get('appointments')
+            ->result_array();
+
+        foreach ($appointments as &$appointment)
+        {
+            $appointment = $this->get_aggregates($appointment);
+        }
+
+        return $appointments;
     }
 }

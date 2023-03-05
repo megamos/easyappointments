@@ -98,6 +98,7 @@ class Clg {
             $this->first_day_in_september = date_create(date("Y-m-d H:i:s", mktime(0,0,0,9,1,$this->appointment_year)));
 
             // Run CLG validations
+            $this->R0_max_one_per_room_and_day($appointment);
             $this->R1_max_one_year_prior($appointment);
             $this->R2_max_seven_days($appointment);
             $this->R3_summer_two_years_in_a_row($appointment);
@@ -107,6 +108,42 @@ class Clg {
         }
         catch (Exception $exception)
         {
+            log_message('error', $exception->getMessage());
+            log_message('error', $exception->getTraceAsString());
+        }
+    }
+
+    /**
+     * Endast en bokning per rum och dag
+     */
+    private function R0_max_one_per_room_and_day($appointment) {
+        try {
+            $appointment['id'] = isset($appointment['id']) ? $appointment['id'] : 0;
+            $service_ids = [];
+            array_push($service_ids, $appointment['id_services']);
+            if ($appointment['additional_rooms']) {
+                array_push($service_ids, $appointment['additional_rooms']);
+            }
+
+            $appointments = $this->CI->appointments_model->get_already_booked_services(
+                $this->start_date,
+                $this->end_date,
+                $appointment['id'],
+                $service_ids
+            );
+
+            $booked_services = [];
+            foreach($appointments as $appointment) {
+                array_push($booked_services, $appointment['service']['name']);
+            }
+
+            //array_push($this->validation_faults, $appointments);
+            if ($appointments > 0 )
+            {
+                array_push($this->validation_faults, lang('appointment_exists') . join(', ', $booked_services));
+            }
+        }
+        catch(Exception $exception) {
             log_message('error', $exception->getMessage());
             log_message('error', $exception->getTraceAsString());
         }

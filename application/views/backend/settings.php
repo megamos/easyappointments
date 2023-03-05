@@ -147,6 +147,15 @@
                         </div>
                         <div class="col-12 col-sm-6">
                             <div class="form-group">
+                                <label for="appointment-colors">
+                                    Background colors on appointments *</label>
+                                <input id="appointment-colors" placeholder="'#444,#126,#FFF,...'"
+                                       data-field="appointment_colors" class="form-control">
+                                <span class="help-block">
+                                    <?= lang('appointments_bg_colors_hint') ?>
+                                </span>
+                            </div>
+                            <div class="form-group">
                                 <label for="google-analytics-code">
                                     Google Analytics ID</label>
                                 <input id="google-analytics-code" placeholder="UA-XXXXXXXX-XX or G-XXXXXXXXXX"
@@ -476,6 +485,14 @@
                             <select id="calendar-view" class="form-control required">
                                 <option value="default">Default</option>
                                 <option value="table">Table</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bg-color-theme"><?= lang('bg_color_theme') ?> *</label>
+                            <select id="bg-color-theme" class="form-control required">
+                                <option value="1">En färg per bokning</option>
+                                <option value="2">En färg per rum</option>
                             </select>
                         </div>
 

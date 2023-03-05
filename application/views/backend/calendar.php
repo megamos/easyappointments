@@ -11,6 +11,11 @@
 <script src="<?= asset_url('assets/js/backend_calendar_appointments_modal.js') ?>"></script>
 <script src="<?= asset_url('assets/js/backend_calendar_unavailability_events_modal.js') ?>"></script>
 <script src="<?= asset_url('assets/js/backend_calendar_api.js') ?>"></script>
+
+<script src="<?= asset_url('assets/js/backend_settings.js') ?>"></script>
+<script src="<?= asset_url('assets/js/backend_settings_system.js') ?>"></script>
+<script src="<?= asset_url('assets/js/backend_settings_user.js') ?>"></script>
+
 <script>
     var GlobalVariables = {
         csrfToken: <?= json_encode($this->security->get_csrf_hash()) ?>,
@@ -25,6 +30,10 @@
         secretaryProviders: <?= json_encode($secretary_providers) ?>,
         calendarView: <?= json_encode($calendar_view) ?>,
         timezones: <?= json_encode($timezones) ?>,
+        settings: {
+            system: <?= json_encode($system_settings) ?>,
+            user: <?= json_encode($user_settings) ?>
+        },
         user: {
             id: <?= $user_id ?>,
             email: <?= json_encode($user_email) ?>,
@@ -176,6 +185,11 @@
             <button id="reload-appointments" class="btn btn-light"
                     data-tippy-content="<?= lang('reload_appointments_hint') ?>">
                 <i class="fas fa-sync-alt"></i>
+            </button>
+
+            <button id="appointments-bg-colors" class="btn btn-light"
+                    data-tippy-content="<?= lang('toggle_appointments_bg_colors_hint') ?>">
+                <i class="fas fa-solid fa-brush"></i>
             </button>
 
             <?php if ($calendar_view === 'default'): ?>
@@ -423,7 +437,7 @@
                         <legend>
                             <?= lang('customer_details_title') ?>
                             
-                            <!-- CLG CHANGE: Only provide thse buttons for admins and bokare (providers) -->
+                            <!-- CLG CHANGE: Only provide these buttons for admins and bokare (providers) -->
                             <?php if ($role_slug == DB_SLUG_ADMIN || $role_slug == DB_SLUG_PROVIDER): ?>
                                 <button id="select-customer" class="btn btn-outline-secondary btn-sm" type="button"
                                         data-tippy-content="<?= lang('pick_existing_customer_hint') ?>">

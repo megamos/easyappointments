@@ -51,6 +51,25 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
         });
 
         /**
+         * Event: Toggle appointment bg-colors Button "Click"
+         *
+         * When the user clicks the "bg-colors toggle" button an the calendar items need to be refreshed.
+         */
+                $('#appointments-bg-colors').on('click', function () {
+                    var calendarView = $('#calendar').fullCalendar('getView');
+
+                    GlobalVariables.settings.user.bg_color_theme = 
+                        GlobalVariables.settings.user.bg_color_theme == "1" ? "2" : "1";
+
+                    refreshCalendarAppointments(
+                        $('#calendar'),
+                        $('#select-filter-item').val(),
+                        $('#select-filter-item').find('option:selected').attr('type'),
+                        calendarView.start,
+                        calendarView.end);
+                });
+
+        /**
          * Event: Popover Close Button "Click"
          *
          * Hides the open popover element.
@@ -1141,6 +1160,10 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
         });
     }
 
+    function getNextAppoitmentColor() {
+
+    }
+
     /**
      * Refresh Calendar Appointments
      *
@@ -1175,13 +1198,38 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
 
                 // Add appointments to calendar.
                 var appointmentEvents = [];
+                var currentColorIndex = 0;
+                var appointmentColors = GlobalVariables.settings.system.find(a => a.name == 'appointment_colors').value.split(",")
+                var appointmentBookers = [];
+
                 response.appointments.forEach(function (appointment) {
                     // Set bg_color depending on status
                     var theColor = "";
                     if (appointment.status == "pending") {
                         theColor = "#F06562";
                     } else {
-                        theColor = appointment.bg_color;
+                        var bgColorTheme = GlobalVariables.settings.user.bg_color_theme;
+
+                        switch(bgColorTheme) {
+                            case '1':
+                                var userId = appointment.customer.id;
+                                var userColor = appointmentBookers.find(u => u.id == userId);
+
+                                if(typeof userColor === "undefined") {
+                                    userColor = { 
+                                        id: userId, 
+                                        color: appointmentColors[currentColorIndex++]
+                                    };
+                                    appointmentBookers.push(userColor);
+                                    currentColorIndex = currentColorIndex == appointmentColors.length ? 0 : currentColorIndex;
+                                }
+
+                                theColor = userColor.color;
+                                break;
+                            case '2':
+                                theColor = appointment.bg_color;
+                                break;
+                        }
                     }
 
                     var appointmentEvent = {
