@@ -132,8 +132,6 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             
             var guestsInput = document.getElementsByName('guests[]');
             var firstGuest = guestsInput[0].value.trim();
-            console.log("test");
-
 
             if (firstGuest.length > 0) {
                 var guests = [];
