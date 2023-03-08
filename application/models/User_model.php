@@ -70,6 +70,13 @@ class User_model extends EA_Model {
             return FALSE;
         }
 
+        $customer = $this->db->get_where('users', ['id' => $user['id'] - 1])->row();
+
+        if (isset($customer) && $customer->id_roles == '3' && $customer->email == $user['email']) {
+            $user['id'] = $customer->id;
+            $this->db->update('users', $user, ['id' => $customer->id]);
+        }
+
         if ( ! $this->db->update('user_settings', $user_settings, ['id_users' => $user['id']]))
         {
             return FALSE;

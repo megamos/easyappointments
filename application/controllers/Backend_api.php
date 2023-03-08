@@ -164,7 +164,7 @@ class Backend_api extends EA_Controller {
         {
             if ($this->privileges[PRIV_APPOINTMENTS]['view'] == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             if ( ! $this->input->post('filter_type'))
@@ -268,7 +268,7 @@ class Backend_api extends EA_Controller {
                 
                 if ($required_privileges == FALSE)
                 {
-                    throw new Exception('You do not have the required privileges for this task.');
+                    throw new Exception('Du saknar rättigheter för att utföra detta.');
                 }
 
                 //$customer['id'] = $this->customers_model->add($customer);
@@ -292,7 +292,7 @@ class Backend_api extends EA_Controller {
 
                 if ($required_privileges == FALSE)
                 {
-                    throw new Exception('You do not have the required privileges for this task.');
+                    throw new Exception('Du saknar rättigheter för att utföra detta.');
                 }
 
                 $manage_mode = isset($appointment['id']);
@@ -430,7 +430,7 @@ class Backend_api extends EA_Controller {
             if ($this->privileges[PRIV_APPOINTMENTS]['delete'] == FALSE
                 && intval($appointment['id_users_customer']) != intval($this->session->userdata('user_id') - 1))
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $provider = $this->providers_model->get_row($appointment['id_users_provider']);
@@ -583,7 +583,7 @@ class Backend_api extends EA_Controller {
             if ($this->privileges[PRIV_USERS]['edit'] == FALSE
                 && $this->session->userdata('user_id') != $this->input->post('provider_id'))
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $this->providers_model->set_setting('google_sync', FALSE, $this->input->post('provider_id'));
@@ -618,7 +618,7 @@ class Backend_api extends EA_Controller {
         {
             if ($this->privileges[PRIV_CUSTOMERS]['view'] == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $key = $this->db->escape_str($this->input->post('key'));
@@ -690,7 +690,7 @@ class Backend_api extends EA_Controller {
                 : $this->privileges[PRIV_APPOINTMENTS]['edit'];
             if ($required_privileges == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $provider = $this->providers_model->get_row($unavailable['id_users_provider']);
@@ -768,7 +768,7 @@ class Backend_api extends EA_Controller {
         {
             if ($this->privileges[PRIV_APPOINTMENTS]['delete'] == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $unavailable = $this->appointments_model->get_row($this->input->post('unavailable_id'));
@@ -829,7 +829,7 @@ class Backend_api extends EA_Controller {
 
             if ($required_privileges == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $date = $this->input->post('date');
@@ -874,7 +874,7 @@ class Backend_api extends EA_Controller {
 
             if ($required_privileges == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $date = $this->input->post('date');
@@ -920,7 +920,7 @@ class Backend_api extends EA_Controller {
                 : $this->privileges[PRIV_CUSTOMERS]['edit'];
             if ($required_privileges == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $customer_id = $this->customers_model->add($customer);
@@ -954,7 +954,7 @@ class Backend_api extends EA_Controller {
         {
             if ($this->privileges[PRIV_CUSTOMERS]['delete'] == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $this->customers_model->delete($this->input->post('customer_id'));
@@ -990,7 +990,7 @@ class Backend_api extends EA_Controller {
                 : $this->privileges[PRIV_SERVICES]['edit'];
             if ($required_privileges == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $service_id = $this->services_model->add($service);
@@ -1023,7 +1023,7 @@ class Backend_api extends EA_Controller {
         {
             if ($this->privileges[PRIV_SERVICES]['delete'] == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $result = $this->services_model->delete($this->input->post('service_id'));
@@ -1054,7 +1054,7 @@ class Backend_api extends EA_Controller {
         {
             if ($this->privileges[PRIV_SERVICES]['view'] == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $key = $this->db->escape_str($this->input->post('key'));
@@ -1095,7 +1095,7 @@ class Backend_api extends EA_Controller {
                 : $this->privileges[PRIV_SERVICES]['edit'];
             if ($required_privileges == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $category_id = $this->services_model->add_category($category);
@@ -1129,7 +1129,7 @@ class Backend_api extends EA_Controller {
         {
             if ($this->privileges[PRIV_SERVICES]['delete'] == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $result = $this->services_model->delete_category($this->input->post('category_id'));
@@ -1160,7 +1160,7 @@ class Backend_api extends EA_Controller {
         {
             if ($this->privileges[PRIV_SERVICES]['view'] == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $key = $this->db->escape_str($this->input->post('key'));
@@ -1193,7 +1193,7 @@ class Backend_api extends EA_Controller {
         {
             if ($this->privileges[PRIV_USERS]['view'] == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $key = $this->db->escape_str($this->input->post('key'));
@@ -1236,7 +1236,7 @@ class Backend_api extends EA_Controller {
                 : $this->privileges[PRIV_USERS]['edit'];
             if ($required_privileges == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $admin_id = $this->admins_model->add($admin);
@@ -1270,7 +1270,7 @@ class Backend_api extends EA_Controller {
         {
             if ($this->privileges[PRIV_USERS]['delete'] == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $result = $this->admins_model->delete($this->input->post('admin_id'));
@@ -1301,7 +1301,7 @@ class Backend_api extends EA_Controller {
         {
             if ($this->privileges[PRIV_USERS]['view'] == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $key = $this->db->escape_str($this->input->post('key'));
@@ -1344,7 +1344,7 @@ class Backend_api extends EA_Controller {
                 : $this->privileges[PRIV_USERS]['edit'];
             if ($required_privileges == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             if ( ! isset($provider['settings']['working_plan']))
@@ -1384,7 +1384,7 @@ class Backend_api extends EA_Controller {
         {
             if ($this->privileges[PRIV_USERS]['delete'] == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $result = $this->providers_model->delete($this->input->post('provider_id'));
@@ -1415,7 +1415,7 @@ class Backend_api extends EA_Controller {
         {
             if ($this->privileges[PRIV_USERS]['view'] == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $key = $this->db->escape_str($this->input->post('key'));
@@ -1458,10 +1458,8 @@ class Backend_api extends EA_Controller {
                 : $this->privileges[PRIV_USERS]['edit'];
             if ($required_privileges == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
-
-            $secretary_id = $this->secretaries_model->add($secretary);
 
             /**
              * Save the customer that the secretary relates to.
@@ -1480,6 +1478,8 @@ class Backend_api extends EA_Controller {
 
             // Update or Add the Customer clone of Secretary(User)
             $this->customers_model->add($customer);
+
+            $secretary_id = $this->secretaries_model->add($secretary);
 
             $response = [
                 'status' => AJAX_SUCCESS,
@@ -1510,7 +1510,7 @@ class Backend_api extends EA_Controller {
         {
             if ($this->privileges[PRIV_USERS]['delete'] == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $result = $this->secretaries_model->delete($this->input->post('secretary_id'));
@@ -1521,7 +1521,9 @@ class Backend_api extends EA_Controller {
              * appointments. No customer info will be needed for new booking, as it is taken from the 
              * logged in user.
              */
-            $this->customers_model->delete($this->input->post('secretary_id'));
+            if ($result) {
+                $this->customers_model->delete($this->input->post('secretary_id') - 1);
+            }
 
             $response = $result ? AJAX_SUCCESS : AJAX_FAILURE;
         }
@@ -1551,7 +1553,7 @@ class Backend_api extends EA_Controller {
             {
                 if ($this->privileges[PRIV_SYSTEM_SETTINGS]['edit'] == FALSE)
                 {
-                    throw new Exception('You do not have the required privileges for this task.');
+                    throw new Exception('Du saknar rättigheter för att utföra detta.');
                 }
 
                 $settings = json_decode($this->input->post('settings', FALSE), TRUE);
@@ -1564,7 +1566,7 @@ class Backend_api extends EA_Controller {
                 {
                     if ($this->privileges[PRIV_USER_SETTINGS]['edit'] == FALSE)
                     {
-                        throw new Exception('You do not have the required privileges for this task.');
+                        throw new Exception('Du saknar rättigheter för att utföra detta.');
                     }
 
                     $settings = json_decode($this->input->post('settings'), TRUE);
@@ -1731,7 +1733,7 @@ class Backend_api extends EA_Controller {
             if ($this->privileges[PRIV_USERS]['edit'] == FALSE
                 && $this->session->userdata('user_id') != $this->input->post('provider_id'))
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $result = $this->providers_model->set_setting('google_calendar', $this->input->post('calendar_id'),
@@ -1763,7 +1765,7 @@ class Backend_api extends EA_Controller {
         {
             if ($this->privileges[PRIV_SYSTEM_SETTINGS]['edit'] == FALSE)
             {
-                throw new Exception('You do not have the required privileges for this task.');
+                throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
 
             $working_plan = $this->input->post('working_plan');

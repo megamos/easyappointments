@@ -133,13 +133,6 @@ class Secretaries extends API_V1_Controller {
                 $this->throw_record_not_found();
             }
 
-            $request = new Request();
-            $updated_secretary = $request->get_body();
-            $base_secretary = $batch[0];
-            $this->parser->decode($updated_secretary, $base_secretary);
-            $updated_secretary['id'] = $id;
-            $id = $this->secretaries_model->add($updated_secretary);
-
             // CLG Change:
             // Customer is a copy of Secretary, so we need to update the corresponding Customer as well
             $customer_id = $id -1;
@@ -156,6 +149,13 @@ class Secretaries extends API_V1_Controller {
             $this->parser->decode($updated_customer, $base_customer);
             $updated_customer['id'] = $customer_id;
             $this->customers_model->add($updated_customer);
+
+            $request = new Request();
+            $updated_secretary = $request->get_body();
+            $base_secretary = $batch[0];
+            $this->parser->decode($updated_secretary, $base_secretary);
+            $updated_secretary['id'] = $id;
+            $id = $this->secretaries_model->add($updated_secretary);
 
             // Fetch the updated Secretary object from the database and return it to the client.
             $batch = $this->secretaries_model->get_batch(['id' => $id]);
@@ -177,6 +177,15 @@ class Secretaries extends API_V1_Controller {
     {
         try
         {
+            // CLG Change:
+            // Customer is a copy of Secretary, so we need to delete the corresponding Customer as well
+            $customer_id = $id - 1;
+
+            if ($customer_id !== NULL && !$this->customers_model->delete($customer_id))
+            {
+                $this->throw_record_not_found();
+            }
+
             $result = $this->secretaries_model->delete($id);
 
             $response = new Response([

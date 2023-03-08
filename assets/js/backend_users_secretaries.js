@@ -92,7 +92,9 @@
             $('#secretaries .record-details').find('input, textarea').prop('disabled', false);
             $('#secretaries .record-details').find('select').prop('disabled', false);
             $('#secretary-password, #secretary-password-confirm').addClass('required');
-            $('#secretary-providers input:checkbox').prop('disabled', false);
+            const providers = $('#secretary-providers input:checkbox');
+            providers.prop('disabled', false);
+            providers[0].checked = true;
         }.bind(this));
 
         /**

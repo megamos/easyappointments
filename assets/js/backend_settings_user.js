@@ -67,7 +67,7 @@
         }
 
         var url = GlobalVariables.baseUrl + '/index.php/backend_api/ajax_save_settings';
-        debugger;
+
         var data = {
             csrfToken: GlobalVariables.csrfToken,
             type: BackendSettings.SETTINGS_USER,
