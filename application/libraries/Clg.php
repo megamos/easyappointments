@@ -122,7 +122,9 @@ class Clg {
             $service_ids = [];
             array_push($service_ids, $appointment['id_services']);
             if ($appointment['additional_rooms']) {
-                array_push($service_ids, $appointment['additional_rooms']);
+                foreach($appointment['additional_rooms'] as $service_id) {
+                    array_push($service_ids, $service_id);
+                }
             }
 
             $appointments = $this->CI->appointments_model->get_already_booked_services(

@@ -58,7 +58,7 @@ $lang['appointment_link_description'] = 'You can make changes by clicking the ap
 $lang['appointment_locked'] = 'Modification impossible.';
 $lang['appointment_locked_message'] = 'The appointment cannot be changed less than {$limit} hours in advance.';
 $lang['appointment_not_found'] = 'Appointment Not Found.';
-$lang['appointment_exists'] = 'Someone else have allready booked one of the rooms';
+$lang['appointment_exists'] = 'Someone else have already booked room(s) during this period: ';
 
 $lang['appointment_does_not_exist_in_db'] = 'The appointment you requested does not exist in the system database anymore.';
 $lang['display_calendar'] = 'Display Calendar';
