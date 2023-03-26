@@ -509,4 +509,25 @@ class Services_model extends EA_Model {
 
         return $this->db->get('service_categories', $limit, $offset)->result_array();
     }
+
+    /**
+     * Checks if any room is "all_rooms" 
+     *
+     * @param DateTime $slot_start When the slot starts
+     * @param DateTime $slot_end When the slot ends.
+     * @param int $id_main ID of the appointment
+     * @param array $service_ids Selected service IDs.
+     *
+     * @return int Returns true if one of the rooms/services is "all_rooms"
+     */
+    public function includes_all_rooms_service($service_ids)
+    {
+        $services = $this->db
+            ->where_in('services.id', $service_ids)
+            ->where('services.is_all_rooms = 1')
+            ->get('services')
+            ->result_array();
+
+        return count($services) > 0;
+    }
 }

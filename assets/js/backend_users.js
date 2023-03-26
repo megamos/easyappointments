@@ -56,11 +56,11 @@ window.BackendUsers = window.BackendUsers || {};
         exports.wp.bindEventHandlers();
 
         // Instantiate default helper object (admin).
-        helper = new ProvidersHelper();
+        helper = new SecretariesHelper();
         helper.resetForm();
         helper.filter('');
         helper.bindEventHandlers();
-
+        
         // Fill the services and providers list boxes.
         GlobalVariables.services.forEach(function (service) {
             $('<div/>', {

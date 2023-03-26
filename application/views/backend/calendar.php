@@ -446,6 +446,10 @@
                                         <?= lang('select') ?>
                                     </span>
                                 </button>
+                                <a style="font-size: 14px; color: #6c757d; border: 1px solid grey; border-radius: 3px; padding: 5px 8px;" href="<?= site_url('backend/users#secretaries') ?>" data-tippy-content="<?= lang('manage_users_hint') ?>">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Släkting
+                                </a>
                                 <input id="filter-existing-customers"
                                     placeholder="<?= lang('type_to_filter_customers') ?>"
                                     style="display: none;" class="input-sm form-control">

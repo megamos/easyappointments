@@ -53,6 +53,7 @@ class Clg {
     {
         $this->CI =& get_instance();
         $this->CI->load->model('appointments_model');
+        $this->CI->load->model('services_model');
         
         $this->validation_faults = [];
 
@@ -103,6 +104,8 @@ class Clg {
             $this->R2_max_seven_days($appointment);
             $this->R3_summer_two_years_in_a_row($appointment);
             //$this->R4_exchange_day($appointment);
+            $this->R5_all_rooms($appointment);
+            
 
             return $this->validation_faults;
         }
@@ -212,7 +215,7 @@ class Clg {
                 - Vill man boka fler nätter under denna period kan man göra så, om lediga rum finns tillgängliga, tidigast fjorton dagar innan ankomst. ");
             }
 
-            array_push($this->validation_faults,"\nTotal days: ".$summer_days_booked.", A days: ".$a_interval->Format("%a , %H:%i:%s"));
+            //array_push($this->validation_faults,"\nTotal days: ".$summer_days_booked.", A days: ".$a_interval->Format("%a"));
         }
         catch(Exception $exception) {
             log_message('error', $exception->getMessage());
@@ -274,7 +277,38 @@ class Clg {
      */
     private function R5_all_rooms($appointment) {
         try {
-            throw new Exception("Not implemented!");
+            $appointment['id'] = isset($appointment['id']) ? $appointment['id'] : 0;
+
+            /** Check if "all_room" booking and other rooms are selected as well */
+            if ($appointment['additional_rooms']) {
+                $service_ids = [];
+                array_push($service_ids, $appointment['id_services']);
+                foreach($appointment['additional_rooms'] as $service_id) {
+                    array_push($service_ids, $service_id);
+                }
+                
+                $includes_all_rooms = $this->CI->services_model->includes_all_rooms_service($service_ids);
+                if ($includes_all_rooms) {
+                    array_push($this->validation_faults, "Vid bokning av hela gården så kan man inte välja andra rum samtidigt. Var vänlig ta bort de andra rummen från bokningen.");
+                }
+            }
+
+            /** Check if "all_room" booking exists during selected dates */
+            $appointments = $this->CI->appointments_model->get_all_rooms_appointments(
+                $this->start_date,
+                $this->end_date,
+                $appointment['id']
+            );
+
+            $booked_services = [];
+            foreach($appointments as $appointment) {
+                array_push($booked_services, $appointment['service']['name']);
+            }
+
+            if (count($booked_services) > 0 )
+            {
+                array_push($this->validation_faults, lang('appointment_exists_all_rooms') . join(', ', $booked_services));
+            }
         }
         catch(Exception $exception) {
             log_message('error', $exception->getMessage());

@@ -38,7 +38,7 @@
 </head>
 
 <body>
-<nav id="header" class="navbar navbar-expand-md navbar-dark">
+<nav id="header" class="navbar navbar-expand-md">
     <div id="header-logo" class="navbar-brand">
         <img src="<?= base_url('assets/img/logo.png') ?>">
         <h6><?= lang('booking_system') ?></h6>

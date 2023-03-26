@@ -102,7 +102,8 @@ $lang['appointment_updated'] = 'Tiden är uppdaterad.';
 $lang['undo'] = 'Ångra';
 $lang['appointment_details_changed'] = 'Bokningen har ändrats.';
 $lang['appointment_changes_saved'] = 'Ändringarna på bokningen har sparats.';
-$lang['appointment_exists'] = 'Någon annan har redan under den angivna tiden bokat: ';
+$lang['appointment_exists'] = 'Någon annan har under den angivna tiden bokat: ';
+$lang['appointment_exists_all_rooms'] = 'Någon annan har under den angivna tiden bokat hela gården för: ';
 $lang['appointment_pending_customer_title'] = 'Din preliminära CLG bokning är mottagen';
 $lang['appointment_pending_customer_msg'] = 'Husmor kommer snart ta hand om din bokning. Det kommer sedan ett email med bekräftelse (eller anledning till nekad bokning)';
 $lang['appointment_pending_provider_title'] = 'CLG-Bookning: Ny bokning att Bekräfta/Neka';
@@ -115,6 +116,7 @@ $lang['appointment_confirmed_provider_msg'] = 'använd länken längst ner för 
 
 $lang['save'] = 'Spara';
 $lang['new'] = 'Ny';
+$lang['new_relative'] = 'Skapa ny släkting';
 $lang['select'] = 'Välj';
 $lang['hide'] = 'Dölj';
 $lang['type_to_filter_customers'] = 'Skriv för att filtrera kunderna';

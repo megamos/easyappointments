@@ -58,7 +58,8 @@ $lang['appointment_link_description'] = 'You can make changes by clicking the ap
 $lang['appointment_locked'] = 'Modification impossible.';
 $lang['appointment_locked_message'] = 'The appointment cannot be changed less than {$limit} hours in advance.';
 $lang['appointment_not_found'] = 'Appointment Not Found.';
-$lang['appointment_exists'] = 'Someone else have already booked room(s) during this period: ';
+$lang['appointment_exists'] = 'Someone else has already during this period booked room: ';
+$lang['appointment_exists_all_rooms'] = 'Someone else has already booked all rooms during this period for: ';
 
 $lang['appointment_does_not_exist_in_db'] = 'The appointment you requested does not exist in the system database anymore.';
 $lang['display_calendar'] = 'Display Calendar';
@@ -104,6 +105,7 @@ $lang['appointment_details_changed'] = 'Appointment details have changed.';
 $lang['appointment_changes_saved'] = 'Appointment changes have been successfully saved.';
 $lang['save'] = 'Save';
 $lang['new'] = 'New';
+$lang['new_relative'] = 'Create new relative';
 $lang['select'] = 'Select';
 $lang['hide'] = 'Hide';
 $lang['type_to_filter_customers'] = 'Type to filter customers.';
