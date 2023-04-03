@@ -397,7 +397,7 @@
                                       </div>
                                 </div>
 
-                                <div class="form-group invisible">
+                                <div class="form-group" style="display:none;">
                                     <label for="select-provider" class="control-label">
                                         <?= lang('provider') ?>
                                         <span class="text-danger">*</span>
@@ -467,7 +467,7 @@
                                         <?= lang('first_name') ?>
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <input id="first-name" type="text"class="required form-control">
+                                    <input id="first-name" type="text"class="required form-control" disabled>
                                 </div>
 
                                 <div class="form-group">
@@ -475,7 +475,7 @@
                                         <?= lang('last_name') ?>
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <input id="last-name" class="required form-control">
+                                    <input id="last-name" class="required form-control" disabled>
                                 </div>
                             </div>    
                             <div class="col-12 col-sm-6">
@@ -484,7 +484,7 @@
                                         <?= lang('email') ?>
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <input id="email" class="required form-control">
+                                    <input id="email" class="required form-control" disabled>
                                 </div>
 
                                 <div class="form-group">
@@ -501,7 +501,7 @@
                         </div>
                         <div class="row form-group">
                             <legend>
-                                <label for="relatives"> <?= lang('customer') ?> </label>
+                                <label style="margin-left: 15px;" for="relatives"> <?= lang('customer') ?> </label>
                                 <button id="select-additional-customer" class="btn btn-outline-secondary btn-sm" type="button"
                                         data-tippy-content="<?= lang('pick_existing_customer_hint') ?>">
                                     <i class="fas fa-hand-pointer mr-2"></i>
