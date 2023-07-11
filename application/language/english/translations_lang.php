@@ -61,6 +61,16 @@ $lang['appointment_not_found'] = 'Appointment Not Found.';
 $lang['appointment_exists'] = 'Someone else has already during this period booked room: ';
 $lang['appointment_exists_all_rooms'] = 'Someone else has already booked all rooms during this period for: ';
 
+$lang['appointment_pending_customer_title'] = 'Din preliminära CLG bokning är mottagen';
+$lang['appointment_pending_customer_msg'] = 'Husmor kommer snart ta hand om din bokning. Det kommer sedan ett email med bekräftelse (eller anledning till nekad bokning)';
+$lang['appointment_pending_provider_title'] = 'CLG-Bookning: Ny bokning att Bekräfta/Neka';
+$lang['appointment_pending_provider_msg'] = 'en släckting väntar på att få sin bokning behandlad.';
+
+$lang['appointment_confirmed_customer_title'] = 'Din CLG bokning är bekräftad';
+$lang['appointment_confirmed_customer_msg'] = 'kära släkting, din bokning på CL-Gården är nu bekräftad';
+$lang['appointment_confirmed_provider_title'] = 'Du har bekräftat följande bokning';
+$lang['appointment_confirmed_provider_msg'] = 'använd länken längst ner för att visa/ändra bokningen';
+
 $lang['appointment_does_not_exist_in_db'] = 'The appointment you requested does not exist in the system database anymore.';
 $lang['display_calendar'] = 'Display Calendar';
 $lang['calendar'] = 'Calendar';

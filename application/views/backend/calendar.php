@@ -495,7 +495,7 @@
                                         <?php endif ?>
                                     </label>
                                     <input id="phone-number"
-                                           class="form-control <?= $require_phone_number === '1' ? 'required' : '' ?>">
+                                           class="form-control <?= $require_phone_number === '1' ? 'required' : '' ?>" disabled>
                                 </div>
                             </div>
                         </div>

@@ -432,7 +432,7 @@ class Backend_api extends EA_Controller {
             {
                 throw new Exception('Du saknar rättigheter för att utföra detta.');
             }
-
+            
             $provider = $this->providers_model->get_row($appointment['id_users_provider']);
             $customer = $this->customers_model->get_row($appointment['id_users_customer']);
             $service = $this->services_model->get_row($appointment['id_services']);

@@ -1640,7 +1640,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                     //return;
                     // CLG Changes:
                     start = moment(arguments[0].toDate());
-                    end = moment(arguments[1].toDate());
+                    end = moment(arguments[0].toDate());
                 }
 
                 if (start.isBefore(moment())) {
@@ -1691,7 +1691,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
 
                 // Preselect time
                 $('#start-datetime').datepicker('setDate', new Date(start.format('YYYY/MM/DD HH:mm:ss')).set({'hour': 12, 'minute': 0, 'second': 0}));
-                $('#end-datetime').datepicker('setDate', new Date(end.format('YYYY/MM/DD HH:mm:ss')).set({'hour': 12, 'minute': 0, 'second': 0}));
+                $('#end-datetime').datepicker('setDate', new Date(end.format('YYYY/MM/DD HH:mm:ss')).set({'hour': 23, 'minute': 59, 'second': 0}));
 
                 return false;
             },

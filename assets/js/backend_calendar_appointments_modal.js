@@ -61,7 +61,6 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                 start_datetime: startDatetime,
                 end_datetime: endDatetime,
                 location: $dialog.find('#appointment-location').val(),
-                //bg_color: $('input[name="colorOption"]:checked').val(),
                 bg_color: $dialog.find('#bg-color-input').val(), //for color picker
                 notes: $dialog.find('#appointment-notes').val(),
                 is_unavailable: false
@@ -211,7 +210,7 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             start.set({'hour': 12, 'minute': 0, 'second': 0});
             
             $dialog.find('#start-datetime').val(GeneralFunctions.formatDate(start, GlobalVariables.dateFormat, true));
-            $dialog.find('#end-datetime').val(GeneralFunctions.formatDate(start.addMinutes(duration),
+            $dialog.find('#end-datetime').val(GeneralFunctions.formatDate(start,
                 GlobalVariables.dateFormat, true));
 
             // CLG CHANGE: Inserting user data if it's a relative (customer, that is a clone of a secretary) 

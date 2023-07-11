@@ -207,7 +207,7 @@ class Clg {
                 $interval = date_diff(date_create($a['start_datetime']), $a_end_date);
                 
                 $summer_days_booked += $interval->Format("%a");
-                array_push($this->validation_faults,"ID: ".$a['id'].", Days:".$interval->Format("%a"));
+                //array_push($this->validation_faults,"ID: ".$a['id'].", Days:".$interval->Format("%a"));
             }
 
             if (($summer_days_booked + $appointment_days) > 7) {
@@ -292,10 +292,10 @@ class Clg {
                     array_push($this->validation_faults, "Vid bokning av hela gården så kan man inte välja andra rum samtidigt. Var vänlig ta bort de andra rummen från bokningen.");
                 }
             }
-
+            $start_date = date_create($appointment['start_datetime']);
             /** Check if "all_room" booking exists during selected dates */
             $appointments = $this->CI->appointments_model->get_all_rooms_appointments(
-                $this->start_date,
+                $start_date,
                 $this->end_date,
                 $appointment['id']
             );

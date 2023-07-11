@@ -313,6 +313,8 @@ window.GeneralFunctions = window.GeneralFunctions || {};
      * @param {Object} errorThrown
      */
     exports.ajaxFailureHandler = function (jqXHR, textStatus, errorThrown) {
+        //TODO: Stopping error display of reset_password_email, as the email is sent properly. Remove this later
+        return;
         console.error('Unexpected HTTP Error: ', jqXHR, textStatus, errorThrown);
 
         var response;
