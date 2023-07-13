@@ -132,13 +132,15 @@
 
 <div class="container-fluid backend-page" id="calendar-page">
     <div class="row" id="calendar-toolbar">
-        <div id="calendar-filter" class="col-12 col-sm-5">
-            <div class="form-group calendar-filter-items">
-                <select id="select-filter-item" class="form-control col"
-                        data-tippy-content="<?= lang('select_filter_item_hint') ?>">
-                </select>
+        <?php if ($role_slug == DB_SLUG_ADMIN): ?>
+            <div id="calendar-filter" class="col-12 col-sm-5">
+                <div class="form-group calendar-filter-items">
+                    <select id="select-filter-item" class="form-control col"
+                            data-tippy-content="<?= lang('select_filter_item_hint') ?>">
+                    </select>
+                </div>
             </div>
-        </div>
+        <?php endif ?>
 
         <div id="calendar-actions" class="col-12 col-sm-7">
             <?php if (($role_slug == DB_SLUG_ADMIN || $role_slug == DB_SLUG_PROVIDER)
