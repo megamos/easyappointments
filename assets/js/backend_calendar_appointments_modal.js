@@ -210,8 +210,7 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             start.set({'hour': 12, 'minute': 0, 'second': 0});
             
             $dialog.find('#start-datetime').val(GeneralFunctions.formatDate(start, GlobalVariables.dateFormat, true));
-            $dialog.find('#end-datetime').val(GeneralFunctions.formatDate(start,
-                GlobalVariables.dateFormat, true));
+            $dialog.find('#end-datetime').val(GeneralFunctions.formatDate(start, GlobalVariables.dateFormat, true));
 
             // CLG CHANGE: Inserting user data if it's a relative (customer, that is a clone of a secretary) 
             //             that wants to create a new booking (appointment)
@@ -243,6 +242,8 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                 $list.slideDown('slow');
                 $('#filter-existing-customers').fadeIn('slow');
                 $('#filter-existing-customers').val('');
+                document.getElementById("filter-existing-customers").focus();
+
                 GlobalVariables.customers.forEach(function (customer) {
                     $('<div/>', {
                         'class': 'list-group-item',
@@ -290,6 +291,8 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                 $list.slideDown('slow');
                 $('#filter-additional-customers').fadeIn('slow');
                 $('#filter-additional-customers').val('');
+                document.getElementById("filter-additional-customers").focus();
+                
                 GlobalVariables.customers.forEach(function (customer) {
                     $('<div/>', {  
                         'class': 'list-group-item', 
@@ -314,7 +317,6 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             var customer = GlobalVariables.customers.find(function (customer) {
                 return Number(customer.id) === Number(customerId);
             });
-            console.log("testing2");
 
             if (customer) {
                 var relativeContainer = $('#relatives-container'),
@@ -331,6 +333,29 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             $('#select-additional-customer').trigger('click'); // Hide the list.
         });
 
+        /**
+         * Event: Filter Existing Customers "Change"
+         */
+        $('#filter-additional-customers').on('keyup', function () {
+            var key = $(this).val().toLowerCase();
+            var $list = $('#additional-customers-list');
+            
+            $list.empty();
+
+            GlobalVariables.customers.forEach(function (customer) {
+                var fullName = customer.first_name.toLowerCase() + ' ' + customer.last_name.toLowerCase();
+
+                if (fullName.includes(key)) {
+                    $('<div/>', {  
+                        'class': 'list-group-item', 
+                        'data-id': customer.id,
+                        'text': customer.first_name + ' ' + customer.last_name
+                    })
+                        .appendTo($list);
+                }
+            });
+        });
+
         var filterExistingCustomersTimeout = null;
 
         /**
@@ -340,7 +365,6 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             if (filterExistingCustomersTimeout) {
                 clearTimeout(filterExistingCustomersTimeout);
             }
-
             var key = $(this).val().toLowerCase();
 
             filterExistingCustomersTimeout = setTimeout(function() {

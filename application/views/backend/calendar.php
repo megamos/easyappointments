@@ -132,7 +132,7 @@
 
 <div class="container-fluid backend-page" id="calendar-page">
     <div class="row" id="calendar-toolbar">
-        <div id="calendar-filter" class="col-12 col-sm-5">
+        <div id="calendar-filter" class="col-12 col-sm-5" style="display:none">
             <div class="form-group calendar-filter-items">
                 <select id="select-filter-item" class="form-control col"
                         data-tippy-content="<?= lang('select_filter_item_hint') ?>">

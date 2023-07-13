@@ -50,7 +50,7 @@
         <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div id="header-menu" class="collapse navbar-collapse flex-row-reverse">
+    <div id="header-menu" class="navbar-collapse flex-row-reverse">
         <ul class="navbar-nav">
 
             <!--<li class="nav-item">
