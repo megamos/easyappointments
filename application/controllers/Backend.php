@@ -97,7 +97,7 @@ class Backend extends EA_Controller {
             $view['secretary_providers'] = [];
         }
 
-        $results = $this->appointments_model->get_batch(['hash' => $appointment_hash]);
+        $results = $this->appointments_model->get_batch(['hash' => $appointment_hash], null, null, null, true);
 
         if ($appointment_hash !== '' && count($results) > 0)
         {

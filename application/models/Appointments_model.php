@@ -606,6 +606,14 @@ class Appointments_model extends EA_Model {
             'id' => $appointment['id_users_customer']
         ])->row_array();
 
+        $appointment['visitors'] = $this->db->get_where('appointment_visitors', [
+            'id_appointment' => $appointment['id']
+        ])->result_array();
+
+        $appointment['children'] = $this->db->get_where('appointments', [
+            'id_main' => $appointment['id']
+        ])->result_array();
+
         return $appointment;
     }
 
