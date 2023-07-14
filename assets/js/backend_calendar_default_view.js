@@ -1816,11 +1816,88 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
             $dialog.find('#select-service').val(appointment.id_services).trigger('change');
             $dialog.find('#select-provider').val(appointment.id_users_provider);
 
+            // CLG changes
+            // Apply appointment data and show modal dialog.
+            var confirmedStatus = true;
+            if (appointment.status == 'pending') {
+                confirmedStatus = false;
+            }
+
+            // Add dropdown for each child appointment
+            var children = appointment.children;
+
+            if (children !== undefined) {
+                var secondRoom = $dialog.find('#extra-room');
+                secondRoom[0].value = children[0].id_services;
+
+                if (children.length > 1) {
+                    var roomsContainer = $('#rooms-container');
+
+                    for (let i = 1; i < children.length; i++) {
+
+                        var currentEntry = $('.room:last');
+                        var newEntry = $(currentEntry.clone());
+                        newEntry.appendTo(roomsContainer);
+                        
+                        newEntry[0].firstElementChild.value = children[i].id_services;
+                    }
+
+                    //Makes sure they have correct icons/colors
+                    roomsContainer.find('.room:not(:last) .btn-add-room')
+                        .removeClass('btn-add-room').addClass('btn-remove-room')
+                        .removeClass('btn-success').addClass('btn-danger')
+                        .html('<i class="fas fa-minus-square"></i>');
+                }
+            }
+
+            // Add Appointment Visitors
+            var relativeContainer = $('#relatives-container');
+            var firstRelativeEntry = $(relativeContainer).children('.relative:first');
+            var guestsContainer = $('#guests-container');
+            var firstGuestEntry = $(guestsContainer).children('.guest:first');
+            
+            appointment.visitors.forEach(function (visitor) {
+                if(visitor.id_user != null ) {
+                    // Add relatives
+                    var newEntry = $(firstRelativeEntry.clone()).appendTo(relativeContainer);
+                    var newEntryInput = newEntry.find('input');
+
+                    newEntry.removeClass('hide');
+                    newEntryInput.val(visitor.name);
+                    newEntryInput.attr("data-userid", visitor.id_user);
+                    newEntryInput.prop('disabled', true);
+                } else {
+                    // Add non-relatives
+                    if (visitor.id == appointment.visitors.find(attr => attr.id_user == null).id) {
+                        firstGuestEntry.find('input').val(visitor.name);
+                    } else {
+                        var newEntry = firstGuestEntry.clone().appendTo(guestsContainer);
+                        newEntry.find('input').val(visitor.name);
+                        guestsContainer.find('.guest:not(:last) .btn-add-guest')
+                            .removeClass('btn-add-guest').addClass('btn-remove-guest')
+                            .removeClass('btn-success').addClass('btn-danger')
+                            .html('<i class="fas fa-minus-square"></i>');
+                    }
+                }
+            });
+
+            guestsContainer.find('.guest:last .btn-remove-guest')
+                .removeClass('btn-remove-guest').addClass('btn-add-guest')
+                .removeClass('btn-danger').addClass('btn-success')
+                .html('<i class="fas fa-plus-square"></i>');
+            
+            $dialog.find('#bg-color-input').val(appointment.bg_color);
+            $dialog.find('#confirmAppointment').prop('checked', confirmedStatus);
+            $dialog.find('.modal-header h3').text(EALang.edit_appointment_title);
+            $dialog.find('#appointment-id').val(appointment.id);
+            $dialog.find('#select-service').val(appointment.id_services).trigger('change');
+            $dialog.find('#select-provider').val(appointment.id_users_provider);
+
             // Set the start and end datetime of the appointment.
-            var startDate = Date.parseExact(appointment.start_datetime, 'yyyy-MM-dd');
+            var startDate = Date.parseExact(appointment.start_datetime.split(" ")[0], 'yyyy-MM-dd');
             $dialog.find('#start-datetime').datepicker('setDate', startDate);
 
-            var endDate = Date.parseExact(appointment.end_datetime, 'yyyy-MM-dd');
+            var endDate = Date.parseExact(appointment.end_datetime.split(" ")[0], 'yyyy-MM-dd');
             $dialog.find('#end-datetime').datepicker('setDate', endDate);
 
             var customer = appointment.customer;
