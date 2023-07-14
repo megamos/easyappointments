@@ -132,7 +132,7 @@
 
 <div class="container-fluid backend-page" id="calendar-page">
     <div class="row" id="calendar-toolbar">
-        <div id="calendar-filter" class="col-12 col-sm-5" style="display:none">
+        <div id="calendar-filter" class="col-12 col-sm-1" style="display:none">
             <div class="form-group calendar-filter-items">
                 <select id="select-filter-item" class="form-control col"
                         data-tippy-content="<?= lang('select_filter_item_hint') ?>">
@@ -140,7 +140,7 @@
             </div>
         </div>
 
-        <div id="calendar-actions" class="col-12 col-sm-7">
+        <div id="calendar-actions" class="col-12 col-sm-11">
             <?php if (($role_slug == DB_SLUG_ADMIN || $role_slug == DB_SLUG_PROVIDER)
                 && config('google_sync_feature') == TRUE): ?>
                 <button id="google-sync" class="btn btn-primary"
@@ -419,12 +419,12 @@
                             <div class="col-12 col-sm-6">
                                 <div class="form-group">
                                     <label for="start-datetime"
-                                           class="control-label"><?= lang('start_date_time') ?></label>
+                                           class="control-label"><?= lang('start_date') ?></label>
                                     <input id="start-datetime" class="required form-control">
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="end-datetime" class="control-label"><?= lang('end_date_time') ?></label>
+                                    <label for="end-datetime" class="control-label"><?= lang('end_date') ?></label>
                                     <input id="end-datetime" class="required form-control">
                                 </div>
                             </div>

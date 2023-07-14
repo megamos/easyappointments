@@ -188,11 +188,11 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
                 $dialog.find('#select-provider').val(appointment.id_users_provider);
 
                 // Set the start and end datetime of the appointment.
-                var startDatetime = Date.parseExact(appointment.start_datetime, 'yyyy-MM-dd HH:mm:ss');
-                $dialog.find('#start-datetime').datetimepicker('setDate', startDatetime);
+                var startDate = Date.parseExact(appointment.start_datetime, 'yyyy-MM-dd HH:mm:ss');
+                $dialog.find('#start-datetime').datepicker('setDate', startDate);
 
-                var endDatetime = Date.parseExact(appointment.end_datetime, 'yyyy-MM-dd HH:mm:ss');
-                $dialog.find('#end-datetime').datetimepicker('setDate', endDatetime);
+                var endDate = Date.parseExact(appointment.end_datetime, 'yyyy-MM-dd');
+                $dialog.find('#end-datetime').datepicker('setDate', endDate);
 
                 var customer = appointment.customer;
                 $dialog.find('#customer-id').val(appointment.id_users_customer);
@@ -212,20 +212,20 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
                 var unavailable = lastFocusedEventData.data;
 
                 // Replace string date values with actual date objects.
-                unavailable.start_datetime = lastFocusedEventData.start.format('YYYY-MM-DD HH:mm:ss');
-                var startDatetime = Date.parseExact(unavailable.start_datetime, 'yyyy-MM-dd HH:mm:ss');
-                unavailable.end_datetime = lastFocusedEventData.end.format('YYYY-MM-DD HH:mm:ss');
-                var endDatetime = Date.parseExact(unavailable.end_datetime, 'yyyy-MM-dd HH:mm:ss');
+                unavailable.start_datetime = lastFocusedEventData.start.format('YYYY-MM-DD');
+                var startDate = Date.parseExact(unavailable.start_datetime, 'yyyy-MM-dd');
+                unavailable.end_datetime = lastFocusedEventData.end.format('YYYY-MM-DD');
+                var endDate = Date.parseExact(unavailable.end_datetime, 'yyyy-MM-dd');
 
                 $dialog = $('#manage-unavailable');
                 BackendCalendarUnavailabilityEventsModal.resetUnavailableDialog();
 
                 // Apply unavailable data to dialog.
                 $dialog.find('.modal-header h3').text('Edit Unavailable Period');
-                $dialog.find('#unavailable-start').datetimepicker('setDate', startDatetime);
+                $dialog.find('#unavailable-start').datepicker('setDate', startDate);
                 $dialog.find('#unavailable-id').val(unavailable.id);
                 $dialog.find('#unavailable-provider').val(unavailable.id_users_provider);
-                $dialog.find('#unavailable-end').datetimepicker('setDate', endDatetime);
+                $dialog.find('#unavailable-end').datepicker('setDate', endDate);
                 $dialog.find('#unavailable-notes').val(unavailable.notes);
 
                 $dialog.modal('show');
@@ -1424,7 +1424,7 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
             // Prepare appointment data.
             event.data.end_datetime = Date.parseExact(
                 event.data.end_datetime, 'yyyy-MM-dd HH:mm:ss')
-                .add({days: delta.days(), hours: delta.hours(), minutes: delta.minutes()})
+                .add({days: delta.days()})
                 .toString('yyyy-MM-dd HH:mm:ss');
 
             var appointment = GeneralFunctions.clone(event.data);
@@ -1555,12 +1555,12 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
 
             appointment.start_datetime = Date.parseExact(
                 appointment.start_datetime, 'yyyy-MM-dd HH:mm:ss')
-                .add({days: delta.days(), hours: delta.hours(), minutes: delta.minutes()})
+                .add({days: delta.days()})
                 .toString('yyyy-MM-dd HH:mm:ss');
 
             appointment.end_datetime = Date.parseExact(
                 appointment.end_datetime, 'yyyy-MM-dd HH:mm:ss')
-                .add({days: delta.days(), hours: delta.hours(), minutes: delta.minutes()})
+                .add({days: delta.days()})
                 .toString('yyyy-MM-dd HH:mm:ss');
 
             event.data.start_datetime = appointment.start_datetime;

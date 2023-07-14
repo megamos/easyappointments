@@ -813,6 +813,7 @@ class Appointments_model extends EA_Model {
         $appointments = $this->db
             //->join('services', 'services.id = appointments.id_services')
             ->where('appointments.id !=', $id_main)
+            ->where('appointments.id_main !=', $id_main)
             ->where_in('appointments.id_services', $service_ids)
             ->group_start()
                 ->where('appointments.start_datetime >=', $slot_start->format('Y-m-d H:i:s'))

@@ -87,8 +87,8 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
             $(this).parents('.popover').popover('dispose');
 
             var $dialog;
-            var startDatetime;
-            var endDatetime;
+            var startDate;
+            var endDate;
 
             if (lastFocusedEventData.data.workingPlanException) {
                 var date = lastFocusedEventData.data.date;
@@ -166,11 +166,6 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                 }
 
                 // Add Appointment Visitors
-                console.log("testing1");
-                // var visitors = array_filter(appointment.visitors, function($v, $k) {
-                //     return $k == 'id_appointment' && $v == appointment.id;
-                // }, ARRAY_FILTER_USE_BOTH);
-
                 var relativeContainer = $('#relatives-container');
                 var firstRelativeEntry = $(relativeContainer).children('.relative:first');
                 var guestsContainer = $('#guests-container');
@@ -210,11 +205,6 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                     .removeClass('btn-danger').addClass('btn-success')
                     .html('<i class="fas fa-plus-square"></i>');
                 
-                /* // Add Guests
-                var addButton3 = $dialog.find('btn btn-success btn-add-guest');
-                addGuest.call(addButton3) */
-
-
                 $dialog.find('#bg-color-input').val(appointment.bg_color);
                 $dialog.find('#confirmAppointment').prop('checked', confirmedStatus);
                 $dialog.find('.modal-header h3').text(EALang.edit_appointment_title);
@@ -223,11 +213,11 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                 $dialog.find('#select-provider').val(appointment.id_users_provider);
 
                 // Set the start and end datetime of the appointment.
-                startDatetime = Date.parseExact(appointment.start_datetime, 'yyyy-MM-dd HH:mm:ss');
-                $dialog.find('#start-datetime').datetimepicker('setDate', startDatetime);
+                startDate = Date.parseExact(appointment.start_datetime.split(" ")[0], 'yyyy-MM-dd');
+                $dialog.find('#start-datetime').datepicker('setDate', startDate);
 
-                endDatetime = Date.parseExact(appointment.end_datetime, 'yyyy-MM-dd HH:mm:ss');
-                $dialog.find('#end-datetime').datetimepicker('setDate', endDatetime);
+                endDate = Date.parseExact(appointment.end_datetime.split(" ")[0], 'yyyy-MM-dd');
+                $dialog.find('#end-datetime').datepicker('setDate', endDate);
 
                 var customer = appointment.customer;
                 $dialog.find('#customer-id').val(appointment.id_users_customer);
@@ -246,20 +236,20 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                 var unavailable = lastFocusedEventData.data;
 
                 // Replace string date values with actual date objects.
-                unavailable.start_datetime = lastFocusedEventData.start.format('YYYY-MM-DD HH:mm:ss');
-                startDatetime = Date.parseExact(unavailable.start_datetime, 'yyyy-MM-dd HH:mm:ss');
-                unavailable.end_datetime = lastFocusedEventData.end.format('YYYY-MM-DD HH:mm:ss');
-                endDatetime = Date.parseExact(unavailable.end_datetime, 'yyyy-MM-dd HH:mm:ss');
+                unavailable.start_datetime = lastFocusedEventData.start.format('YYYY-MM-dd');
+                startDate = Date.parseExact(unavailable.start_datetime, 'YYYY-MM-dd');
+                unavailable.end_datetime = lastFocusedEventData.end.format('YYYY-MM-dd');
+                endDate = Date.parseExact(unavailable.end_datetime, 'YYYY-MM-dd');
 
                 $dialog = $('#manage-unavailable');
                 BackendCalendarUnavailabilityEventsModal.resetUnavailableDialog();
 
                 // Apply unavailable data to dialog.
                 $dialog.find('.modal-header h3').text('Edit Unavailable Period');
-                $dialog.find('#unavailable-start').datetimepicker('setDate', startDatetime);
+                $dialog.find('#unavailable-start').datepicker('setDate', startDate);
                 $dialog.find('#unavailable-id').val(unavailable.id);
                 $dialog.find('#unavailable-provider').val(unavailable.id_users_provider);
-                $dialog.find('#unavailable-end').datetimepicker('setDate', endDatetime);
+                $dialog.find('#unavailable-end').datepicker('setDate', endDate);
                 $dialog.find('#unavailable-notes').val(unavailable.notes);
                 $dialog.modal('show');
             }
@@ -475,7 +465,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                         'text': EALang.start
                     }),
                     $('<span/>', {
-                        'text': GeneralFunctions.formatDate(event.start.format('YYYY-MM-DD HH:mm:ss'), GlobalVariables.dateFormat, true)
+                        'text': GeneralFunctions.formatDate(event.start.format('YYYY-MM-dd'), GlobalVariables.dateFormat, true)
                     }),
                     $('<br/>'),
 
@@ -484,7 +474,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                         'text': EALang.end
                     }),
                     $('<span/>', {
-                        'text': GeneralFunctions.formatDate(event.end.format('YYYY-MM-DD HH:mm:ss'), GlobalVariables.dateFormat, true)
+                        'text': GeneralFunctions.formatDate(event.end.format('YYYY-MM-dd'), GlobalVariables.dateFormat, true)
                     }),
                     $('<br/>'),
 
@@ -648,7 +638,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                         'text': EALang.start
                     }),
                     $('<span/>', {
-                        'text': GeneralFunctions.formatDate(event.start.format('YYYY-MM-DD HH:mm:ss'), GlobalVariables.dateFormat, true)
+                        'text': GeneralFunctions.formatDate(event.start.format('YYYY-MM-dd'), GlobalVariables.dateFormat, true)
                     }),
                     $('<br/>'),
 
@@ -657,7 +647,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                         'text': EALang.end
                     }),
                     $('<span/>', {
-                        'text': GeneralFunctions.formatDate(event.end.format('YYYY-MM-DD HH:mm:ss'), GlobalVariables.dateFormat, true)
+                        'text': GeneralFunctions.formatDate(event.end.format('YYYY-MM-dd'), GlobalVariables.dateFormat, true)
                     }),
                     $('<br/>'),
 
@@ -817,8 +807,15 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
      * @see updateAppointmentData()
      */
     function calendarEventResize(event, delta, revertFunc) {
-        if (event.data.id_users_customer != (GlobalVariables.user.id - 1).toString()
-        || GlobalVariables.user.privileges.appointments.edit === false) {
+        // CLG change
+        //TODO: Disabling this for now
+        alert("Drag and Drop är för tillfället inte möjligt.");
+        location.reload();
+        return;
+        if (GlobalVariables.user.role_slug !== Backend.DB_SLUG_ADMIN 
+            && GlobalVariables.user.role_slug !== Backend.DB_SLUG_PROVIDER
+            && (event.data.id_users_customer != (GlobalVariables.user.id - 1).toString()
+        || GlobalVariables.user.privileges.appointments.edit === false)) {
             revertFunc();
             Backend.displayNotification(EALang.no_privileges_edit_appointments);
             return;
@@ -834,9 +831,9 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
         if (Boolean(Number(event.data.is_unavailable)) === false) {
             // Prepare appointment data.
             event.data.end_datetime = Date.parseExact(
-                event.data.end_datetime, 'yyyy-MM-dd HH:mm:ss')
-                .add({days: delta.days(), hours: delta.hours(), minutes: delta.minutes()})
-                .toString('yyyy-MM-dd HH:mm:ss');
+                event.data.end_datetime, 'YYYY-MM-dd')
+                .add({days: delta.days()})
+                .toString('YYYY-MM-dd');
 
             var appointment = GeneralFunctions.clone(event.data);
 
@@ -850,9 +847,9 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                 // Display success notification to user.
                 var undoFunction = function () {
                     appointment.end_datetime = event.data.end_datetime = Date.parseExact(
-                        appointment.end_datetime, 'yyyy-MM-dd HH:mm:ss')
-                        .add({days: -delta.days(), hours: -delta.hours(), minutes: -delta.minutes()})
-                        .toString('yyyy-MM-dd HH:mm:ss');
+                        appointment.end_datetime, 'YYYY-MM-dd')
+                        .add({days: -delta.days()})
+                        .toString('YYYY-MM-dd');
 
                     var url = GlobalVariables.baseUrl + '/index.php/backend_api/ajax_save_appointment';
 
@@ -887,8 +884,8 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
             // Update unavailable time period.
             var unavailable = {
                 id: event.data.id,
-                start_datetime: event.start.format('YYYY-MM-DD HH:mm:ss'),
-                end_datetime: event.end.format('YYYY-MM-DD HH:mm:ss'),
+                start_datetime: event.start.format('YYYY-MM-dd'),
+                end_datetime: event.end.format('YYYY-MM-dd'),
                 id_users_provider: event.data.id_users_provider
             };
 
@@ -899,9 +896,9 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                 // Display success notification to user.
                 var undoFunction = function () {
                     unavailable.end_datetime = event.data.end_datetime = Date.parseExact(
-                        unavailable.end_datetime, 'yyyy-MM-dd HH:mm:ss')
+                        unavailable.end_datetime, 'YYYY-MM-dd')
                         .add({minutes: -delta.minutes()})
-                        .toString('yyyy-MM-dd HH:mm:ss');
+                        .toString('YYYY-MM-dd');
 
                     var url = GlobalVariables.baseUrl + '/index.php/backend_api/ajax_save_unavailable';
 
@@ -978,14 +975,19 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
      * @param {function} revertFunc
      */
     function calendarEventDrop(event, delta, revertFunc) {
-        if (event.data.id_users_customer != (GlobalVariables.user.id - 1).toString()
-            || GlobalVariables.user.privileges.appointments.edit === false) {
+        // CLG change
+        //TODO: Disabling this for now
+        alert("Drag and Drop är för tillfället inte möjligt.");
+        location.reload();
+        return;
+        if (GlobalVariables.user.role_slug !== Backend.DB_SLUG_ADMIN 
+            && GlobalVariables.user.role_slug !== Backend.DB_SLUG_PROVIDER
+            && (event.data.id_users_customer != (GlobalVariables.user.id - 1).toString()
+            || GlobalVariables.user.privileges.appointments.edit === false)) {
             revertFunc();
             Backend.displayNotification(EALang.no_privileges_edit_appointments);
             return;
         }
-
-
 
         if ($('#notification').is(':visible')) {
             $('#notification').hide('bind');
@@ -996,39 +998,39 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
         if (event.data.is_unavailable === '0') {
             // Prepare appointment data.
             var appointment = GeneralFunctions.clone(event.data);
-
+            //appointment.end_datetime = appointment.end_datetime;
+            //appointment.start_datetime = appointment.end_datetime;
             // Must delete the following because only appointment data should be provided to the ajax call.
             delete appointment.customer;
             delete appointment.provider;
             delete appointment.service;
-
-            appointment.start_datetime = Date.parseExact(
-                appointment.start_datetime, 'yyyy-MM-dd HH:mm:ss')
-                .add({days: delta.days(), hours: delta.hours(), minutes: delta.minutes()})
+            debugger;
+            appointment.start_datetime = Date.parse(
+                appointment.start_datetime)
+                .addDays(delta.days())
                 .toString('yyyy-MM-dd HH:mm:ss');
 
-            appointment.end_datetime = Date.parseExact(
-                appointment.end_datetime, 'yyyy-MM-dd HH:mm:ss')
-                .add({days: delta.days(), hours: delta.hours(), minutes: delta.minutes()})
+            appointment.end_datetime = Date.parse(
+                appointment.end_datetime)
+                .addDays(delta.days())
                 .toString('yyyy-MM-dd HH:mm:ss');
 
-            event.data.start_datetime = appointment.start_datetime;
-            event.data.end_datetime = appointment.end_datetime;
+            event.data.start_datetime = appointment.start_datetime;//.split(" ")[0];
+            event.data.end_datetime = appointment.end_datetime;//.split(" ")[0];
 
             // Define success callback function.
             successCallback = function () {
                 // Define the undo function, if the user needs to reset the last change.
                 var undoFunction = function () {
-                    appointment.start_datetime = Date.parseExact(
-                        appointment.start_datetime, 'yyyy-MM-dd HH:mm:ss')
-                        .add({days: -delta.days(), hours: -delta.hours(), minutes: -delta.minutes()})
+                    appointment.start_datetime = Date.parse(
+                        appointment.start_datetime)
+                        .addDays(delta.days())
                         .toString('yyyy-MM-dd HH:mm:ss');
-
-                    appointment.end_datetime = Date.parseExact(
-                        appointment.end_datetime, 'yyyy-MM-dd HH:mm:ss')
-                        .add({days: -delta.days(), hours: -delta.hours(), minutes: -delta.minutes()})
+        
+                    appointment.end_datetime = Date.parse(
+                        appointment.end_datetime)
+                        .addDays(delta.days())
                         .toString('yyyy-MM-dd HH:mm:ss');
-
                     event.data.start_datetime = appointment.start_datetime;
                     event.data.end_datetime = appointment.end_datetime;
 
@@ -1063,21 +1065,21 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
             // Update unavailable time period.
             var unavailable = {
                 id: event.data.id,
-                start_datetime: event.start.format('YYYY-MM-DD HH:mm:ss'),
-                end_datetime: event.end.format('YYYY-MM-DD HH:mm:ss'),
+                start_datetime: event.start.format('YYYY-MM-DD'),
+                end_datetime: event.end.format('YYYY-MM-DD'),
                 id_users_provider: event.data.id_users_provider
             };
 
             successCallback = function () {
                 var undoFunction = function () {
-                    unavailable.start_datetime = Date.parseExact(
-                        unavailable.start_datetime, 'yyyy-MM-dd HH:mm:ss')
-                        .add({days: -delta.days(), minutes: -delta.minutes()})
+                    unavailable.start_datetime = Date.parse(
+                        appointment.start_datetime)
+                        .addDays(delta.days())
                         .toString('yyyy-MM-dd HH:mm:ss');
-
-                    unavailable.end_datetime = Date.parseExact(
-                        unavailable.end_datetime, 'yyyy-MM-dd HH:mm:ss')
-                        .add({days: -delta.days(), minutes: -delta.minutes()})
+        
+                    unavailable.end_datetime = Date.parse(
+                        appointment.end_datetime)
+                        .addDays(delta.days())
                         .toString('yyyy-MM-dd HH:mm:ss');
 
                     event.data.start_datetime = unavailable.start_datetime;
@@ -1609,17 +1611,17 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
             height: getCalendarHeight(),
             editable: true,
             firstDay: firstWeekdayNumber,
-            slotDuration: '00:15:00', 
-            snapDuration: '00:15:00',
+            slotDuration: '24:00:00', 
+            snapDuration: '24:00:00',
             slotLabelInterval: '01:00',
             timeFormat: timeFormat,
             slotLabelFormat: slotTimeFormat,
             allDayText: EALang.all_day,
             columnFormat: columnFormat,
             header: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'agendaDay,agendaWeek,month'
+                left: '',
+                center: 'prevYear, nextYear, prev,next today, title',
+                right: ''//'agendaDay,agendaWeek,month'
             },
             // views: {
             //     timelineWeek: {
@@ -1690,8 +1692,8 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                 }
 
                 // Preselect time
-                $('#start-datetime').datepicker('setDate', new Date(start.format('YYYY/MM/DD HH:mm:ss')).set({'hour': 12, 'minute': 0, 'second': 0}));
-                $('#end-datetime').datepicker('setDate', new Date(end.format('YYYY/MM/DD HH:mm:ss')).set({'hour': 23, 'minute': 59, 'second': 0}));
+                $('#start-datetime').datepicker('setDate', new Date(start.format('YYYY/MM/DD')));
+                $('#end-datetime').datepicker('setDate', new Date(end.format('YYYY/MM/DD')));
 
                 return false;
             },
@@ -1815,11 +1817,11 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
             $dialog.find('#select-provider').val(appointment.id_users_provider);
 
             // Set the start and end datetime of the appointment.
-            var startDatetime = Date.parseExact(appointment.start_datetime, 'yyyy-MM-dd HH:mm:ss');
-            $dialog.find('#start-datetime').datetimepicker('setDate', startDatetime);
+            var startDate = Date.parseExact(appointment.start_datetime, 'yyyy-MM-dd');
+            $dialog.find('#start-datetime').datepicker('setDate', startDate);
 
-            var endDatetime = Date.parseExact(appointment.end_datetime, 'yyyy-MM-dd HH:mm:ss');
-            $dialog.find('#end-datetime').datetimepicker('setDate', endDatetime);
+            var endDate = Date.parseExact(appointment.end_datetime, 'yyyy-MM-dd');
+            $dialog.find('#end-datetime').datepicker('setDate', endDate);
 
             var customer = appointment.customer;
             $dialog.find('#customer-id').val(appointment.id_users_customer);

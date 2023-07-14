@@ -328,16 +328,20 @@ class Backend_api extends EA_Controller {
                     unset($appointment['guests']);
                 }
 
-                // Get additional rooms
-                $rooms = [];
-                if (count($appointment['additional_rooms']) > 0) {
-                    $rooms = $appointment['additional_rooms'];
+                
+                if (isset($appointment['additional_rooms'])) {
+                    // Get additional rooms
+                    $rooms = [];
+                    if (count($appointment['additional_rooms']) > 0) {
+                        $rooms = $appointment['additional_rooms'];
+                    }
+
+                    unset($appointment['additional_rooms']);
                 }
+                
 
                 // Set background color
                 $appointment['bg_color']= $this->services_model->get_value("color", $appointment['id_services']);
-
-                unset($appointment['additional_rooms']);
 
                 // Check and save if "book all rooms" service
 

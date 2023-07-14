@@ -52,14 +52,14 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             // ID must exist on the object in order for the model to update the record and not to perform
             // an insert operation.
 
-            var startDatetime = $dialog.find('#start-datetime').datetimepicker('getDate').toString('yyyy-MM-dd HH:mm:ss');
-            var endDatetime = $dialog.find('#end-datetime').datetimepicker('getDate').toString('yyyy-MM-dd HH:mm:ss');
+            var startDateTime = $dialog.find('#start-datetime').datepicker('getDate').set({'hour': 12, 'minute': 0, 'second': 0}).toString('yyyy-MM-dd  HH:mm:ss');
+            var endDateTime = $dialog.find('#end-datetime').datepicker('getDate').set({'hour': 23, 'minute': 59, 'second': 0}).toString('yyyy-MM-dd HH:mm:ss');
 
             var appointment = {
                 id_services: $dialog.find('#select-service').val(),
                 id_users_provider: $dialog.find('#select-provider').val(),
-                start_datetime: startDatetime,
-                end_datetime: endDatetime,
+                start_datetime: startDateTime,
+                end_datetime: endDateTime,
                 location: $dialog.find('#appointment-location').val(),
                 bg_color: $dialog.find('#bg-color-input').val(), //for color picker
                 notes: $dialog.find('#appointment-notes').val(),
@@ -156,9 +156,9 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
 
             // Define error callback.
             var errorCallback = function () {
-                $dialog.find('.modal-message').text(EALang.service_communication_error);
-                $dialog.find('.modal-message').addClass('alert-danger').removeClass('d-none');
-                $dialog.find('.modal-body').scrollTop(0);
+                // $dialog.find('.modal-message').text(EALang.service_communication_error);
+                // $dialog.find('.modal-message').addClass('alert-danger').removeClass('d-none');
+                // $dialog.find('.modal-body').scrollTop(0);
             };
 
             // Save appointment data.
@@ -448,8 +448,8 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
 
             var duration = service ? service.duration : 60;
 
-            var start = $('#start-datetime').datetimepicker('getDate');
-            $('#end-datetime').datetimepicker('setDate', new Date(start.getTime() + duration * 60000));
+            var start = $('#start-datetime').datepicker('getDate');
+            $('#end-datetime').datepicker('setDate', new Date(start));
 
             // Update the providers select box.
 
@@ -535,7 +535,7 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
         $('#filter-existing-customers').fadeOut('slow');
         $('#select-customer span').text(EALang.select);
 
-        // Setup start and datetimepickers.
+        // Setup start and datepickers.
         // Get the selected service duration. It will be needed in order to calculate the appointment end datetime.
         var serviceId = $dialog.find('#select-service').val();
 
@@ -580,12 +580,8 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             .removeClass('btn-danger').addClass('btn-success')
             .html('<i class="fas fa-plus-square"></i>');
                 
-        var duration = service ? service.duration : 0;
-
-        var startDatetime = new Date();
-        startDatetime.set({'hour': 12, 'minute': 0, 'second': 0});
-
-        var endDatetime = startDatetime.addMinutes(duration);
+        var startDateTime = new Date();
+        var endDateTime = startDateTime;
         var dateFormat;
 
         switch (GlobalVariables.dateFormat) {
@@ -605,7 +601,7 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
         var firstWeekDay = GlobalVariables.firstWeekday;
         var firstWeekDayNumber = GeneralFunctions.getWeekDayId(firstWeekDay);
 
-        $dialog.find('#start-datetime').datetimepicker({
+        $dialog.find('#start-datetime').datepicker({
             dateFormat: dateFormat,
             timeFormat: GlobalVariables.timeFormat === 'regular' ? 'h:mm TT' : 'HH:mm',
 
@@ -635,18 +631,18 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             onClose: function () {
                 var serviceId = $('#select-service').val();
 
-                // Automatically update the #end-datetime DateTimePicker based on service duration.
+                // Automatically update the #end-datetime datepicker based on service duration.
                 var service = GlobalVariables.availableServices.find(function (availableService) {
                     return Number(availableService.id) === Number(serviceId);
                 });
 
-                var start = $('#start-datetime').datetimepicker('getDate');
-                $('#end-datetime').datetimepicker('setDate', new Date(start.getTime() + service.duration * 60000));
+                var start = $('#start-datetime').datepicker('getDate');
+                $('#end-datetime').datepicker('setDate', new Date(start));
             }
         });
-        $dialog.find('#start-datetime').datetimepicker('setDate', startDatetime);
+        $dialog.find('#start-datetime').datepicker('setDate', startDateTime);
 
-        $dialog.find('#end-datetime').datetimepicker({
+        $dialog.find('#end-datetime').datepicker({
             dateFormat: dateFormat,
             timeFormat: GlobalVariables.timeFormat === 'regular' ? 'h:mm TT' : 'HH:mm',
 
@@ -674,7 +670,7 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             minuteText: EALang.minutes,
             firstDay: firstWeekDayNumber
         });
-        $dialog.find('#end-datetime').datetimepicker('setDate', endDatetime);
+        $dialog.find('#end-datetime').datepicker('setDate', endDateTime);
     };
 
     /**
@@ -712,8 +708,8 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             }
 
             // Check appointment start and end time.
-            var start = $('#start-datetime').datetimepicker('getDate');
-            var end = $('#end-datetime').datetimepicker('getDate');
+            var start = $('#start-datetime').datepicker('getDate');
+            var end = $('#end-datetime').datepicker('getDate');
             if (start > end) {
                 $dialog.find('#start-datetime, #end-datetime').closest('.form-group').addClass('has-error');
                 throw new Error(EALang.start_date_before_end_error);
