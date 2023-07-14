@@ -24,9 +24,10 @@ root {
     box-shadow: none;
     border-radius: 0;
     padding: 0;
-    background-color: #484848; /* #5b906e;*/
-    background-image: url('../img/login_bg2.jpg');
+    background-color: rgb(255, 255, 255); /* #5b906e;*/
+    /* background-image: url('../img/login_bg2.jpg'); */
     background-size: cover;
+    color: #eb651b;
 }
 
 #header #header-logo {
@@ -36,6 +37,7 @@ root {
 
 #header #header-logo small {
     font-size: 9px;
+    color: #ef6333;
 }
 
 #header #header-logo img {
@@ -49,30 +51,47 @@ root {
     margin-top: 6px;
     font-size: 15px;
     font-weight: bold;
-    color: white;
+    color: #ef6333;
 }
 
 #header .navbar-toggler {
     margin-right: 5px;
 }
 
-#header .nav-link {
-    color: white;
+
+.navbar-nav .nav-link {
     padding: 20px 15px;
     font-weight: lighter;
 }
 
-#header #header-menu .nav-item {
+.navbar-nav .nav-item {
     min-width: 100px;
     text-align: center;
 }
 
-#header #header-menu .nav-item:hover {
+.navbar-nav .nav-item:hover {
     background: #ef6333;
+    color: white;
 }
 
-#header #header-menu .nav-item.active {
+.navbar-nav .nav-item a {
+    color: #ef6333;
+    /* color: black; */
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.navbar-nav .nav-item a:hover {
+    color: white;
+}
+
+.navbar-nav .nav-item.active {
     background: #ef6333;
+    color: white;
+}
+
+.navbar-nav .active .nav-link {
+    color: white;
 }
 
 #footer {
@@ -433,7 +452,7 @@ body legend {
 }
 
 #existing-customers-list, #additional-customers-list {
-    height: 110px;
+    height: 166px;
     overflow-y: auto;
     margin-bottom: 8px;
     font-size: 12px;
@@ -442,7 +461,7 @@ body legend {
 
 #existing-customers-list div, #additional-customers-list div {
     display: inline-block;
-    width: 250px;
+    width: 243px;
     margin: 0 7px 7px 0;
     padding: 5px;
     border-radius: 3px;

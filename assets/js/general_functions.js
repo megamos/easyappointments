@@ -313,8 +313,6 @@ window.GeneralFunctions = window.GeneralFunctions || {};
      * @param {Object} errorThrown
      */
     exports.ajaxFailureHandler = function (jqXHR, textStatus, errorThrown) {
-        console.error('Unexpected HTTP Error: ', jqXHR, textStatus, errorThrown);
-
         var response;
 
         try {

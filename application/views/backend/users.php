@@ -39,12 +39,12 @@
     <!-- PAGE NAVIGATION -->
     <ul class="nav nav-pills">
         <li class="nav-item">
-            <a class="nav-link active" href="#providers" data-toggle="tab">
+            <a class="nav-link" href="#providers" data-toggle="tab">
                 <?= lang('providers') ?>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#secretaries" data-toggle="tab">
+            <a class="nav-link active" href="#secretaries" data-toggle="tab">
                 <?= lang('secretaries') ?>
             </a>
         </li>
@@ -59,7 +59,7 @@
 
         <!-- PROVIDERS TAB -->
 
-        <div class="tab-pane active" id="providers">
+        <div class="tab-pane" id="providers">
             <div class="row">
                 <div id="filter-providers" class="filter-records column col-12 col-md-5">
                     <form class="mb-4">
@@ -367,7 +367,7 @@
 
         <!-- SECRETARIES TAB -->
 
-        <div class="tab-pane" id="secretaries">
+        <div class="tab-pane active" id="secretaries">
             <div class="row">
                 <div id="filter-secretaries" class="filter-records column col-12 col-md-5">
                     <form class="mb-4">

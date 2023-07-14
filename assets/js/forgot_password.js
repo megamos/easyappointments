@@ -25,6 +25,7 @@ $(function () {
         $alert.addClass('d-none');
         $('#get-new-password').prop('disabled', true);
 
+        var redirect = true;
         $.post(url, data)
             .done(function (response) {
                 $alert.removeClass('d-none alert-danger alert-success');
@@ -36,8 +37,13 @@ $(function () {
                     $alert.addClass('alert-danger');
                     $alert.text('The operation failed! Please enter a valid username '
                         + 'and email address in order to get a new password.');
+                    redirect = false
                 }
             });
+
+        if (redirect) {
+            window.location.replace(GlobalVariables.baseUrl + '/index.php');
+        }
     }
 
 

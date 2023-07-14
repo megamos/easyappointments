@@ -38,11 +38,6 @@
         <?= lang('book_appointment_title') ?>
     </a>
 
-    <a href="<?= site_url('backend') ?>" class="btn btn-outline-secondary btn-large">
-        <i class="fas fa-wrench mr-2"></i>
-        <?= lang('backend_section') ?>
-    </a>
-
     <div class="mt-4">
         <small>
             Powered by

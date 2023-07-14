@@ -62,7 +62,7 @@ class Notifications {
         try
         {
         
-            throw new Exception('SAVE');
+            //throw new Exception('SAVE');
             $email = new EmailClient($this->CI, $this->CI->config->config);
 
             if ($manage_mode)
@@ -205,22 +205,10 @@ class Notifications {
         try
         {
             $email = new EmailClient($this->CI, $this->CI->config->config);
-
-            //TODO: Not sure what manage_mode is used for, so change of delete this statement
-            if ($manage_mode)
-            {
-                $customer_title = new Text(lang('appointment_confirmed_customer_title'));
-                $customer_message = new Text('appointment_confirmed_customer_msg');
-                $provider_title = new Text(lang('appointment_confirmed_provider_title'));
-                $provider_message = new Text('appointment_confirmed_provider_msg');
-            }
-            else
-            {
-                $customer_title = new Text(lang('appointment_confirmed_customer_title'));
-                $customer_message = new Text(lang('appointment_confirmed_customer_msg'));
-                $provider_title = new Text(lang('appointment_confirmed_provider_title'));
-                $provider_message = new Text(lang('appointment_confirmed_provider_msg'));
-            }
+            $customer_title = new Text(lang('appointment_confirmed_customer_title'));
+            $customer_message = new Text(lang('appointment_confirmed_customer_msg'));
+            $provider_title = new Text(lang('appointment_confirmed_provider_title'));
+            $provider_message = new Text(lang('appointment_confirmed_provider_msg'));
 
             $calendar_link = new Url(site_url('backend/index/' . $appointment['hash']));
 

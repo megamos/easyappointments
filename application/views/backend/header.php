@@ -38,7 +38,7 @@
 </head>
 
 <body>
-<nav id="header" class="navbar navbar-expand-md navbar-dark">
+<nav id="header" class="navbar navbar-expand-md">
     <div id="header-logo" class="navbar-brand">
         <img src="<?= base_url('assets/img/logo.png') ?>">
         <h6><?= lang('booking_system') ?></h6>
@@ -50,7 +50,7 @@
         <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div id="header-menu" class="collapse navbar-collapse flex-row-reverse">
+    <div id="header-menu" class="navbar-collapse flex-row-reverse">
         <ul class="navbar-nav">
 
             <!--<li class="nav-item">

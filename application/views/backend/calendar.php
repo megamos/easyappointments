@@ -132,7 +132,7 @@
 
 <div class="container-fluid backend-page" id="calendar-page">
     <div class="row" id="calendar-toolbar">
-        <div id="calendar-filter" class="col-12 col-sm-5">
+        <div id="calendar-filter" class="col-12 col-sm-1" style="display:none">
             <div class="form-group calendar-filter-items">
                 <select id="select-filter-item" class="form-control col"
                         data-tippy-content="<?= lang('select_filter_item_hint') ?>">
@@ -140,7 +140,7 @@
             </div>
         </div>
 
-        <div id="calendar-actions" class="col-12 col-sm-7">
+        <div id="calendar-actions" class="col-12 col-sm-11">
             <?php if (($role_slug == DB_SLUG_ADMIN || $role_slug == DB_SLUG_PROVIDER)
                 && config('google_sync_feature') == TRUE): ?>
                 <button id="google-sync" class="btn btn-primary"
@@ -397,7 +397,7 @@
                                       </div>
                                 </div>
 
-                                <div class="form-group invisible">
+                                <div class="form-group" style="display:none;">
                                     <label for="select-provider" class="control-label">
                                         <?= lang('provider') ?>
                                         <span class="text-danger">*</span>
@@ -419,12 +419,12 @@
                             <div class="col-12 col-sm-6">
                                 <div class="form-group">
                                     <label for="start-datetime"
-                                           class="control-label"><?= lang('start_date_time') ?></label>
+                                           class="control-label"><?= lang('start_date') ?></label>
                                     <input id="start-datetime" class="required form-control">
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="end-datetime" class="control-label"><?= lang('end_date_time') ?></label>
+                                    <label for="end-datetime" class="control-label"><?= lang('end_date') ?></label>
                                     <input id="end-datetime" class="required form-control">
                                 </div>
                             </div>
@@ -446,6 +446,10 @@
                                         <?= lang('select') ?>
                                     </span>
                                 </button>
+                                <a style="font-size: 14px; color: #6c757d; border: 1px solid grey; border-radius: 3px; padding: 5px 8px;" href="<?= site_url('backend/users#secretaries') ?>" data-tippy-content="<?= lang('manage_users_hint') ?>">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Släkting
+                                </a>
                                 <input id="filter-existing-customers"
                                     placeholder="<?= lang('type_to_filter_customers') ?>"
                                     style="display: none;" class="input-sm form-control">
@@ -463,7 +467,7 @@
                                         <?= lang('first_name') ?>
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <input id="first-name" type="text"class="required form-control">
+                                    <input id="first-name" type="text"class="required form-control" disabled>
                                 </div>
 
                                 <div class="form-group">
@@ -471,7 +475,7 @@
                                         <?= lang('last_name') ?>
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <input id="last-name" class="required form-control">
+                                    <input id="last-name" class="required form-control" disabled>
                                 </div>
                             </div>    
                             <div class="col-12 col-sm-6">
@@ -480,7 +484,7 @@
                                         <?= lang('email') ?>
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <input id="email" class="required form-control">
+                                    <input id="email" class="required form-control" disabled>
                                 </div>
 
                                 <div class="form-group">
@@ -491,13 +495,13 @@
                                         <?php endif ?>
                                     </label>
                                     <input id="phone-number"
-                                           class="form-control <?= $require_phone_number === '1' ? 'required' : '' ?>">
+                                           class="form-control <?= $require_phone_number === '1' ? 'required' : '' ?>" disabled>
                                 </div>
                             </div>
                         </div>
                         <div class="row form-group">
                             <legend>
-                                <label for="relatives"> <?= lang('customer') ?> </label>
+                                <label style="margin-left: 15px;" for="relatives"> <?= lang('customer') ?> </label>
                                 <button id="select-additional-customer" class="btn btn-outline-secondary btn-sm" type="button"
                                         data-tippy-content="<?= lang('pick_existing_customer_hint') ?>">
                                     <i class="fas fa-hand-pointer mr-2"></i>

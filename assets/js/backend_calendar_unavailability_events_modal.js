@@ -33,14 +33,14 @@ window.BackendCalendarUnavailabilityEventsModal = window.BackendCalendarUnavaila
             $dialog.find('.modal-message').addClass('d-none');
             $dialog.find('.has-error').removeClass('has-error');
 
-            var start = $dialog.find('#unavailable-start').datetimepicker('getDate');
+            var start = $dialog.find('#unavailable-start').datepicker('getDate');
 
             if (!start) {
                 $dialog.find('#unavailable-start').closest('.form-group').addClass('has-error');
                 return;
             }
 
-            var end = Date.parse($dialog.find('#unavailable-end').datetimepicker('getDate'));
+            var end = Date.parse($dialog.find('#unavailable-end').datepicker('getDate'));
 
             if (!end) {
                 $dialog.find('#unavailable-end').closest('.form-group').addClass('has-error');
@@ -60,8 +60,8 @@ window.BackendCalendarUnavailabilityEventsModal = window.BackendCalendarUnavaila
 
             // Unavailable period records go to the appointments table.
             var unavailable = {
-                start_datetime: start.toString('yyyy-MM-dd HH:mm'),
-                end_datetime: end.toString('yyyy-MM-dd HH:mm'),
+                start_datetime: start.toString('yyyy-MM-dd'),
+                end_datetime: end.toString('yyyy-MM-dd'),
                 notes: $dialog.find('#unavailable-notes').val(),
                 id_users_provider: $('#unavailable-provider').val() // curr provider
             };
@@ -153,7 +153,7 @@ window.BackendCalendarUnavailabilityEventsModal = window.BackendCalendarUnavaila
         var fDay = GlobalVariables.firstWeekday;
         var fDaynum = GeneralFunctions.getWeekDayId(fDay);
 
-        $dialog.find('#unavailable-start').datetimepicker({
+        $dialog.find('#unavailable-start').datepicker({
             dateFormat: dateFormat,
             timeFormat: GlobalVariables.timeFormat === 'regular' ? 'h:mm TT' : 'HH:mm',
 
@@ -183,7 +183,7 @@ window.BackendCalendarUnavailabilityEventsModal = window.BackendCalendarUnavaila
         });
         $dialog.find('#unavailable-start').val(start);
 
-        $dialog.find('#unavailable-end').datetimepicker({
+        $dialog.find('#unavailable-end').datepicker({
             dateFormat: dateFormat,
             timeFormat: GlobalVariables.timeFormat === 'regular' ? 'h:mm TT' : 'HH:mm',
 

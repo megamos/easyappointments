@@ -813,6 +813,7 @@ class Appointments_model extends EA_Model {
         $appointments = $this->db
             //->join('services', 'services.id = appointments.id_services')
             ->where('appointments.id !=', $id_main)
+            ->where('appointments.id_main !=', $id_main)
             ->where_in('appointments.id_services', $service_ids)
             ->group_start()
                 ->where('appointments.start_datetime >=', $slot_start->format('Y-m-d H:i:s'))
@@ -822,6 +823,42 @@ class Appointments_model extends EA_Model {
                     ->where('appointments.end_datetime >=', $slot_start->format('Y-m-d H:i:s'))
                 ->group_end()
             ->group_end()
+            ->get('appointments')
+            ->result_array();
+
+        foreach ($appointments as &$appointment)
+        {
+            $appointment = $this->get_aggregates($appointment);
+        }
+
+        return $appointments;
+    }
+    
+    /**
+     * Returns the service/room names that have already been booked for the given slot
+     *
+     * @param DateTime $slot_start When the slot starts
+     * @param DateTime $slot_end When the slot ends.
+     * @param int $id_main ID of the appointment
+     * @param array $service_ids Selected service IDs.
+     *
+     * @return int Returns the service name of any already booked service for selected time period.
+     */
+    public function get_all_rooms_appointments(DateTime $slot_start, DateTime $slot_end, $id_main)
+    {
+        $appointments = $this->db
+            //->join('services', 'services.id = appointments.id_services')
+            ->where('appointments.id !=', $id_main)
+            ->join('services', 'services.id = appointments.id_services')
+            ->group_start()
+                ->where('appointments.start_datetime >=', $slot_start->format('Y-m-d H:i:s'))
+                ->where('appointments.start_datetime <=', $slot_end->format('Y-m-d H:i:s'))
+                ->or_group_start()
+                    ->where('appointments.start_datetime <=', $slot_start->format('Y-m-d H:i:s'))
+                    ->where('appointments.end_datetime >=', $slot_start->format('Y-m-d H:i:s'))
+                ->group_end()
+            ->group_end()
+            ->where('services.is_all_rooms = 1')
             ->get('appointments')
             ->result_array();
 
