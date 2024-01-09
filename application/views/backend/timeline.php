@@ -1,5 +1,4 @@
 <link rel="stylesheet" type="text/css" href="<?= asset_url('/assets/ext/jquery-fullcalendar/fullcalendar.min.css') ?>">
-<link rel="stylesheet" type="text/css" href="<?= asset_url('/assets/ext/jquery-fullcalendar/scheduler.min.css') ?>">
 
 <script src="<?= asset_url('assets/ext/jquery-fullcalendar/fullcalendar.min.js') ?>"></script>
 <script src="<?= asset_url('assets/ext/jquery-fullcalendar/scheduler.min.js') ?>"></script>
@@ -7,8 +6,7 @@
 <script src="<?= asset_url('assets/ext/jquery-ui/jquery-ui-timepicker-addon.min.js') ?>"></script>
 <script src="<?= asset_url('assets/js/working_plan_exceptions_modal.js') ?>"></script>
 <script src="<?= asset_url('assets/js/backend_calendar.js') ?>"></script>
-<script src="<?= asset_url('assets/js/backend_calendar_default_view.js') ?>"></script>
-<script src="<?= asset_url('assets/js/backend_calendar_table_view.js') ?>"></script>
+<script src="<?= asset_url('assets/js/backend_calendar_timeline_view.js') ?>"></script>
 <script src="<?= asset_url('assets/js/backend_calendar_google_sync.js') ?>"></script>
 <script src="<?= asset_url('assets/js/backend_calendar_appointments_modal.js') ?>"></script>
 <script src="<?= asset_url('assets/js/backend_calendar_unavailability_events_modal.js') ?>"></script>
@@ -21,7 +19,6 @@
 <script>
     var GlobalVariables = {
         csrfToken: <?= json_encode($this->security->get_csrf_hash()) ?>,
-        fullCalendarLicens: <?= json_encode($fullcalendar_license_key) ?>,
         availableProviders: <?= json_encode($available_providers) ?>,
         availableServices: <?= json_encode($available_services) ?>,
         baseUrl: <?= json_encode($base_url) ?>,
@@ -130,10 +127,10 @@
             return false;
         })
         ;
-    });
+    }); 
 </script>
 
-<div class="container-fluid backend-page" id="calendar-page">
+<div class="container-fluid backend-page" id="timeline-page">
     <div class="row" id="calendar-toolbar">
         <div id="calendar-filter" class="col-12 col-sm-1" style="display:none">
             <div class="form-group calendar-filter-items">
@@ -687,4 +684,3 @@
 <!-- WORKING PLAN EXCEPTIONS MODAL -->
 
 <?php require __DIR__ . '/working_plan_exceptions_modal.php' ?>
-
