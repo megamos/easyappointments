@@ -84,6 +84,7 @@ class Backend extends EA_Controller {
         $view['user_phone_number'] = $user['phone_number'];
         $view['system_settings'] = $this->settings_model->get_settings();
         $view['user_settings'] = $user['settings'];
+        $view['fullcalendar_license_key'] = $this->settings_model->get_setting('fullcalendar_license_key');
 
         $this->set_user_data($view);
 
@@ -112,6 +113,74 @@ class Backend extends EA_Controller {
 
         $this->load->view('backend/header', $view);
         $this->load->view('backend/calendar', $view);
+        $this->load->view('backend/footer', $view);
+    }
+
+    
+    public function timeline($appointment_hash = '')
+    {
+        
+        $this->session->set_userdata('dest_url', site_url('backend/timeline'));
+
+        if ( ! $this->has_privileges(PRIV_APPOINTMENTS))
+        {
+            return;
+        }
+
+        $calendar_view_query_param = $this->input->get('view');
+
+        $user_id = $this->session->userdata('user_id');
+
+        $user = $this->user_model->get_user($user_id);
+
+        $view['base_url'] = config('base_url');
+        $view['page_title'] = lang('calendar');
+        $view['user_display_name'] = $this->user_model->get_user_display_name($user_id);
+        $view['active_menu'] = PRIV_APPOINTMENTS;
+        $view['date_format'] = $this->settings_model->get_setting('date_format');
+        $view['time_format'] = $this->settings_model->get_setting('time_format');
+        $view['first_weekday'] = $this->settings_model->get_setting('first_weekday');
+        $view['company_name'] = $this->settings_model->get_setting('company_name');
+        $view['require_phone_number'] = $this->settings_model->get_setting('require_phone_number');
+        $view['available_providers'] = $this->providers_model->get_available_providers();
+        $view['available_services'] = $this->services_model->get_available_services();
+        $view['customers'] = $this->customers_model->get_batch();
+        $view['calendar_view'] = 'timline';
+        $view['timezones'] = $this->timezones->to_array();
+        $view['user_first_name'] = $user['first_name'];
+        $view['user_last_name'] = $user['last_name'];
+        $view['user_phone_number'] = $user['phone_number'];
+        $view['system_settings'] = $this->settings_model->get_settings();
+        $view['user_settings'] = $user['settings'];
+        $view['fullcalendar_license_key'] = $this->settings_model->get_setting('fullcalendar_license_key');
+
+        $this->set_user_data($view);
+
+        if ($this->session->userdata('role_slug') === DB_SLUG_SECRETARY)
+        {
+            $secretary = $this->secretaries_model->get_row($user_id);
+            $view['secretary_providers'] = $secretary['providers'];
+        }
+        else
+        {
+            $view['secretary_providers'] = [];
+        }
+
+        $results = $this->appointments_model->get_batch(['hash' => $appointment_hash], null, null, null, true);
+
+        if ($appointment_hash !== '' && count($results) > 0)
+        {
+            $appointment = $results[0];
+            $appointment['customer'] = $this->customers_model->get_row($appointment['id_users_customer']);
+            $view['edit_appointment'] = $appointment; // This will display the appointment edit dialog on page load.
+        }
+        else
+        {
+            $view['edit_appointment'] = NULL;
+        }
+
+        $this->load->view('backend/header', $view);
+        $this->load->view('backend/timeline', $view);
         $this->load->view('backend/footer', $view);
     }
 

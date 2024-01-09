@@ -12,11 +12,11 @@
 /**
  * Backend Calendar
  *
- * This module implements the default calendar view of backend.
+ * This module implements the timline calendar view of backend.
  *
- * @module BackendCalendarDefaultView
+ * @module BackendCalendarTimelineView
  */
-window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
+window.BackendCalendarTimelineView = window.BackendCalendarTimelineView || {};
 
 (function (exports) {
     'use strict';
@@ -809,9 +809,9 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
     function calendarEventResize(event, delta, revertFunc) {
         // CLG change
         //TODO: Disabling this for now
-        alert("Resize är för tillfället inte möjligt.");
+        //alert("Drag and Drop är för tillfället inte möjligt.");
         location.reload();
-        return;
+        //return;
         if (GlobalVariables.user.role_slug !== Backend.DB_SLUG_ADMIN 
             && GlobalVariables.user.role_slug !== Backend.DB_SLUG_PROVIDER
             && (event.data.id_users_customer != (GlobalVariables.user.id - 1).toString()
@@ -977,9 +977,9 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
     function calendarEventDrop(event, delta, revertFunc) {
         // CLG change
         //TODO: Disabling this for now
-        alert("Drag and Drop är för tillfället inte möjligt.");
+        //alert("Drag and Drop är för tillfället inte möjligt.");
         location.reload();
-        return;
+        //return;
         if (GlobalVariables.user.role_slug !== Backend.DB_SLUG_ADMIN 
             && GlobalVariables.user.role_slug !== Backend.DB_SLUG_PROVIDER
             && (event.data.id_users_customer != (GlobalVariables.user.id - 1).toString()
@@ -1236,15 +1236,15 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
 
                     var appointmentEvent = {
                         id: appointment.id,
-                        title: appointment.customer.first_name + ' '
+                        title: appointment.service.name + ' - '
+                            + appointment.customer.first_name + ' '
                             + appointment.customer.last_name,
                         start: moment(appointment.start_datetime),
                         end: moment(appointment.end_datetime),
                         allDay: false,
                         color: theColor,
                         status: appointment.status,
-                        data: appointment, // Store appointment data for later use.
-                        //resourceId: appointment.service.id
+                        data: appointment // Store appointment data for later use.
                     };
 
                     // Save parent/main appointment for child appointments. Used when editing.
@@ -1253,8 +1253,6 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                     // Save children IDs for parent appointment
                     } else {
                         appointmentEvent.data.children = response.appointments.filter(a => a.id_main == appointment.id).map(a => a.id_services);
-                        var allServiceIds = appointmentEvent.data.children.concat(appointmentEvent.data.id_services);
-                        appointmentEvent.resourceIds = allServiceIds;
                     }
 
                     calendarEventSource.push(appointmentEvent);
@@ -1619,23 +1617,8 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
             resources: GlobalVariables.availableServices,
             resourceGroupField: 'category_name',
             resourceAreaWidth: '10%',
-            slotWidth: 50,
-            height: getCalendarHeight(),
-            editable: true,
-            //firstDay: firstWeekdayNumber,
-            // slotDuration: '24:00:00', 
-            // snapDuration: '24:00:00',
-            // slotLabelInterval: '24:00',
-            // timeFormat: timeFormat,
-            // slotLabelFormat: slotTimeFormat,
-            // columnFormat: columnFormat,
+            slotWidth: 30,
             allDayText: EALang.all_day,
-            // views: {
-            //     timelineWeek: {
-            //         type: 'timeline',
-            //         duration: { days: 7}
-            //     }
-            // },
 
             // Selectable
             selectable: true,
@@ -1731,7 +1714,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
             },
 
             // Calendar events need to be declared on initialization.
-            //windowResize: calendarWindowResize,
+            windowResize: calendarWindowResize,
             viewRender: calendarViewRender,
             dayClick: calendarDayClick,
             eventClick: calendarEventClick,
@@ -1741,7 +1724,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
         });
 
         // Trigger once to set the proper footer position after calendar initialization.
-        calendarWindowResize();
+        //calendarWindowResize();
 
         // Fill the select list boxes of the page.
         if (GlobalVariables.availableProviders.length > 0) {
@@ -1945,4 +1928,4 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
         }, 60000);
     };
 
-})(window.BackendCalendarDefaultView);
+})(window.BackendCalendarTimelineView);

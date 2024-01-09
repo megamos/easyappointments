@@ -159,8 +159,16 @@ class Clg {
      */
     private function R1_max_one_year_prior($appointment) {
         try {
-            if (strtotime($appointment['start_datetime']) > (time() + (60 * 60 * 24 * 356))) {
-                array_push($this->validation_faults, "Bokning får ske max ett år i förväg");
+            if (strtotime($appointment['start_datetime']) > (time() + (60 * 60 * 24 * 356)))  {
+                
+                $service_ids = [];
+                array_push($service_ids, $appointment['id_services']);
+                
+                $includes_all_rooms = $this->CI->services_model->includes_all_rooms_service($service_ids);
+                
+                if (!$includes_all_rooms) {
+                    array_push($this->validation_faults, "Bokning får ske max ett år i förväg");
+                }
             }
         }
         catch(Exception $exception) {

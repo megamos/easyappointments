@@ -119,7 +119,11 @@ window.BackendCalendar = window.BackendCalendar || {};
         // Load and initialize the calendar view.
         if (view === 'table') {
             BackendCalendarTableView.initialize();
-        } else {
+        } 
+        else if (view === 'timline') {
+            BackendCalendarTimelineView.initialize();
+        } 
+        else {
             BackendCalendarDefaultView.initialize();
         }
 
