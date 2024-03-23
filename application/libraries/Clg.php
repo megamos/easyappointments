@@ -196,14 +196,22 @@ class Clg {
             //Check how many days the appointment is for, then add that to summer_days booked
             $summer_days_booked = 0;
             $a_interval = date_diff($this->start_date, $this->end_date);
-            $appointment_days = $a_interval->Format("%a");
+            $appointment_days = $a_interval->Format("%a") + 1;
 
+            //array_push($this->validation_faults, $appointment_days);
             $summer_appointments = $this->CI->appointments_model->get_batch([
                 'is_main' => TRUE,
                 'id_users_customer' => $appointment['id_users_customer'],
                 'start_datetime >=' => $this->last_day_in_may->format('Y-m-d'),
                 'end_datetime <' => $this->first_day_in_september->format('Y-m-d')
             ]);
+
+            // Exclude the current appointment being edited
+            foreach ($summer_appointments as $key => $a) {
+                if ($a['id'] == $appointment['id']) {
+                    unset($summer_appointments[$key]);
+                }
+            }
 
             foreach ($summer_appointments as $a) {
                 $a_end_date = date_create($a['end_datetime']);
