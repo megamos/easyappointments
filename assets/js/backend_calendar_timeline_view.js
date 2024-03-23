@@ -1616,7 +1616,7 @@ window.BackendCalendarTimelineView = window.BackendCalendarTimelineView || {};
             resourceLabelText: 'Rum & Event',
             resources: GlobalVariables.availableServices,
             resourceGroupField: 'category_name',
-            resourceAreaWidth: '10%',
+            resourceAreaWidth: '230px',
             slotWidth: 30,
             allDayText: EALang.all_day,
 

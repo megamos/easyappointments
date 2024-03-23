@@ -53,7 +53,7 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
             // an insert operation.
 
             var startDateTime = $dialog.find('#start-datetime').datepicker('getDate').set({'hour': 12, 'minute': 0, 'second': 0}).toString('yyyy-MM-dd  HH:mm:ss');
-            var endDateTime = $dialog.find('#end-datetime').datepicker('getDate').set({'hour': 23, 'minute': 59, 'second': 0}).toString('yyyy-MM-dd HH:mm:ss');
+            var endDateTime = $dialog.find('#end-datetime').datepicker('getDate').set({'hour': 11, 'minute': 59, 'second': 0}).toString('yyyy-MM-dd HH:mm:ss');
 
             var appointment = {
                 id_services: $dialog.find('#select-service').val(),
