@@ -22,6 +22,11 @@ class Clg {
     private $validation_faults;
 
     /**
+     * @var CI_Session
+     */
+    private $session;
+
+    /**
      * @var DateTime
      */
     protected $start_date;
@@ -84,13 +89,15 @@ class Clg {
      * Send the required notifications, related to an appointment creation/modification.
      *
      * @param array $appointment Appointment record.
+     * @param CI_Session $current_session Appointment record.
      * @param bool|false $manage_mode
      */
-    public function validate_appointment($appointment, $manage_mode = FALSE)
+    public function validate_appointment($appointment, $current_session, $manage_mode = FALSE)
     {
         try
         {
             // Needed for several rules
+            $this->session = $current_session;
             $this->start_date = date_create($appointment['start_datetime']);
             $this->end_date = date_create($appointment['end_datetime']);
             $this->appointment_year = number_format($this->start_date->format('y'));
@@ -190,6 +197,13 @@ class Clg {
 
             // Return if appointment is not during summer months
             if ($this->is_during_summer == false) {
+                return;
+            }
+
+            // Allow husmor to break this rule (used for booking guides during summer)
+            $user_id = $this->session->userdata('user_id');
+
+            if ($user_id == 3) {
                 return;
             }
 

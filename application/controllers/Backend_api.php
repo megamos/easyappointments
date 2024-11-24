@@ -309,7 +309,7 @@ class Backend_api extends EA_Controller {
                 //$appointment['id_users_customer'] = $customer['id'];
 
                 // Run CLG validations/booking rules
-                $exceptions = $this->clg->validate_appointment($appointment, false);
+                $exceptions = $this->clg->validate_appointment($appointment, $this->session, false);
                 if (sizeof($exceptions) > 0) {
                     throw new Exception(join("\r\n", $exceptions));
                 }
