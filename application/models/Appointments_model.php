@@ -891,13 +891,12 @@ class Appointments_model extends EA_Model {
         $xmas_service_id = $this->get_service_id_by_name('Jul');
         $new_years_service_id = $this->get_service_id_by_name('Nyår');
 
-        // Check if the current appointment is for Christmas or New Year's
-        $is_xmas_booking = in_array($xmas_service_id, $appointment['id_services']) || 
-                           (isset($appointment['additional_rooms']) && in_array($xmas_service_id, $appointment['additional_rooms']));
-        $is_new_years_booking = in_array($new_years_service_id, $appointment['id_services']) || 
-                                (isset($appointment['additional_rooms']) && in_array($new_years_service_id, $appointment['additional_rooms']));
+        $id_services_array = explode(',', $appointment['id_services']);
 
-        if ($is_xmas_booking && $is_new_years_booking) {
+        $is_christmas_booking = in_array($xmas_service_id, $id_services_array);
+        $is_new_year_booking = in_array($new_years_service_id, $id_services_array);
+        
+        if ($is_christmas_booking && $is_new_year_booking) {
             return true;
         }
 
@@ -920,7 +919,7 @@ class Appointments_model extends EA_Model {
             }
         }
 
-        return ($is_xmas_booking && $has_new_years_booking) || ($is_new_years_booking && $has_xmas_booking);
+        return ($is_christmas_booking && $has_new_years_booking) || ($is_new_year_booking && $has_xmas_booking);
     }
 
     /**
@@ -939,18 +938,23 @@ class Appointments_model extends EA_Model {
         return $result ? $result['id'] : null;
     }
 
-        /**
+    /**
      * Check if less than 40% of the relatives and guests are in both appointments.
      *
-     * @param int $appointment_id_1 The ID of the first appointment.
+     * @param mixed $appointment_1 The first appointment (can be an ID or an array).
      * @param int $appointment_id_2 The ID of the second appointment.
      * @return bool Returns true if less than 40% of the relatives and guests are in both appointments, false otherwise.
      */
-    public function is_less_than_40_percent_overlap($appointment_id_1, $appointment_id_2)
+    public function is_less_than_40_percent_overlap($appointment_1, $appointment_id_2)
     {
         // Get relatives and guests for the first appointment
-        $relatives_1 = $this->get_relatives_by_appointment($appointment_id_1);
-        $guests_1 = $this->get_guests_by_appointment($appointment_id_1);
+        if (is_array($appointment_1)) {
+            $relatives_1 = $this->get_relatives_by_appointment_array($appointment_1);
+            $guests_1 = $this->get_guests_by_appointment_array($appointment_1);
+        } else {
+            $relatives_1 = $this->get_relatives_by_appointment($appointment_1);
+            $guests_1 = $this->get_guests_by_appointment($appointment_1);
+        }
 
         // Get relatives and guests for the second appointment
         $relatives_2 = $this->get_relatives_by_appointment($appointment_id_2);
@@ -963,7 +967,33 @@ class Appointments_model extends EA_Model {
         $overlapping = count(array_intersect($relatives_1, $relatives_2)) + count(array_intersect($guests_1, $guests_2));
 
         // Check if less than 40% of the relatives and guests are in both appointments
+        if ($total_unique === 0) {
+            return true; // No overlap if there are no unique relatives or guests
+        }
+        
         return ($overlapping / $total_unique) < 0.4;
+    }
+
+    /**
+     * Get relatives by appointment array.
+     *
+     * @param array $appointment The appointment array.
+     * @return array The list of relative IDs.
+     */
+    private function get_relatives_by_appointment_array($appointment)
+    {
+        return isset($appointment['relatives']) ? $appointment['relatives'] : [];
+    }
+
+    /**
+     * Get guests by appointment array.
+     *
+     * @param array $appointment The appointment array.
+     * @return array The list of guest names.
+     */
+    private function get_guests_by_appointment_array($appointment)
+    {
+        return isset($appointment['guests']) ? $appointment['guests'] : [];
     }
 
     /**
@@ -974,12 +1004,13 @@ class Appointments_model extends EA_Model {
      */
     private function get_relatives_by_appointment($appointment_id)
     {
-        $this->db->select('relative_id');
-        $this->db->from('relatives');
-        $this->db->where('appointment_id', $appointment_id);
+        $this->db->select('id_user');
+        $this->db->from('appointment_visitors');
+        $this->db->where('id_appointment', $appointment_id);
+        $this->db->where('id_user IS NOT NULL');
         $result = $this->db->get()->result_array();
 
-        return array_column($result, 'relative_id');
+        return array_column($result, 'id_user');
     }
 
     /**
@@ -990,11 +1021,12 @@ class Appointments_model extends EA_Model {
      */
     private function get_guests_by_appointment($appointment_id)
     {
-        $this->db->select('guest_name');
-        $this->db->from('guests');
-        $this->db->where('appointment_id', $appointment_id);
+        $this->db->select('name');
+        $this->db->from('appointment_visitors');
+        $this->db->where('id_appointment', $appointment_id);
+        $this->db->where('id_user IS NULL');
         $result = $this->db->get()->result_array();
 
-        return array_column($result, 'guest_name');
+        return array_column($result, 'name');
     }
 }

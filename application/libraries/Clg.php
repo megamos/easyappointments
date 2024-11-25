@@ -31,6 +31,8 @@ class Clg {
      */
     protected $start_date;
     
+
+
     /**
      * @var DateTime
      */
@@ -50,6 +52,11 @@ class Clg {
      * @var DateTime
      */
     protected $appointment_year;
+
+    /**
+     * @var bool
+     */
+    protected $is_during_summer;
     
     /**
      * CLG constructor.
@@ -93,42 +100,42 @@ class Clg {
      * @param bool|false $manage_mode
      */
     public function validate_appointment($appointment, $current_session, $manage_mode = FALSE)
+{
+    try
     {
-        try
-        {
-            // Needed for several rules
-            $this->session = $current_session;
-            $this->start_date = date_create($appointment['start_datetime']);
-            $this->end_date = date_create($appointment['end_datetime']);
-            $this->appointment_year = number_format($this->start_date->format('y'));
-            $this->is_during_summer = $this->is_summer_appointment($this->start_date, $this->end_date);
-            $this->last_day_in_may = date_create(date("Y-m-d H:i:s", mktime(0,0,0,6,0,$this->appointment_year)));
-            $this->first_day_in_september = date_create(date("Y-m-d H:i:s", mktime(0,0,0,9,1,$this->appointment_year)));
+        // Needed for several rules
+        $this->session = $current_session;
+        $this->start_date = date_create($appointment['start_datetime']);
+        $this->end_date = date_create($appointment['end_datetime']);
+        $this->appointment_year = (int)$this->start_date->format('Y'); 
+        $this->is_during_summer = $this->is_summer_appointment($this->start_date, $this->end_date);
+        $this->last_day_in_may = date_create(date("Y-m-d H:i:s", mktime(0, 0, 0, 5, 31, $this->appointment_year))); 
+        $this->first_day_in_september = date_create(date("Y-m-d H:i:s", mktime(0, 0, 0, 9, 1, $this->appointment_year)));
 
-            // Run CLG validations
-            $this->R0_max_one_per_room_and_day($appointment);
-            $this->R1_max_one_year_prior($appointment);
-            $this->R2_max_seven_days($appointment);
-            $this->R3_summer_two_years_in_a_row($appointment);
-            //$this->R4_exchange_day($appointment);
-            $this->R5_all_rooms($appointment);
-            //$this->R6_holidays($appointment);
-            $this->R7_xmas_or_newyears($appointment);
-            $this->R8_preliminary_booking_restrictions($appointment);
-            $this->R9_age_limit($appointment);
-            //$this->R10_relative_guide($appointment);
-            
-            // Run system validations
-            $this->V1_minimum_one_person_per_room($appointment);
+        // Run CLG validations
+        $this->R0_max_one_per_room_and_day($appointment);
+        $this->R1_max_one_year_prior($appointment);
+        $this->R2_max_seven_days($appointment);
+        $this->R3_summer_two_years_in_a_row($appointment);
+        //$this->R4_exchange_day($appointment);
+        $this->R5_all_rooms($appointment);
+        //$this->R6_holidays($appointment);
+        $this->R7_xmas_or_newyears($appointment);
+        $this->R8_preliminary_booking_restrictions($appointment);
+        $this->R9_age_limit($appointment);
+        //$this->R10_relative_guide($appointment);
+        
+        // Run system validations
+        $this->V1_minimum_one_person_per_room($appointment);
 
-            return $this->validation_faults;
-        }
-        catch (Exception $exception)
-        {
-            log_message('error', $exception->getMessage());
-            log_message('error', $exception->getTraceAsString());
-        }
+        return $this->validation_faults;
     }
+    catch (Exception $exception)
+    {
+        log_message('error', $exception->getMessage());
+        log_message('error', $exception->getTraceAsString());
+    }
+}
 
     /**
      * Endast en bokning per rum och dag
@@ -385,11 +392,11 @@ class Clg {
                 $this->CI->db->join('services', 'appointments.id_services = services.id');
                 $this->CI->db->where('appointments.id_users_customer', $user_id);
                 $this->CI->db->where_in('services.name', $holidays);
-                $this->CI->db->where('YEAR(appointments.start_datetime)', $appointment_year);
+                $this->CI->db->where('YEAR(ea_appointments.start_datetime)', $appointment_year);
                 $existing_appointments = $this->CI->db->get()->result_array();
 
                 foreach ($existing_appointments as $existing_appointment) {
-                    if (!$this->CI->appointments_model->is_less_than_40_percent_overlap($appointment['id'], $existing_appointment['id'])) {
+                    if (!$this->CI->appointments_model->is_less_than_40_percent_overlap($appointment, $existing_appointment['id'])) {
                         array_push($this->validation_faults, "Jul/nyår kan bokas med max en jul/ett nyår i taget och mindre än 40% av gästerna får vara samma.");
                         break;
                     }
@@ -430,8 +437,8 @@ class Clg {
             $user_id = $appointment['id_users_customer'];
             $user = $this->CI->user_model->get_user($user_id);
             
-            if (isset($user['settings']['birthday'])) {
-                $birthday = new DateTime($user['settings']['birthday']);
+            if (isset($user['birthday'])) {
+                $birthday = new DateTime($user['birthday']);
                 $today = new DateTime();
                 $age = $today->diff($birthday)->y;
 
@@ -498,6 +505,15 @@ class Clg {
             // Check if the number of people is fewer than the number of rooms
             if ($people_count < $room_count) {
                 array_push($this->validation_faults, "En bokning måste åtminstånde ha lika många personer som rum.");
+            }
+
+            // Fetch the service details to check if is_all_rooms is set
+            $service = $this->CI->services_model->get_row($appointment['id_services']);
+            $is_all_rooms = isset($service['is_all_rooms']) ? $service['is_all_rooms'] : false;
+
+            // Check if 'is_all_rooms' is set and there are at least 2 relatives
+            if ($is_all_rooms && count($relatives) < 2) {
+                array_push($this->validation_faults, "När hela gården bokas måste minst 2 släktingar läggas till i bokningen.");
             }
         }
         catch(Exception $exception) {
