@@ -112,7 +112,14 @@ class Clg {
             $this->R3_summer_two_years_in_a_row($appointment);
             //$this->R4_exchange_day($appointment);
             $this->R5_all_rooms($appointment);
+            //$this->R6_holidays($appointment);
+            $this->R7_xmas_or_newyears($appointment);
+            $this->R8_preliminary_booking_restrictions($appointment);
+            $this->R9_age_limit($appointment);
+            //$this->R10_relative_guide($appointment);
             
+            // Run system validations
+            $this->V1_minimum_one_person_per_room($appointment);
 
             return $this->validation_faults;
         }
@@ -362,10 +369,32 @@ class Clg {
 
     /**
      * Jul/nyår kan bokas med max en jul/ett nyår i taget.
+     * TODO: Check if it's roughly the same ppl booking both holidays but booker is different
      */
     private function R7_xmas_or_newyears($appointment) {
         try {
-            throw new Exception("Not implemented!");
+            $user_id = $appointment['id_users_customer'];
+            $is_booking_both = $this->CI->appointments_model->is_booking_xmas_and_new_years($user_id, $appointment);
+
+            if ($is_booking_both) {
+                $holidays = ['Jul', 'Nyår'];
+                $appointment_year = date('Y', strtotime($appointment['start_datetime']));
+
+                $this->CI->db->select('appointments.*');
+                $this->CI->db->from('appointments');
+                $this->CI->db->join('services', 'appointments.id_services = services.id');
+                $this->CI->db->where('appointments.id_users_customer', $user_id);
+                $this->CI->db->where_in('services.name', $holidays);
+                $this->CI->db->where('YEAR(appointments.start_datetime)', $appointment_year);
+                $existing_appointments = $this->CI->db->get()->result_array();
+
+                foreach ($existing_appointments as $existing_appointment) {
+                    if (!$this->CI->appointments_model->is_less_than_40_percent_overlap($appointment['id'], $existing_appointment['id'])) {
+                        array_push($this->validation_faults, "Jul/nyår kan bokas med max en jul/ett nyår i taget och mindre än 40% av gästerna får vara samma.");
+                        break;
+                    }
+                }
+            }
         }
         catch(Exception $exception) {
             log_message('error', $exception->getMessage());
@@ -378,7 +407,14 @@ class Clg {
      */
     private function R8_preliminary_booking_restrictions($appointment) {
         try {
-            throw new Exception("Not implemented!");
+            $start_date = new DateTime($appointment['start_datetime']);
+            $end_date = new DateTime($appointment['end_datetime']);
+            $interval = $start_date->diff($end_date);
+            $days = $interval->days + 1; // Include the start day
+
+            if ($days > 7) {
+                array_push($this->validation_faults, "Bokningar får inte överstiga 7 dagar.");
+            }
         }
         catch(Exception $exception) {
             log_message('error', $exception->getMessage());
@@ -391,7 +427,20 @@ class Clg {
      */
     private function R9_age_limit($appointment) {
         try {
-            throw new Exception("Not implemented!");
+            $user_id = $appointment['id_users_customer'];
+            $user = $this->CI->user_model->get_user($user_id);
+            
+            if (isset($user['settings']['birthday'])) {
+                $birthday = new DateTime($user['settings']['birthday']);
+                $today = new DateTime();
+                $age = $today->diff($birthday)->y;
+
+                if ($age < 18) {
+                    array_push($this->validation_faults, "Från det året man fyller 18 år kan man få bo på Lilla Hyttnäs.");
+                }
+            } else {
+                array_push($this->validation_faults, "Födelsedatum saknas för användaren.");
+            }
         }
         catch(Exception $exception) {
             log_message('error', $exception->getMessage());
@@ -405,7 +454,51 @@ class Clg {
      */
     private function R10_relative_guide($appointment) {
         try {
+            /*
+            * Är i princip implementerad i R2_max_seven_days eftersom husmor kan skapa bokning. TODO: Ska det va så och denna tas bort?
+            */
             throw new Exception("Not implemented!");
+        }
+        catch(Exception $exception) {
+            log_message('error', $exception->getMessage());
+            log_message('error', $exception->getTraceAsString());
+        }
+    }
+    
+    /**
+     ************ SYSTEMETS EGNA VALIDERINGAR (Ej genomklubbade regler) ************
+     */
+
+    /**
+     * En bokning måste åtminstånde ha lika många personer som rum.
+     */
+    private function V1_minimum_one_person_per_room($appointment) {
+        try {
+            // Get visiting relatives
+            $relatives = [];
+            if (isset($appointment['relatives'])) {
+                $relatives = $appointment['relatives'];
+            }
+
+            // Get visiting guests
+            $guests = [];
+            if (isset($appointment['guests'])) {
+                $guests = $appointment['guests'];
+            }
+
+            // Count the number of rooms in the booking
+            $room_count = 1; // Start with the main room
+            if (isset($appointment['additional_rooms'])) {
+                $room_count += count($appointment['additional_rooms']);
+            }
+
+            // Count the number of people (relatives + guests + 1 for the person making the booking)
+            $people_count = count($relatives) + count($guests) + 1;
+
+            // Check if the number of people is fewer than the number of rooms
+            if ($people_count < $room_count) {
+                array_push($this->validation_faults, "En bokning måste åtminstånde ha lika många personer som rum.");
+            }
         }
         catch(Exception $exception) {
             log_message('error', $exception->getMessage());

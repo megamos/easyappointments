@@ -877,4 +877,124 @@ class Appointments_model extends EA_Model {
 
         return $appointments;
     }
+
+    /**
+     * Check if the user is trying to book both Christmas and New Year's.
+     *
+     * @param int $user_id The ID of the user making the appointment.
+     * @param array $appointment The appointment data.
+     * @return bool Returns true if the user is trying to book both Christmas and New Year's, false otherwise.
+     */
+    public function is_booking_xmas_and_new_years($user_id, $appointment)
+    {
+        // Get the service IDs for Christmas and New Year's
+        $xmas_service_id = $this->get_service_id_by_name('Jul');
+        $new_years_service_id = $this->get_service_id_by_name('Nyår');
+
+        // Check if the current appointment is for Christmas or New Year's
+        $is_xmas_booking = in_array($xmas_service_id, $appointment['id_services']) || 
+                           (isset($appointment['additional_rooms']) && in_array($xmas_service_id, $appointment['additional_rooms']));
+        $is_new_years_booking = in_array($new_years_service_id, $appointment['id_services']) || 
+                                (isset($appointment['additional_rooms']) && in_array($new_years_service_id, $appointment['additional_rooms']));
+
+        if ($is_xmas_booking && $is_new_years_booking) {
+            return true;
+        }
+
+        // Check if the user has existing bookings for Christmas or New Year's
+        $this->db->select('id_services');
+        $this->db->from('appointments');
+        $this->db->where('id_users_customer', $user_id);
+        $this->db->where_in('id_services', [$xmas_service_id, $new_years_service_id]);
+        $existing_bookings = $this->db->get()->result_array();
+
+        $has_xmas_booking = false;
+        $has_new_years_booking = false;
+
+        foreach ($existing_bookings as $booking) {
+            if ($booking['id_services'] == $xmas_service_id) {
+                $has_xmas_booking = true;
+            }
+            if ($booking['id_services'] == $new_years_service_id) {
+                $has_new_years_booking = true;
+            }
+        }
+
+        return ($is_xmas_booking && $has_new_years_booking) || ($is_new_years_booking && $has_xmas_booking);
+    }
+
+    /**
+     * Get the service ID by its name.
+     *
+     * @param string $service_name The name of the service.
+     * @return int The ID of the service.
+     */
+    private function get_service_id_by_name($service_name)
+    {
+        $this->db->select('id');
+        $this->db->from('services');
+        $this->db->where('name', $service_name);
+        $result = $this->db->get()->row_array();
+
+        return $result ? $result['id'] : null;
+    }
+
+        /**
+     * Check if less than 40% of the relatives and guests are in both appointments.
+     *
+     * @param int $appointment_id_1 The ID of the first appointment.
+     * @param int $appointment_id_2 The ID of the second appointment.
+     * @return bool Returns true if less than 40% of the relatives and guests are in both appointments, false otherwise.
+     */
+    public function is_less_than_40_percent_overlap($appointment_id_1, $appointment_id_2)
+    {
+        // Get relatives and guests for the first appointment
+        $relatives_1 = $this->get_relatives_by_appointment($appointment_id_1);
+        $guests_1 = $this->get_guests_by_appointment($appointment_id_1);
+
+        // Get relatives and guests for the second appointment
+        $relatives_2 = $this->get_relatives_by_appointment($appointment_id_2);
+        $guests_2 = $this->get_guests_by_appointment($appointment_id_2);
+
+        // Calculate the total number of unique relatives and guests in both appointments
+        $total_unique = count(array_unique(array_merge($relatives_1, $guests_1, $relatives_2, $guests_2)));
+
+        // Calculate the number of overlapping relatives and guests
+        $overlapping = count(array_intersect($relatives_1, $relatives_2)) + count(array_intersect($guests_1, $guests_2));
+
+        // Check if less than 40% of the relatives and guests are in both appointments
+        return ($overlapping / $total_unique) < 0.4;
+    }
+
+    /**
+     * Get relatives by appointment ID.
+     *
+     * @param int $appointment_id The ID of the appointment.
+     * @return array The list of relative IDs.
+     */
+    private function get_relatives_by_appointment($appointment_id)
+    {
+        $this->db->select('relative_id');
+        $this->db->from('relatives');
+        $this->db->where('appointment_id', $appointment_id);
+        $result = $this->db->get()->result_array();
+
+        return array_column($result, 'relative_id');
+    }
+
+    /**
+     * Get guests by appointment ID.
+     *
+     * @param int $appointment_id The ID of the appointment.
+     * @return array The list of guest names.
+     */
+    private function get_guests_by_appointment($appointment_id)
+    {
+        $this->db->select('guest_name');
+        $this->db->from('guests');
+        $this->db->where('appointment_id', $appointment_id);
+        $result = $this->db->get()->result_array();
+
+        return array_column($result, 'guest_name');
+    }
 }
