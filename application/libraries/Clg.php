@@ -22,17 +22,20 @@ class Clg {
     private $validation_faults;
 
     /**
+     * @var array
+     */
+    protected $privileges;
+
+    /**
      * @var CI_Session
      */
-    private $session;
+    protected $session;
 
     /**
      * @var DateTime
      */
     protected $start_date;
     
-
-
     /**
      * @var DateTime
      */
@@ -57,6 +60,11 @@ class Clg {
      * @var bool
      */
     protected $is_during_summer;
+
+    /**
+     * @var bool
+     */
+    protected $is_provider;
     
     /**
      * CLG constructor.
@@ -66,6 +74,7 @@ class Clg {
         $this->CI =& get_instance();
         $this->CI->load->model('appointments_model');
         $this->CI->load->model('services_model');
+        $this->CI->load->model('roles_model');
         
         $this->validation_faults = [];
 
@@ -105,6 +114,9 @@ class Clg {
     {
         // Needed for several rules
         $this->session = $current_session;
+        $this->privileges = $this->CI->roles_model->get_privileges($this->session->userdata('role_slug'));
+        $this->is_provider = $this->session->userdata('role_slug') === DB_SLUG_PROVIDER; 
+
         $this->start_date = date_create($appointment['start_datetime']);
         $this->end_date = date_create($appointment['end_datetime']);
         $this->appointment_year = (int)$this->start_date->format('Y'); 
@@ -144,6 +156,7 @@ class Clg {
         try {
             $appointment['id'] = isset($appointment['id']) ? $appointment['id'] : 0;
             $service_ids = [];
+
             array_push($service_ids, $appointment['id_services']);
             if ($appointment['additional_rooms']) {
                 foreach($appointment['additional_rooms'] as $service_id) {
@@ -180,6 +193,11 @@ class Clg {
      */
     private function R1_max_one_year_prior($appointment) {
         try {
+            // Allow providers/husmor to break this rule
+            if ($this->is_provider) {
+                return;
+            }
+
             if (strtotime($appointment['start_datetime']) > (time() + (60 * 60 * 24 * 356)))  {
                 
                 $service_ids = [];
@@ -204,6 +222,11 @@ class Clg {
      */
     private function R2_max_seven_days($appointment) {
         try {
+            // Allow providers/husmor to break this rule
+            if ($this->is_provider) {
+                return;
+            }
+            
             // Om det är 14 dagar innan så får man boka fler nätter            
             if (strtotime($appointment['start_datetime']) < (time() + (60 * 60 * 24 * 14))) {
                 return;
@@ -211,13 +234,6 @@ class Clg {
 
             // Return if appointment is not during summer months
             if ($this->is_during_summer == false) {
-                return;
-            }
-
-            // Allow husmor to break this rule (used for booking guides during summer)
-            $user_id = $this->session->userdata('user_id');
-
-            if ($user_id == 3) {
                 return;
             }
 
@@ -414,6 +430,11 @@ class Clg {
      */
     private function R8_preliminary_booking_restrictions($appointment) {
         try {
+            // Allow providers/husmor to break this rule
+            if ($this->is_provider) {
+                return;
+            }
+
             $start_date = new DateTime($appointment['start_datetime']);
             $end_date = new DateTime($appointment['end_datetime']);
             $interval = $start_date->diff($end_date);
