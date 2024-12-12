@@ -457,7 +457,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
             displayDelete = (($parent.hasClass('fc-custom') || $altParent.hasClass('fc-custom'))
                 && GlobalVariables.user.privileges.appointments.delete === true)
                 ? 'mr-2' : 'd-none'; // Same value at the time.
-
+            debugger;
             $html = $('<div/>', {
                 'html': [
                     $('<strong/>', {
@@ -465,7 +465,8 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                         'text': EALang.start
                     }),
                     $('<span/>', {
-                        'text': GeneralFunctions.formatDate(event.start.format('YYYY-MM-dd'), GlobalVariables.dateFormat, true)
+                        'text': GeneralFunctions.formatDate(event.data.date.format('YYYY-MM-dd'), GlobalVariables.dateFormat, true)
+                        //'text': GeneralFunctions.formatDate(event.start.format('YYYY-MM-dd'), GlobalVariables.dateFormat, true)
                     }),
                     $('<br/>'),
 
@@ -622,13 +623,14 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                 ((GlobalVariables.user.role_slug == Backend.DB_SLUG_ADMIN ||
                 GlobalVariables.user.role_slug == Backend.DB_SLUG_PROVIDER)
                 && GlobalVariables.user.privileges.appointments.edit === true))
-            if (true)
-            {
-                displayEdit = 'mr-2 test';
-                displayDelete = 'mr-2 test';
-            } else {
-                displayEdit = 'd-none';
-                displayDelete = 'd-none';
+
+            displayEdit = 'mr-2 test';
+            displayDelete = 'mr-2 test';
+
+            //Change hour to 11:59 AM if it is 23:59 PM
+            var endDate = GeneralFunctions.formatDate(event.data.end_datetime, GlobalVariables.dateFormat, true);
+            if (endDate.includes("23:59")) {
+                endDate = endDate.replace("23:59", "11:59");
             }
 
             $html = $('<div/>', {
@@ -638,7 +640,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                         'text': EALang.start
                     }),
                     $('<span/>', {
-                        'text': GeneralFunctions.formatDate(event.start.format('YYYY-MM-dd'), GlobalVariables.dateFormat, true)
+                        'text': GeneralFunctions.formatDate(event.data.start_datetime, GlobalVariables.dateFormat, true)
                     }),
                     $('<br/>'),
 
@@ -647,7 +649,8 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
                         'text': EALang.end
                     }),
                     $('<span/>', {
-                        'text': GeneralFunctions.formatDate(event.end.format('YYYY-MM-dd'), GlobalVariables.dateFormat, true)
+
+                        'text': endDate
                     }),
                     $('<br/>'),
 
@@ -1004,7 +1007,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
             delete appointment.customer;
             delete appointment.provider;
             delete appointment.service;
-            debugger;
+
             appointment.start_datetime = Date.parse(
                 appointment.start_datetime)
                 .addDays(delta.days())

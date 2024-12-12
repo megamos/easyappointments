@@ -198,13 +198,11 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                     .trigger('change');
             }
 
-            var serviceId = $dialog.find('#select-service').val();
+            // var serviceId = $dialog.find('#select-service').val();
 
-            var service = GlobalVariables.availableServices.find(function (availableService) {
-                return Number(availableService.id) === Number(serviceId);
-            });
-
-            var duration = service ? service.duration : 60;
+            // var service = GlobalVariables.availableServices.find(function (availableService) {
+            //     return Number(availableService.id) === Number(serviceId);
+            // });
 
             var start = new Date();
             start.set({'hour': 12, 'minute': 0, 'second': 0});
@@ -446,10 +444,8 @@ window.BackendCalendarAppointmentsModal = window.BackendCalendarAppointmentsModa
                 return Number(availableService.id) === Number(serviceId);
             });
 
-            var duration = service ? service.duration : 60;
-
-            var start = $('#start-datetime').datepicker('getDate');
-            $('#end-datetime').datepicker('setDate', new Date(start));
+            //var start = $('#start-datetime').datepicker('getDate');
+            //$('#end-datetime').datepicker('setDate', new Date(start));
 
             // Update the providers select box.
 

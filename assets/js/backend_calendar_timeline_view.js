@@ -1004,7 +1004,7 @@ window.BackendCalendarTimelineView = window.BackendCalendarTimelineView || {};
             delete appointment.customer;
             delete appointment.provider;
             delete appointment.service;
-            debugger;
+
             appointment.start_datetime = Date.parse(
                 appointment.start_datetime)
                 .addDays(delta.days())
