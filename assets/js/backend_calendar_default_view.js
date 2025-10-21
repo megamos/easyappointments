@@ -1820,6 +1820,10 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
             var appointment = GlobalVariables.editAppointment;
             BackendCalendarAppointmentsModal.resetAppointmentDialog();
 
+            // Navigate calendar to the appointment's date
+            var appointmentDate = Date.parseExact(appointment.start_datetime.split(" ")[0], 'yyyy-MM-dd');
+            $('#calendar').fullCalendar('gotoDate', appointmentDate);
+
             $dialog.find('.modal-header h3').text(EALang.edit_appointment_title);
             $dialog.find('#appointment-id').val(appointment.id);
             $dialog.find('#select-service').val(appointment.id_services).trigger('change');
@@ -1835,7 +1839,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
             // Add dropdown for each child appointment
             var children = appointment.children;
 
-            if (children !== undefined) {
+            if (children !== undefined && children !== null && children.length > 0) {
                 var secondRoom = $dialog.find('#extra-room');
                 secondRoom[0].value = children[0].id_services;
 
@@ -1865,35 +1869,37 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
             var guestsContainer = $('#guests-container');
             var firstGuestEntry = $(guestsContainer).children('.guest:first');
             
-            appointment.visitors.forEach(function (visitor) {
-                if(visitor.id_user != null ) {
-                    // Add relatives
-                    var newEntry = $(firstRelativeEntry.clone()).appendTo(relativeContainer);
-                    var newEntryInput = newEntry.find('input');
+            if (appointment.visitors !== undefined && appointment.visitors !== null && appointment.visitors.length > 0) {
+                appointment.visitors.forEach(function (visitor) {
+                    if(visitor.id_user != null ) {
+                        // Add relatives
+                        var newEntry = $(firstRelativeEntry.clone()).appendTo(relativeContainer);
+                        var newEntryInput = newEntry.find('input');
 
-                    newEntry.removeClass('hide');
-                    newEntryInput.val(visitor.name);
-                    newEntryInput.attr("data-userid", visitor.id_user);
-                    newEntryInput.prop('disabled', true);
-                } else {
-                    // Add non-relatives
-                    if (visitor.id == appointment.visitors.find(attr => attr.id_user == null).id) {
-                        firstGuestEntry.find('input').val(visitor.name);
+                        newEntry.removeClass('hide');
+                        newEntryInput.val(visitor.name);
+                        newEntryInput.attr("data-userid", visitor.id_user);
+                        newEntryInput.prop('disabled', true);
                     } else {
-                        var newEntry = firstGuestEntry.clone().appendTo(guestsContainer);
-                        newEntry.find('input').val(visitor.name);
-                        guestsContainer.find('.guest:not(:last) .btn-add-guest')
-                            .removeClass('btn-add-guest').addClass('btn-remove-guest')
-                            .removeClass('btn-success').addClass('btn-danger')
-                            .html('<i class="fas fa-minus-square"></i>');
+                        // Add non-relatives
+                        if (visitor.id == appointment.visitors.find(attr => attr.id_user == null).id) {
+                            firstGuestEntry.find('input').val(visitor.name);
+                        } else {
+                            var newEntry = firstGuestEntry.clone().appendTo(guestsContainer);
+                            newEntry.find('input').val(visitor.name);
+                            guestsContainer.find('.guest:not(:last) .btn-add-guest')
+                                .removeClass('btn-add-guest').addClass('btn-remove-guest')
+                                .removeClass('btn-success').addClass('btn-danger')
+                                .html('<i class="fas fa-minus-square"></i>');
+                        }
                     }
-                }
-            });
+                });
 
-            guestsContainer.find('.guest:last .btn-remove-guest')
-                .removeClass('btn-remove-guest').addClass('btn-add-guest')
-                .removeClass('btn-danger').addClass('btn-success')
-                .html('<i class="fas fa-plus-square"></i>');
+                guestsContainer.find('.guest:last .btn-remove-guest')
+                    .removeClass('btn-remove-guest').addClass('btn-add-guest')
+                    .removeClass('btn-danger').addClass('btn-success')
+                    .html('<i class="fas fa-plus-square"></i>');
+            }
             
             $dialog.find('#bg-color-input').val(appointment.bg_color);
             $dialog.find('#confirmAppointment').prop('checked', confirmedStatus);

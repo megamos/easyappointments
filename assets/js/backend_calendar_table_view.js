@@ -1734,13 +1734,137 @@ window.BackendCalendarTableView = window.BackendCalendarTableView || {};
         var startDate = moment().toDate();
         var endDate = moment().add(Number($('#select-filter-item').val()) - 1, 'days').toDate();
 
+        // If opening from appointment link, navigate to that date
+        if (GlobalVariables.editAppointment) {
+            var appointmentDate = Date.parseExact(GlobalVariables.editAppointment.start_datetime.split(" ")[0], 'yyyy-MM-dd');
+            startDate = appointmentDate;
+            endDate = moment(appointmentDate).add(Number($('#select-filter-item').val()) - 1, 'days').toDate();
+            $('.select-date').datepicker('setDate', startDate);
+        }
+
         createView(startDate, endDate);
 
         $('#insert-working-plan-exception').hide();
 
         bindEventHandlers();
 
+        // Display the edit dialog if an appointment hash is provided.
+        if (GlobalVariables.editAppointment) {
+            // Wait for view to be created
+            setTimeout(function() {
+                openAppointmentDialog(GlobalVariables.editAppointment);
+            }, 500);
+        }
+
         // Hide Google Calendar Sync buttons cause they can not be used within this view.
         $('#enable-sync, #google-sync').hide();
     };
+
+    /**
+     * Open appointment dialog with data
+     */
+    function openAppointmentDialog(appointment) {
+        var $dialog = $('#manage-appointment');
+        BackendCalendarAppointmentsModal.resetAppointmentDialog();
+
+        $dialog.find('.modal-header h3').text(EALang.edit_appointment_title);
+        $dialog.find('#appointment-id').val(appointment.id);
+        $dialog.find('#select-service').val(appointment.id_services).trigger('change');
+        $dialog.find('#select-provider').val(appointment.id_users_provider);
+
+        // Apply appointment data and show modal dialog.
+        var confirmedStatus = true;
+        if (appointment.status == 'pending') {
+            confirmedStatus = false;
+        }
+
+        // Add dropdown for each child appointment
+        var children = appointment.children;
+
+        if (children !== undefined && children !== null && children.length > 0) {
+            var secondRoom = $dialog.find('#extra-room');
+            secondRoom[0].value = children[0].id_services;
+
+            if (children.length > 1) {
+                var roomsContainer = $('#rooms-container');
+
+                for (let i = 1; i < children.length; i++) {
+                    var currentEntry = $('.room:last');
+                    var newEntry = $(currentEntry.clone());
+                    newEntry.appendTo(roomsContainer);
+                    
+                    newEntry[0].firstElementChild.value = children[i].id_services;
+                }
+
+                //Makes sure they have correct icons/colors
+                roomsContainer.find('.room:not(:last) .btn-add-room')
+                    .removeClass('btn-add-room').addClass('btn-remove-room')
+                    .removeClass('btn-success').addClass('btn-danger')
+                    .html('<i class="fas fa-minus-square"></i>');
+            }
+        }
+
+        // Add Appointment Visitors
+        var relativeContainer = $('#relatives-container');
+        var firstRelativeEntry = $(relativeContainer).children('.relative:first');
+        var guestsContainer = $('#guests-container');
+        var firstGuestEntry = $(guestsContainer).children('.guest:first');
+        
+        if (appointment.visitors !== undefined && appointment.visitors !== null && appointment.visitors.length > 0) {
+            appointment.visitors.forEach(function (visitor) {
+                if(visitor.id_user != null ) {
+                    // Add relatives
+                    var newEntry = $(firstRelativeEntry.clone()).appendTo(relativeContainer);
+                    var newEntryInput = newEntry.find('input');
+
+                    newEntry.removeClass('hide');
+                    newEntryInput.val(visitor.name);
+                    newEntryInput.attr("data-userid", visitor.id_user);
+                    newEntryInput.prop('disabled', true);
+                } else {
+                    // Add non-relatives
+                    if (visitor.id == appointment.visitors.find(attr => attr.id_user == null).id) {
+                        firstGuestEntry.find('input').val(visitor.name);
+                    } else {
+                        var newEntry = firstGuestEntry.clone().appendTo(guestsContainer);
+                        newEntry.find('input').val(visitor.name);
+                        guestsContainer.find('.guest:not(:last) .btn-add-guest')
+                            .removeClass('btn-add-guest').addClass('btn-remove-guest')
+                            .removeClass('btn-success').addClass('btn-danger')
+                            .html('<i class="fas fa-minus-square"></i>');
+                    }
+                }
+            });
+
+            guestsContainer.find('.guest:last .btn-remove-guest')
+                .removeClass('btn-remove-guest').addClass('btn-add-guest')
+                .removeClass('btn-danger').addClass('btn-success')
+                .html('<i class="fas fa-plus-square"></i>');
+        }
+        
+        $dialog.find('#bg-color-input').val(appointment.bg_color);
+        $dialog.find('#confirmAppointment').prop('checked', confirmedStatus);
+
+        // Set the start and end datetime of the appointment.
+        var startDate = Date.parseExact(appointment.start_datetime.split(" ")[0], 'yyyy-MM-dd');
+        $dialog.find('#start-datetime').datepicker('setDate', startDate);
+
+        var endDate = Date.parseExact(appointment.end_datetime.split(" ")[0], 'yyyy-MM-dd');
+        $dialog.find('#end-datetime').datepicker('setDate', endDate);
+
+        var customer = appointment.customer;
+        $dialog.find('#customer-id').val(appointment.id_users_customer);
+        $dialog.find('#first-name').val(customer.first_name);
+        $dialog.find('#last-name').val(customer.last_name);
+        $dialog.find('#email').val(customer.email);
+        $dialog.find('#phone-number').val(customer.phone_number);
+        $dialog.find('#address').val(customer.address);
+        $dialog.find('#city').val(customer.city);
+        $dialog.find('#zip-code').val(customer.zip_code);
+        $dialog.find('#appointment-location').val(appointment.location);
+        $dialog.find('#appointment-notes').val(appointment.notes);
+        $dialog.find('#customer-notes').val(customer.notes);
+
+        $dialog.modal('show');
+    }
 })(window.BackendCalendarTableView);
