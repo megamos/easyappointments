@@ -165,47 +165,46 @@ class User extends EA_Controller {
     {
         try
         {
-            if ( ! $this->input->post('username') || ! $this->input->post('email'))
+            $username = $this->input->post('username');
+            $email_address = $this->input->post('email');
+
+            if ( ! $username || ! $email_address)
             {
-                throw new Exception('You must enter a valid username and email address in '
-                    . 'order to get a new password!');
+                // Blank fields leak nothing about accounts, so this one may differ.
+                $this->output
+                    ->set_content_type('application/json')
+                    ->set_output(json_encode(AJAX_FAILURE));
+
+                return;
             }
 
-            $new_password = $this->user_model->regenerate_password(
-                $this->input->post('username'),
-                $this->input->post('email')
-            );
+            $company_settings = [
+                'company_name' => $this->settings_model->get_setting('company_name'),
+                'company_link' => $this->settings_model->get_setting('company_link'),
+                'company_email' => $this->settings_model->get_setting('company_email')
+            ];
 
-            if ($new_password != FALSE)
-            {
-                $this->config->load('email');
+            // The delivery callback runs before the new password is persisted, so a failed send
+            // leaves the existing password intact instead of locking the user out.
+            $this->user_model->regenerate_password($username, $email_address,
+                function ($new_password) use ($email_address, $company_settings) {
+                    $this->config->load('email');
 
-                $email = new EmailClient($this, $this->config->config);
+                    $email_client = new EmailClient($this, $this->config->config);
 
-                $company_settings = [
-                    'company_name' => $this->settings_model->get_setting('company_name'),
-                    'company_link' => $this->settings_model->get_setting('company_link'),
-                    'company_email' => $this->settings_model->get_setting('company_email')
-                ];
-
-                $email->send_password(new NonEmptyText($new_password), new Email($this->input->post('email')),
-                    $company_settings);
-            }
-
-            $response = $new_password != FALSE ? AJAX_SUCCESS : AJAX_FAILURE;
+                    $email_client->send_password(new NonEmptyText($new_password),
+                        new Email($email_address), $company_settings);
+                });
         }
         catch (Exception $exception)
         {
-            $this->output->set_status_header(500);
-
-            $response = [
-                'message' => $exception->getMessage(),
-                'trace' => config('debug') ? $exception->getTrace() : []
-            ];
+            // Never surface the reason: it would reveal whether the account exists.
+            log_message('error', 'ajax_forgot_password failed: ' . $exception->getMessage());
         }
 
+        // Always the same answer whether or not the account exists (no account enumeration).
         $this->output
             ->set_content_type('application/json')
-            ->set_output(json_encode($response));
+            ->set_output(json_encode(AJAX_SUCCESS));
     }
 }

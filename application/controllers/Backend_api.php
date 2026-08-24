@@ -1564,25 +1564,40 @@ class Backend_api extends EA_Controller {
 
                 $this->settings_model->save_settings($settings);
             }
+            elseif ($this->input->post('type') == SETTINGS_USER)
+            {
+                if ($this->privileges[PRIV_USER_SETTINGS]['edit'] == FALSE)
+                {
+                    throw new Exception('Du saknar rättigheter för att utföra detta.');
+                }
+
+                $settings = json_decode($this->input->post('settings'), TRUE);
+
+                if ( ! is_array($settings) || ! isset($settings['settings']))
+                {
+                    throw new Exception('Vi kunde inte läsa dina uppgifter, så ingenting sparades. Prova att ladda om sidan.');
+                }
+
+                // This endpoint only ever saves the signed-in user's own record, so the id from the
+                // browser is never trusted - otherwise anyone could post someone else's id here and
+                // overwrite their password.
+                $settings['id'] = $this->session->userdata('user_id');
+
+                if ( ! $this->user_model->save_user($settings))
+                {
+                    throw new Exception('Dina uppgifter kunde inte sparas. Prova igen om en liten stund.');
+                }
+
+                $this->session->set_userdata([
+                    'user_email' => $settings['email'],
+                    'username' => $settings['settings']['username'],
+                    'timezone' => $settings['timezone'],
+                ]);
+            }
             else
             {
-                if ($this->input->post('type') == SETTINGS_USER)
-                {
-                    if ($this->privileges[PRIV_USER_SETTINGS]['edit'] == FALSE)
-                    {
-                        throw new Exception('Du saknar rättigheter för att utföra detta.');
-                    }
-
-                    $settings = json_decode($this->input->post('settings'), TRUE);
-
-                    $this->user_model->save_user($settings);
-
-                    $this->session->set_userdata([
-                        'user_email' => $settings['email'],
-                        'username' => $settings['settings']['username'],
-                        'timezone' => $settings['timezone'],
-                    ]);
-                }
+                // Anything else would have fallen through and answered OK without saving a thing.
+                throw new Exception('Okänd typ av inställning, ingenting sparades.');
             }
 
             $response = AJAX_SUCCESS;

@@ -1,13 +1,17 @@
+// NOTE: forgot_password.js and forgot_password.min.js are kept byte-identical on purpose. The
+// .min.js twin is the file actually served (DEBUG_MODE = FALSE), and hand-minifying this by hand
+// would be pure risk for 1.6 KB of savings. Edit both, or neither.
+
 $(function () {
     'use strict';
 
     var $form = $('form');
 
     /**
-     * Event: Login Button "Click"
+     * Event: Form "Submit"
      *
-     * Make an HTTP request to the server and check whether the user's credentials are right. If yes then redirect the
-     * user to the destination page, otherwise display an error message.
+     * Ask the server for a new password and report back in place. Never navigate away, and never
+     * say anything that would reveal whether the account exists.
      */
     function onFormSubmit(event) {
         event.preventDefault();
@@ -21,31 +25,37 @@ $(function () {
         };
 
         var $alert = $('.alert');
+        var $button = $('#get-new-password');
 
-        $alert.addClass('d-none');
-        $('#get-new-password').prop('disabled', true);
+        $alert.addClass('d-none').removeClass('alert-danger alert-success');
+        $button.prop('disabled', true);
 
-        var redirect = true;
         $.post(url, data)
             .done(function (response) {
-                $alert.removeClass('d-none alert-danger alert-success');
-                $('#get-new-password').prop('disabled', false);
                 if (response === GlobalVariables.AJAX_SUCCESS) {
-                    $alert.addClass('alert-success');
-                    $alert.text(EALang['new_password_sent_with_email']);
+                    $alert
+                        .removeClass('d-none alert-danger')
+                        .addClass('alert-success')
+                        .text(EALang['new_password_sent_with_email']);
+                    $('#username').val('');
+                    $('#email').val('');
                 } else {
-                    $alert.addClass('alert-danger');
-                    $alert.text('The operation failed! Please enter a valid username '
-                        + 'and email address in order to get a new password.');
-                    redirect = false
+                    $alert
+                        .removeClass('d-none alert-success')
+                        .addClass('alert-danger')
+                        .text(EALang['type_username_and_email_for_new_password']);
                 }
+            })
+            .fail(function () {
+                $alert
+                    .removeClass('d-none alert-success')
+                    .addClass('alert-danger')
+                    .text(EALang['service_communication_error']);
+            })
+            .always(function () {
+                $button.prop('disabled', false);
             });
-
-        if (redirect) {
-            window.location.replace(GlobalVariables.baseUrl + '/index.php');
-        }
     }
-
 
     $form.on('submit', onFormSubmit);
 });

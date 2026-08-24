@@ -51,35 +51,70 @@ class User_model extends EA_Model {
      * @param array $user Contains the current users data.
      *
      * @return bool Returns the operation result.
+     *
+     * @throws Exception If the user settings record is missing, or if a new password was not stored.
      */
     public function save_user($user)
     {
+        // Hold on to the real user id. The customer mirror further down used to assign the
+        // customer's id to $user['id'], which then became the WHERE of the user_settings update -
+        // so username, preferences and password were written to a row that does not exist and the
+        // save silently did nothing.
+        $user_id = $user['id'];
+
         $user_settings = $user['settings'];
-        $user_settings['id_users'] = $user['id'];
+        $user_settings['id_users'] = $user_id;
         unset($user['settings']);
 
+        $settings_record = $this->db->get_where('user_settings', ['id_users' => $user_id])->row();
+
+        if ( ! $settings_record)
+        {
+            throw new Exception('Vi hittade inga inställningar för ditt konto, så ingenting sparades. Hör av dig till bokningsgruppen så hjälper vi dig.');
+        }
+
         // Prepare user password (hash).
+        $new_password_hash = NULL;
+
         if (isset($user_settings['password']))
         {
-            $salt = $this->db->get_where('user_settings', ['id_users' => $user['id']])->row()->salt;
-            $user_settings['password'] = hash_password($salt, $user_settings['password']);
+            $new_password_hash = hash_password($settings_record->salt, $user_settings['password']);
+            $user_settings['password'] = $new_password_hash;
         }
 
-        if ( ! $this->db->update('users', $user, ['id' => $user['id']]))
+        if ( ! $this->db->update('users', $user, ['id' => $user_id]))
         {
             return FALSE;
         }
 
-        $customer = $this->db->get_where('users', ['id' => $user['id'] - 1])->row();
+        // Family members also have a paired customer record, created right before their login
+        // record and carrying the same email. Keep its contact details in sync - but on a copy,
+        // so the real user id survives for the user_settings update below.
+        $customer = $this->db->get_where('users', ['id' => $user_id - 1])->row();
 
-        if (isset($customer) && $customer->id_roles == '3' && $customer->email == $user['email']) {
-            $user['id'] = $customer->id;
-            $this->db->update('users', $user, ['id' => $customer->id]);
+        if (isset($customer) && $customer->id_roles == '3' && $customer->email == $user['email'])
+        {
+            $customer_record = $user;
+            $customer_record['id'] = $customer->id;
+            $this->db->update('users', $customer_record, ['id' => $customer->id]);
         }
 
-        if ( ! $this->db->update('user_settings', $user_settings, ['id_users' => $user['id']]))
+        if ( ! $this->db->update('user_settings', $user_settings, ['id_users' => $user_id]))
         {
             return FALSE;
+        }
+
+        // Never report success without having written. The database driver reports a successful
+        // query even when it matched no row, so read the record back and confirm the new password
+        // really landed before letting the caller answer OK.
+        if ($new_password_hash !== NULL)
+        {
+            $stored = $this->db->get_where('user_settings', ['id_users' => $user_id])->row();
+
+            if ( ! $stored || ! hash_equals($new_password_hash, (string)$stored->password))
+            {
+                throw new Exception('Det nya lösenordet kunde inte sparas. Ditt gamla lösenord fungerar fortfarande, så prova gärna igen eller hör av dig till bokningsgruppen.');
+            }
         }
 
         return TRUE;
@@ -173,10 +208,12 @@ class User_model extends EA_Model {
      *
      * @param string $username User's username.
      * @param string $email User's email.
+     * @param callable|null $deliver Receives the new password and must deliver it. If it throws,
+     *                               the new password is NOT stored and the old one keeps working.
      *
      * @return string|bool Returns the new password on success or FALSE on failure.
      */
-    public function regenerate_password($username, $email)
+    public function regenerate_password($username, $email, callable $deliver = NULL)
     {
         $result = $this->db
             ->select('users.id')
@@ -197,6 +234,14 @@ class User_model extends EA_Model {
         $new_password = random_string('alnum', 12);
         $salt = $this->db->get_where('user_settings', ['id_users' => $user_id])->row()->salt;
         $hash_password = hash_password($salt, $new_password);
+
+        // Deliver first, persist second. Storing the new password before the email is known to have
+        // left the building would lock the user out whenever delivery fails.
+        if ($deliver !== NULL)
+        {
+            $deliver($new_password);
+        }
+
         $this->db->update('user_settings', ['password' => $hash_password], ['id_users' => $user_id]);
 
         return $new_password;
