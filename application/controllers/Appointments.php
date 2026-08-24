@@ -439,6 +439,16 @@ class Appointments extends EA_Controller {
     {
         try
         {
+            // Den här ändpunkten skrev rakt in i appointments-tabellen utan någon
+            // inloggningskontroll alls. Själva bokningsguiden (index() här ovan) är redan
+            // inloggningsskyddad, så den som kommit fram till formuläret på riktigt har en
+            // session och släpps igenom här — men utan den här grinden kunde vem som helst
+            // på internet posta hit och både skapa och skriva över befintliga bokningar.
+            if ( ! $this->has_privileges(PRIV_APPOINTMENTS, FALSE))
+            {
+                throw new Exception('Du saknar behörighet att boka. Logga in och försök igen.');
+            }
+
             $post_data = $this->input->post('post_data');
             $captcha = $this->input->post('captcha');
             $manage_mode = filter_var($post_data['manage_mode'], FILTER_VALIDATE_BOOLEAN);
