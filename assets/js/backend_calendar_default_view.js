@@ -1835,7 +1835,7 @@ window.BackendCalendarDefaultView = window.BackendCalendarDefaultView || {};
             // Add dropdown for each child appointment
             var children = appointment.children;
 
-            if (children !== undefined) {
+            if (children !== undefined && children !== null && children.length > 0) {
                 var secondRoom = $dialog.find('#extra-room');
                 secondRoom[0].value = children[0].id_services;
 

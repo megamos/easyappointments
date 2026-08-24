@@ -818,10 +818,21 @@ class Appointments_model extends EA_Model {
      */
     public function get_already_booked_services(DateTime $slot_start, DateTime $slot_end, $id_main, $service_ids)
     {
+        $id_main = (int)$id_main;
+
+        // OBS: id_main är NULL på varje huvudrad (is_main = 1). Ett rakt
+        // "id_main != $id_main" utvärderas därför till NULL i SQL och SLÄNGER varje huvudrad,
+        // dvs. själva rummet i alla enkelrumsbokningar. Behåll raderna med NULL och exkludera
+        // bara den redigerade bokningens egna barnrader.
+        // where('...id_main', NULL) låter CI bygga "IS NULL" OCH sätta tabellprefixet -
+        // en rå sträng med escape = FALSE hade gett ett oprefixat, okänt kolumnnamn.
         $appointments = $this->db
             //->join('services', 'services.id = appointments.id_services')
             ->where('appointments.id !=', $id_main)
-            ->where('appointments.id_main !=', $id_main)
+            ->group_start()
+                ->where('appointments.id_main', NULL)
+                ->or_where('appointments.id_main !=', $id_main)
+            ->group_end()
             ->where_in('appointments.id_services', $service_ids)
             ->group_start()
                 ->where('appointments.start_datetime >=', $slot_start->format('Y-m-d H:i:s'))
